@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Unidad 2: densidad de estados, función de Fermi y concentración de portadores en semiconductores intrínsecos y dopados, de 3D a 0D.">
+<meta name="author" content="Elodie Strupiechonski, Andrés de Luna Bugallo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235B4BC4'/%3E%3Cpath d='M12 22h40M12 42h40' stroke='white' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%232874A6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='40' cy='42' r='5' fill='white' stroke='%23C1440E' stroke-width='3'/%3E%3C/svg%3E">
+<title>Laboratorio de Portadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: misma familia que el Laboratorio PVT — controles fijos a la izquierda,
+     figura de convolución a todo lo ancho con eje de energía común, lecturas arriba,
+     evolución en T y comparación de casos debajo. Acento violeta silicio. */
+  :root {
+    --bg: #EEF0F6;
+    --surface: #FFFFFF;
+    --surface-2: #F5F6FB;
+    --border: #D9DCE8;
+    --text: #181A2A;
+    --text-muted: #565A72;
+    --text-faint: #80849A;
+    --accent: #5B4BC4;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #E6E2F8;
+    --copper: #B8763B;
+    --elec: #2874A6;
+    --elec-soft: rgba(40,116,166,0.16);
+    --hole: #C1440E;
+    --hole-soft: rgba(193,68,14,0.14);
+    --gap: rgba(86,90,114,0.07);
+    --shadow: 0 1px 2px rgba(24,26,42,0.06), 0 6px 18px rgba(24,26,42,0.07);
+    --radius-s: 6px; --radius-m: 10px; --radius-l: 18px;
+    --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+      --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+      --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+      --copper: #C88A4E; --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.20);
+      --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.18); --gap: rgba(162,165,190,0.06);
+      --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+    --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+    --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+    --copper: #C88A4E; --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.20);
+    --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.18); --gap: rgba(162,165,190,0.06);
+    --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1240px; margin: 0 auto; padding-block: clamp(20px, 4vw, 44px) 64px; padding-inline: clamp(16px, 4vw, 40px); }
+
+  header.masthead { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(20px, 3vw, 30px); max-width: 780px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5.4vw, 52px); line-height: 0.98; margin: 0; text-wrap: balance; }
+  .subhead { color: var(--text-muted); font-size: 15.5px; max-width: 64ch; margin: 2px 0 0; }
+
+  .app-shell { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 920px) { .app-shell { grid-template-columns: minmax(0, 1fr); } }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); }
+
+  .deck { padding: 20px; display: flex; flex-direction: column; gap: 18px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); }
+  @media (max-width: 920px) { .deck { position: static; } }
+  .deck-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field > label, .field > .flabel { font-size: 12.5px; color: var(--text-muted); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 3px; gap: 3px; }
+  .seg button { font-family: var(--font-body); font-weight: 600; font-size: 13px; padding: 8px 4px; border: none; border-radius: 7px; background: transparent; color: var(--text-muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .seg.case button[data-case="n"][aria-pressed="true"] { background: var(--elec); color: #fff; }
+  .seg.case button[data-case="p"][aria-pressed="true"] { background: var(--hole); color: #fff; }
+
+  select { font-family: var(--font-body); font-size: 14px; padding: 8px 10px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+  select:disabled { opacity: 0.45; }
+
+  .slider-block { display: flex; flex-direction: column; gap: 6px; }
+  .slider-block.disabled { opacity: 0.4; }
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .slider-name { font-size: 13px; font-weight: 600; }
+  .slider-name .sym { color: var(--text-faint); font-weight: 500; font-family: var(--font-mono); font-size: 12px; }
+  .slider-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 14px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; background: var(--border); outline-offset: 4px; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); }
+  .range-caps { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); }
+  .divider { height: 1px; background: var(--border); border: none; margin: 0; }
+
+  .proc-title { font-size: 12.5px; color: var(--text-muted); margin: 0 0 8px; }
+  .proc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .proc-btn { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; padding: 10px 8px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; text-align: left; line-height: 1.25; }
+  .proc-btn small { display: block; color: var(--text-faint); font-weight: 400; font-size: 10.5px; margin-top: 2px; }
+  .proc-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .proc-btn.running { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .proc-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .reset-btn { font-family: var(--font-body); font-size: 12.5px; font-weight: 500; color: var(--text-muted); background: none; border: 1px dashed var(--border); border-radius: var(--radius-s); padding: 8px; cursor: pointer; }
+  .reset-btn:hover { color: var(--text); border-color: var(--text-faint); }
+
+  .main-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+  .readout-strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  @media (max-width: 620px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .readout { background: var(--surface); padding: 13px 15px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rlabel { font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .rvalue { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(18px, 2.3vw, 24px); font-weight: 500; white-space: nowrap; }
+  .readout.n .rvalue { color: var(--elec); }
+  .readout.p .rvalue { color: var(--hole); }
+  .readout.ef .rvalue { color: var(--accent); }
+  .rsub { font-size: 11px; color: var(--text-faint); }
+
+  .card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
+  .card-note { font-size: 11.5px; color: var(--text-faint); font-family: var(--font-mono); }
+  .scroll-x { overflow-x: auto; }
+  svg { display: block; overflow: visible; }
+  #conv { width: 100%; min-width: 660px; height: auto; }
+  #tchart { width: 100%; height: auto; }
+  .caption { font-size: 12.5px; color: var(--text-muted); margin: 0; max-width: 90ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 0; border-top: 2px solid; display: inline-block; }
+
+  .lower { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 18px; }
+  @media (max-width: 1060px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+
+  table.cmp { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.cmp th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  table.cmp td { padding: 9px 8px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.cmp td:first-child { font-family: var(--font-body); font-weight: 600; }
+  table.cmp tr { cursor: pointer; }
+  table.cmp tr:hover td { background: var(--surface-2); }
+  table.cmp tr.active td { background: var(--accent-soft); }
+  td.cn { color: var(--elec); } td.cp { color: var(--hole); }
+  .tag { display: inline-block; font-family: var(--font-body); font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 99px; }
+  .tag.n { background: var(--elec-soft); color: var(--elec); }
+  .tag.p { background: var(--hole-soft); color: var(--hole); }
+  .tag.i { background: var(--accent-soft); color: var(--accent); }
+
+  .eq-list { display: flex; flex-direction: column; gap: 6px; }
+  .eq-line { font-family: var(--font-mono); font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 8px 12px; overflow-x: auto; white-space: pre; }
+  .eq-line .hi { color: var(--accent); font-weight: 600; }
+  .eq-line .ce { color: var(--elec); } .eq-line .ch { color: var(--hole); }
+
+  .axis-label { font-family: var(--font-mono); font-size: 11px; fill: var(--text-faint); }
+  .tick { font-family: var(--font-mono); font-size: 10px; fill: var(--text-faint); }
+  .ptitle { font-family: var(--font-display); font-weight: 700; font-size: 15px; fill: var(--text); }
+  .lvl { font-family: var(--font-mono); font-size: 11px; }
+
+  .challenge { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .dimstrip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 700px) { .dimstrip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .dimcell { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 8px 10px; background: var(--surface-2); cursor: pointer; text-align: left; font-family: var(--font-body); color: var(--text); display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .dimcell.active { border-color: var(--accent); background: var(--accent-soft); }
+  .dimcell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .dimcell .dh { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--font-display); font-weight: 700; font-size: 15px; }
+  .dimcell .dh small { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); font-weight: 400; }
+  .dimcell svg { width: 100%; height: 46px; }
+  .dimcell .dv { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  @media (max-width: 860px) { .challenge { grid-template-columns: minmax(0, 1fr); } }
+  .q { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; font-size: 13.5px; }
+  .q b { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+
+  footer.notes { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 12.5px; max-width: 86ch; }
+  footer.notes p { margin: 0 0 6px; }
+
+  /* ---- pestañas Laboratorio / Teoría ---- */
+  .tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin: 0 0 18px; box-shadow: var(--shadow); }
+  .tabs button { font-family: var(--font-body); font-weight: 600; font-size: 14px; padding: 8px 20px; border: none; border-radius: 999px; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tabs .tab-ic { font-family: var(--font-mono); font-size: 12px; opacity: 0.8; }
+  .theory { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .theory { grid-template-columns: minmax(0, 1fr); } }
+  .toc { padding: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  @media (max-width: 960px) { .toc { position: static; max-height: none; } }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: t; display: flex; flex-direction: column; gap: 2px; }
+  .toc li { counter-increment: t; }
+  .toc a { display: flex; gap: 10px; padding: 7px 8px; border-radius: var(--radius-s); color: var(--text); text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+  .toc a::before { content: counter(t, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--accent); padding-top: 2px; }
+  .toc a:hover, .toc a:focus-visible { background: var(--accent-soft); outline: none; }
+  .toc-note { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
+  .theory-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .tsec { scroll-margin-top: 16px; gap: 12px; }
+  .tsec h3 { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin: 0; }
+  .tsec h3 .tn { margin-right: 10px; vertical-align: 2px; }
+  .tsec h3 .tn { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.08em; }
+  .tsec p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 78ch; }
+  .tsec p + p { margin-top: 2px; }
+  .feq { font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif; font-size: 20px; line-height: 1.5; text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 16px; overflow-x: auto; white-space: nowrap; color: var(--text); }
+  .feq i { font-style: italic; }
+  .feq .lbl { font-family: var(--font-body); font-size: 12px; color: var(--text-faint); font-style: normal; display: block; margin-top: 2px; white-space: normal; }
+  .feq + .feq { margin-top: -4px; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 3px; line-height: 1.2; }
+  .frac > span { padding: 0 4px; }
+  .frac > span:first-child { border-bottom: 1.2px solid currentColor; padding-bottom: 2px; }
+  .frac > span:last-child { padding-top: 2px; }
+  .rad { display: inline-block; border-top: 1.2px solid currentColor; padding: 2px 3px 0; line-height: 1.25; }
+  .rad .frac { margin-top: 2px; }
+  .feq sub, .feq sup { font-size: 0.68em; }
+  .where { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 13.5px; }
+  .where dt { font-family: 'Cambria Math', 'Times New Roman', serif; font-style: italic; font-size: 15px; color: var(--accent); }
+  .where dd { margin: 0; color: var(--text-muted); }
+  .inlab { border-left: 3px solid var(--copper); background: var(--surface-2); padding: 10px 14px; border-radius: 0 var(--radius-s) var(--radius-s) 0; font-size: 14px !important; color: var(--text-muted); }
+  .inlab b { color: var(--copper); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; display: block; margin-bottom: 2px; }
+  .keyidea { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; font-weight: 500; }
+  .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .tgrid .feq { font-size: 18px; }
+  .ttable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ttable th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .ttable td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  [hidden] { display: none !important; }
+  .th4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--accent); margin: 8px 0 -2px; letter-spacing: 0.01em; }
+  .tfig { margin: 4px 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 14px 12px; }
+  .tfig svg { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; overflow: visible; }
+  .tfig figcaption { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+  .tsec p b { font-weight: 600; }
+  /* ---- regreso al índice del curso ---- */
+  .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 18px; }
+  .topnav .tabs { margin: 0; }
+  a.home-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 9px 16px; box-shadow: var(--shadow); }
+  a.home-link:hover { border-color: var(--accent); color: var(--accent); }
+  a.home-link:focus-visible, a.home-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.home-link .hk { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  a.home-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 40; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 13px; text-decoration: none; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(24,26,42,0.25); }
+  a.home-fab:hover { filter: brightness(1.08); }
+  a.home-fab .hk { font-family: var(--font-mono); font-size: 12px; }
+  @media (max-width: 520px) { a.home-fab .hl { display: none; } a.home-fab { padding: 12px 14px; } }
+  .sec-home { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .sec-home a, .sec-home button { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); text-decoration: none; background: none; border: none; cursor: pointer; padding: 2px 4px; }
+  .sec-home a:hover, .sec-home button:hover { color: var(--accent); }
+
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <span class="eyebrow">Física de Dispositivos Semiconductores · ENESJ · Unidad 2</span>
+    <h1>Laboratorio de Portadores</h1>
+    <p class="subhead">Cambia el material, la temperatura y el dopaje y observa cómo la densidad de estados g(E) multiplicada por la ocupación f(E) da la concentración de electrones y huecos. Compara un semiconductor intrínseco con uno tipo n y uno tipo p, en Si y en GaAs, y confínalo a un pozo (2D), un alambre (1D) o un punto cuántico (0D).</p>
+  </header>
+<div class="topnav"><a class="home-link" href="index.html"><span class="hk">←</span>Índice del curso</a><div class="tabs" role="tablist" aria-label="Secciones de la unidad"><button type="button" role="tab" id="tabLab" data-tab="lab" aria-controls="panelLab" aria-selected="true"><span class="tab-ic">◧</span>Laboratorio</button><button type="button" role="tab" id="tabTheory" data-tab="theory" aria-controls="panelTheory" aria-selected="false"><span class="tab-ic">∫</span>Teoría</button></div></div>
+<div id="panelLab" role="tabpanel" aria-labelledby="tabLab">
+
+
+  <div class="app-shell">
+    <aside class="panel deck" aria-label="Controles">
+      <h2 class="deck-title">Controles</h2>
+
+      <div class="field">
+        <span class="flabel" id="matLabel">Material</span>
+        <div class="seg" role="group" aria-labelledby="matLabel" id="matSeg">
+          <button type="button" data-mat="Si" aria-pressed="true">Si</button>
+          <button type="button" data-mat="GaAs" aria-pressed="false">GaAs</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="flabel" id="dimLabel">Dimensionalidad</span>
+        <div class="seg" role="group" aria-labelledby="dimLabel" id="dimSeg">
+          <button type="button" data-dim="3" aria-pressed="true">3D</button>
+          <button type="button" data-dim="2" aria-pressed="false">2D</button>
+          <button type="button" data-dim="1" aria-pressed="false">1D</button>
+          <button type="button" data-dim="0" aria-pressed="false">0D</button>
+        </div>
+      </div>
+
+      <div class="slider-block" id="lBlock">
+        <div class="slider-head">
+          <span class="slider-name"><span id="lName">Confinamiento</span> <span class="sym">L</span></span>
+          <span class="slider-value" id="lVal"></span>
+        </div>
+        <input type="range" id="lSlider" min="2" max="30" step="0.5" value="8" aria-label="Tamaño de confinamiento en nanómetros">
+        <div class="range-caps"><span>2 nm</span><span>30 nm</span></div>
+      </div>
+
+      <div class="field">
+        <span class="flabel" id="caseLabel">Caso</span>
+        <div class="seg case" role="group" aria-labelledby="caseLabel" id="caseSeg">
+          <button type="button" data-case="i" aria-pressed="false">Intrínseco</button>
+          <button type="button" data-case="n" aria-pressed="true">Tipo n</button>
+          <button type="button" data-case="p" aria-pressed="false">Tipo p</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="dopSel">Impureza</label>
+        <select id="dopSel"></select>
+      </div>
+
+      <div class="slider-block" id="nBlock">
+        <div class="slider-head">
+          <span class="slider-name">Dopaje <span class="sym" id="nSym">N_D</span></span>
+          <span class="slider-value" id="nVal"></span>
+        </div>
+        <input type="range" id="nSlider" min="13" max="19" step="0.05" value="16" aria-label="Concentración de impurezas, logaritmo base 10 en cm⁻³">
+        <div class="range-caps"><span>10¹³ cm⁻³</span><span>10¹⁹ cm⁻³</span></div>
+      </div>
+
+      <div class="slider-block">
+        <div class="slider-head">
+          <span class="slider-name">Temperatura <span class="sym">T</span></span>
+          <span class="slider-value" id="tVal"></span>
+        </div>
+        <input type="range" id="tSlider" min="40" max="800" step="1" value="300" aria-label="Temperatura en kelvin">
+        <div class="range-caps"><span>40 K</span><span>800 K</span></div>
+      </div>
+
+      <div class="field">
+        <span class="flabel" id="statLabel">Estadística de ocupación</span>
+        <div class="seg" role="group" aria-labelledby="statLabel" id="statSeg">
+          <button type="button" data-stat="fd" aria-pressed="true">Fermi–Dirac</button>
+          <button type="button" data-stat="mb" aria-pressed="false">Boltzmann</button>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div>
+        <p class="proc-title">Barridos — anima la evolución</p>
+        <div class="proc-grid">
+          <button class="proc-btn" id="sweepT" type="button">Calentar<small>40 → 800 K</small></button>
+          <button class="proc-btn" id="sweepN" type="button">Dopar<small>10¹³ → 10¹⁹ cm⁻³</small></button>
+        </div>
+      </div>
+
+      <button class="reset-btn" id="resetBtn" type="button">Volver a Si tipo n, 10¹⁶ cm⁻³, 300 K</button>
+    </aside>
+
+    <div class="main-col">
+      <div class="readout-strip">
+        <div class="readout n"><span class="rlabel">Electrones, n</span><span class="rvalue" id="rN"></span><span class="rsub" id="rNs"></span></div>
+        <div class="readout p"><span class="rlabel">Huecos, p</span><span class="rvalue" id="rP"></span><span class="rsub" id="rPs"></span></div>
+        <div class="readout"><span class="rlabel">Intrínseca, nᵢ</span><span class="rvalue" id="rNi"></span><span class="rsub" id="rNis"></span></div>
+        <div class="readout ef"><span class="rlabel">E_F − E_i</span><span class="rvalue" id="rEf"></span><span class="rsub" id="rEfs"></span></div>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head">
+          <h3 class="card-title">Convolución g(E) × f(E)</h3>
+          <span class="card-note" id="convNote"></span>
+        </div>
+        <div class="scroll-x"><svg id="conv" viewBox="0 0 960 450" role="img" aria-label="Diagrama de bandas, densidad de estados, función de Fermi y concentración de portadores por energía"></svg></div>
+        <div class="legend">
+          <span><i class="sw" style="border-color:var(--elec)"></i>electrones · g_c(E)·f(E)</span>
+          <span><i class="sw" style="border-color:var(--hole)"></i>huecos · g_v(E)·[1 − f(E)]</span>
+          <span><i class="sw" style="border-color:var(--accent);border-top-style:dashed"></i>nivel de Fermi E_F</span>
+          <span><i class="sw" style="border-color:var(--text-faint);border-top-style:dotted"></i>nivel intrínseco E_i</span>
+          <span id="bulkLeg" hidden><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>g(E) del volumen 3D, referencia</span>
+        </div>
+        <p class="caption">Las cuatro gráficas comparten el eje de energía. La cuarta usa escala logarítmica: el área de cada curva es la concentración (n o p) y la diferencia de altura entre ambas muestra cuántos órdenes de magnitud separan a portadores mayoritarios y minoritarios. En el diagrama de bandas, el número de puntos crece con el logaritmo de la concentración. Con confinamiento, las líneas finas dentro de las bandas son las subbandas o niveles discretos y todas las concentraciones se expresan por unidad de volumen para poder compararlas con el caso 3D.</p>
+        <div class="dimstrip" id="dimStrip"></div>
+      </section>
+
+      <div class="lower">
+        <section class="panel card">
+          <div class="card-head">
+            <h3 class="card-title">Evolución con la temperatura</h3>
+            <span class="card-note" id="tNote"></span>
+          </div>
+          <svg id="tchart" viewBox="0 0 540 320" role="img" aria-label="Concentración de portadores contra temperatura"></svg>
+          <div class="legend">
+            <span><i class="sw" style="border-color:var(--elec)"></i>n</span>
+            <span><i class="sw" style="border-color:var(--hole)"></i>p</span>
+            <span><i class="sw" style="border-color:var(--copper);border-top-style:dashed"></i>nᵢ</span>
+            <span><i class="sw" style="border-color:var(--text-faint);border-top-style:dotted"></i>nivel de dopaje</span>
+          </div>
+          <p class="caption">A baja T las impurezas no se ionizan (congelamiento); en el intervalo medio n ≈ N_D (región extrínseca); a alta T nᵢ supera al dopaje y el material se vuelve intrínseco.</p>
+        </section>
+
+        <section class="panel card">
+          <div class="card-head">
+            <h3 class="card-title">Los tres casos a la misma T</h3>
+            <span class="card-note" id="cmpNote"></span>
+          </div>
+          <div class="scroll-x">
+            <table class="cmp" id="cmpTable">
+              <thead><tr><th>Caso</th><th>E_F − E_v</th><th>n (cm⁻³)</th><th>p (cm⁻³)</th><th>Tipo</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="caption">Selecciona una fila para verla en la figura.</p>
+          <div class="eq-list" id="eqList"></div>
+        </section>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Retos</h3><span class="card-note">usa los controles para responder</span></div>
+        <div class="challenge">
+          <div class="q"><b>Reto 1</b>Si tipo n con 10¹⁵ cm⁻³ de fósforo: ¿a qué temperatura n supera en 10 % a N_D porque nᵢ empieza a pesar? Repite con GaAs y explica la diferencia.</div>
+          <div class="q"><b>Reto 2</b>Con Si tipo p a 300 K, sube N_A hasta 10¹⁹ cm⁻³ y alterna entre Fermi–Dirac y Boltzmann. ¿Desde qué dopaje deja de cumplirse n·p = nᵢ²? ¿Por qué?</div>
+          <div class="q"><b>Reto 3</b>A 300 K, el mismo dopaje de 10¹⁶ cm⁻³ deja E_F más cerca de la banda en GaAs tipo n que en Si tipo n. Relaciónalo con N_c de cada material.</div>
+          <div class="q"><b>Reto 4</b>GaAs intrínseco a 300 K con L = 5 nm: anota el gap efectivo y nᵢ en 3D, 2D, 1D y 0D. ¿Por qué nᵢ cae tanto al reducir la dimensionalidad? Repite con Si y explica por qué su corrimiento es menor.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  </div>
+<div id="panelTheory" role="tabpanel" aria-labelledby="tabTheory" hidden>
+<div class="theory">
+<nav class="panel toc" aria-label="Contenido de la teoría"><h2 class="deck-title">Teoría · Unidad 2</h2><ol><li><a href="#t-dos" data-target="t-dos">Densidad de estados</a></li><li><a href="#t-fermi" data-target="t-fermi">Ocupación: Fermi–Dirac y Boltzmann</a></li><li><a href="#t-conc" data-target="t-conc">Concentración de portadores: la convolución g·f</a></li><li><a href="#t-intr" data-target="t-intr">Semiconductor intrínseco y ley de acción de masas</a></li><li><a href="#t-dop" data-target="t-dop">Dopaje y neutralidad de carga</a></li><li><a href="#t-temp" data-target="t-temp">Las tres regiones de temperatura</a></li><li><a href="#t-dim" data-target="t-dim">Dimensionalidad: pozos, alambres y puntos cuánticos</a></li></ol><p class="toc-note">Cada fórmula aparece evaluada con tus valores en la pestaña Laboratorio, en «Ecuaciones con tus números».</p><button type="button" class="btn ghost" data-goto-lab>Ir al laboratorio →</button></nav>
+<div class="theory-col">
+<section class="panel card tsec" id="t-dos">
+  <h3><span class="tn">01</span>Densidad de estados</h3>
+  <p>g(E)dE cuenta cuántos estados electrónicos por unidad de volumen hay entre E y E + dE. Cerca del borde de la banda, con la aproximación parabólica, los estados se reparten de manera uniforme en el espacio k; contarlos en una esfera da una densidad que crece como la raíz de la energía.</p>
+  <div class="feq"><i>g</i><sub>c</sub>(<i>E</i>) = <span class="frac"><span>1</span><span>2π<sup>2</sup></span></span> <span style="font-size:1.25em">(</span><span class="frac"><span>2<i>m</i><sub>e</sub>*</span><span>ħ<sup>2</sup></span></span><span style="font-size:1.25em">)</span><sup>3/2</sup> √<span class="rad"><i>E</i> − <i>E</i><sub>c</sub></span><span class="lbl">banda de conducción, 3D; para la valencia se usa m_h* y √(E_v − E)</span></div>
+  <dl class="where"><dt>m*</dt><dd>masa efectiva de densidad de estados (incluye el número de valles)</dd></dl>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-fermi">
+  <h3><span class="tn">02</span>Ocupación: Fermi–Dirac y Boltzmann</h3>
+  <p>La probabilidad de que un estado de energía E esté ocupado en equilibrio la da la función de Fermi–Dirac. El nivel de Fermi E<sub>F</sub> es la energía donde la ocupación vale ½. La probabilidad de que el estado esté vacío, es decir, de que haya un hueco, es 1 − f.</p>
+  <div class="feq"><i>f</i>(<i>E</i>) = <span class="frac"><span>1</span><span>1 + <i>e</i><sup>(<i>E</i> − <i>E</i><sub>F</sub>)/<i>kT</i></sup></span></span> &nbsp;≈&nbsp; <i>e</i><sup>−(<i>E</i> − <i>E</i><sub>F</sub>)/<i>kT</i></sup><span class="lbl">la aproximación de Boltzmann vale cuando E − E_F ≫ kT (más de ~3kT)</span></div>
+  <p>A 300 K, kT = 25.9 meV. Si E<sub>F</sub> se acerca a menos de unos 3kT de una banda (dopajes de ~10¹⁸–10¹⁹ cm⁻³), el semiconductor es degenerado y hay que usar Fermi–Dirac.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-conc">
+  <h3><span class="tn">03</span>Concentración de portadores: la convolución g·f</h3>
+  <p>El número de electrones es la suma, sobre todos los estados de la banda de conducción, de la probabilidad de que estén ocupados. Con Boltzmann la integral se resuelve y toda la información de la banda queda en una sola constante, la densidad efectiva de estados.</p>
+  <div class="feq"><i>n</i> = ∫<sub><i>E</i><sub>c</sub></sub><sup>∞</sup> <i>g</i><sub>c</sub>(<i>E</i>) <i>f</i>(<i>E</i>) <i>dE</i> = <i>N</i><sub>c</sub> <i>F</i><sub>1/2</sub>(η) &nbsp;≈&nbsp; <i>N</i><sub>c</sub> <i>e</i><sup>−(<i>E</i><sub>c</sub> − <i>E</i><sub>F</sub>)/<i>kT</i></sup></div>
+  <div class="feq"><i>p</i> = ∫<sub>−∞</sub><sup><i>E</i><sub>v</sub></sup> <i>g</i><sub>v</sub>(<i>E</i>)[1 − <i>f</i>(<i>E</i>)] <i>dE</i> &nbsp;≈&nbsp; <i>N</i><sub>v</sub> <i>e</i><sup>−(<i>E</i><sub>F</sub> − <i>E</i><sub>v</sub>)/<i>kT</i></sup></div>
+  <div class="feq"><i>N</i><sub>c</sub> = 2 <span style="font-size:1.25em">(</span><span class="frac"><span>2π<i>m</i><sub>e</sub>* <i>kT</i></span><span><i>h</i><sup>2</sup></span></span><span style="font-size:1.25em">)</span><sup>3/2</sup> ∝ <i>T</i><sup>3/2</sup><span class="lbl">densidad efectiva de estados: 2.8×10¹⁹ cm⁻³ en Si y 4.7×10¹⁷ cm⁻³ en GaAs a 300 K</span></div>
+  <p class="inlab"><b>En el laboratorio</b>La cuarta gráfica muestra g·f en escala logarítmica: el área bajo cada curva es n o p. Casi todos los electrones están a unos kT del borde de la banda.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-intr">
+  <h3><span class="tn">04</span>Semiconductor intrínseco y ley de acción de masas</h3>
+  <p>Sin impurezas, cada electrón en la banda de conducción deja un hueco en la de valencia: n = p = n<sub>i</sub>. Multiplicando las expresiones de n y p el nivel de Fermi se cancela, así que el producto np no depende del dopaje.</p>
+  <div class="feq"><i>n</i> <i>p</i> = <i>n</i><sub>i</sub><sup>2</sup> = <i>N</i><sub>c</sub> <i>N</i><sub>v</sub> <i>e</i><sup>−<i>E</i><sub>g</sub>/<i>kT</i></sup><span class="lbl">ley de acción de masas (equilibrio, no degenerado)</span></div>
+  <div class="feq"><i>E</i><sub>i</sub> = <span class="frac"><span><i>E</i><sub>c</sub> + <i>E</i><sub>v</sub></span><span>2</span></span> + <span class="frac"><span><i>kT</i></span><span>2</span></span> ln <span class="frac"><span><i>N</i><sub>v</sub></span><span><i>N</i><sub>c</sub></span></span><span class="lbl">nivel intrínseco: casi a la mitad de la brecha</span></div>
+  <p>n<sub>i</sub> depende exponencialmente de E<sub>g</sub>/2kT: ~10¹⁰ cm⁻³ en Si y ~2×10⁶ cm⁻³ en GaAs a 300 K. Un cambio de 0.3 eV en la brecha cambia n<sub>i</sub> en más de dos órdenes de magnitud.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-dop">
+  <h3><span class="tn">05</span>Dopaje y neutralidad de carga</h3>
+  <p>Un donador (P en Si) aporta un electrón débilmente ligado, a unos 45 meV de E<sub>c</sub>; un aceptor (B) toma un electrón de la valencia y deja un hueco. El nivel de Fermi se ajusta para que la carga total sea cero.</p>
+  <div class="feq"><i>p</i> + <i>N</i><sub>D</sub><sup>+</sup> = <i>n</i> + <i>N</i><sub>A</sub><sup>−</sup><span class="lbl">neutralidad de carga</span></div>
+  <div class="tgrid">
+    <div class="feq"><i>n</i> ≈ <i>N</i><sub>D</sub>, &nbsp; <i>p</i> = <span class="frac"><span><i>n</i><sub>i</sub><sup>2</sup></span><span><i>N</i><sub>D</sub></span></span><span class="lbl">tipo n, ionización completa</span></div>
+    <div class="feq"><i>E</i><sub>F</sub> − <i>E</i><sub>i</sub> = <i>kT</i> ln <span class="frac"><span><i>n</i></span><span><i>n</i><sub>i</sub></span></span><span class="lbl">posición del nivel de Fermi</span></div>
+  </div>
+  <div class="feq"><i>N</i><sub>D</sub><sup>+</sup> = <span class="frac"><span><i>N</i><sub>D</sub></span><span>1 + 2 <i>e</i><sup>(<i>E</i><sub>F</sub> − <i>E</i><sub>D</sub>)/<i>kT</i></sup></span></span><span class="lbl">ionización incompleta (factor de degeneración 2 para donadores, 4 para aceptores)</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-temp">
+  <h3><span class="tn">06</span>Las tres regiones de temperatura</h3>
+  <p>En un semiconductor tipo n, n(T) pasa por tres regímenes. A baja temperatura los electrones regresan a los donadores (congelamiento) y n ≪ N<sub>D</sub>. En un intervalo amplio alrededor de 300 K todos los donadores están ionizados y n ≈ N<sub>D</sub>: es la región extrínseca, en la que trabajan los dispositivos. A alta temperatura n<sub>i</sub> supera a N<sub>D</sub> y el material se vuelve intrínseco: el dispositivo deja de funcionar.</p>
+  <div class="feq"><i>n</i> = <span class="frac"><span><i>N</i><sub>D</sub></span><span>2</span></span> + √<span class="rad"><span style="font-size:1.1em">(</span><span class="frac"><span><i>N</i><sub>D</sub></span><span>2</span></span><span style="font-size:1.1em">)</span><sup>2</sup> + <i>n</i><sub>i</sub><sup>2</sup></span><span class="lbl">extrínseca + intrínseca, ionización completa</span></div>
+  <p class="inlab"><b>En el laboratorio</b>Usa «Calentar 40 → 800 K» y sigue n, p y n<sub>i</sub> en la gráfica de temperatura.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-dim">
+  <h3><span class="tn">07</span>Dimensionalidad: pozos, alambres y puntos cuánticos</h3>
+  <p>Si el material mide L en una dirección y L es comparable a la longitud de onda del electrón, el movimiento en esa dirección se cuantiza. Cada nivel de confinamiento E<sub>n</sub> abre una subbanda que se mueve libremente en las direcciones restantes. La forma de g(E) cambia con el número de direcciones libres.</p>
+  <div class="feq"><i>E</i><sub><i>n</i></sub> = <span class="frac"><span>ħ<sup>2</sup>π<sup>2</sup><i>n</i><sup>2</sup></span><span>2<i>m</i>*<i>L</i><sup>2</sup></span></span><span class="lbl">pozo de barreras infinitas</span></div>
+  <table class="ttable"><thead><tr><th>Sistema</th><th>Direcciones libres</th><th>g(E)</th></tr></thead><tbody>
+    <tr><td>3D, volumen</td><td>3</td><td>∝ √(E − E_c)</td></tr>
+    <tr><td>2D, pozo cuántico</td><td>2</td><td>escalones: (m*/πħ²) Σ Θ(E − E_n), por unidad de área</td></tr>
+    <tr><td>1D, alambre</td><td>1</td><td>∝ Σ 1/√(E − E_n): picos que divergen</td></tr>
+    <tr><td>0D, punto</td><td>0</td><td>Σ 2δ(E − E_n): niveles discretos, como un átomo</td></tr>
+  </tbody></table>
+  <p>El confinamiento sube el borde efectivo de las bandas, abre la brecha y reduce n<sub>i</sub>. El efecto es mayor en materiales de masa pequeña, como el GaAs.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+</div>
+</div>
+</div>
+  <a class="home-fab" href="index.html" aria-label="Ir al índice del curso de Física de Dispositivos Semiconductores"><span class="hk">⌂</span><span class="hl">Índice del curso</span></a>
+<footer class="notes">
+    <p>Modelo: bandas parabólicas, N_c y N_v escalan como T^{3/2}, E_g(T) por Varshni, ionización incompleta de impurezas con degeneración 2 (donadores) y 4 (aceptores), neutralidad de carga p + N_D⁺ = n + N_A⁻ resuelta numéricamente. Con Fermi–Dirac, n = N_c·F½(η) se integra numéricamente.</p>
+    <p>Confinamiento: barreras infinitas, masa efectiva isotrópica igual a la masa de densidad de estados (m*ₑ = 1.08, m*ₕ = 0.56 en Si; 0.071 y 0.43 en GaAs, consistentes con N_c y N_v). Pozo de ancho L, alambre de sección L×L y punto cúbico de lado L. Los niveles del punto cuántico se dibujan ensanchados 6 meV para poder verlos; su ocupación se calcula con niveles discretos. El dopaje se trata como promedio por volumen, aunque en un punto de 5 nm 10¹⁶ cm⁻³ equivale a 0.001 impurezas por punto.</p>
+    <p>Parámetros a 300 K (base Neamen): Si N_c = 2.8×10¹⁹, N_v = 1.04×10¹⁹ cm⁻³; GaAs N_c = 4.7×10¹⁷, N_v = 7.0×10¹⁸ cm⁻³. Con estos valores nᵢ(Si) sale ≈ 6.1×10⁹ cm⁻³, más cerca del valor moderno 9.65×10⁹ que del 1.5×10¹⁰ tabulado en el libro. Energías de ionización de libro, aproximadas.</p>
+    <p class="credit">© 2026 Elodie Strupiechonski (ENES Juriquilla, UNAM) y Andrés de Luna Bugallo (CFATA, UNAM). Material didáctico bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const kB = 8.617333e-5;
+  const NC_FREE = 2.509e19;                 // 2(2π m0 kT/h²)^{3/2} a 300 K, cm⁻³
+  const E0_NM = 0.37603;                    // ħ²π²/(2 m0 (1 nm)²), eV
+  const A2D = 4.177e14;                     // m0/(πħ²), eV⁻¹ cm⁻²
+  const C1D = 1.6306e7;                     // √(2m0)/(πħ), eV^{-1/2} cm⁻¹
+  const SIG0D = 0.006;                      // ensanchamiento visual de niveles 0D, eV
+  const MATS = {
+    Si: { Nc: 2.8e19, Nv: 1.04e19, Eg0: 1.170, a: 4.73e-4, b: 636,
+      donors: [['P', 0.045], ['As', 0.054], ['Sb', 0.039]],
+      acceptors: [['B', 0.045], ['Al', 0.067], ['Ga', 0.072]] },
+    GaAs: { Nc: 4.7e17, Nv: 7.0e18, Eg0: 1.519, a: 5.405e-4, b: 204,
+      donors: [['Si', 0.0058], ['Se', 0.0059], ['Te', 0.0058]],
+      acceptors: [['C', 0.026], ['Be', 0.028], ['Zn', 0.031]] }
+  };
+  for (const k in MATS) { const m = MATS[k]; m.me = Math.pow(m.Nc / NC_FREE, 2 / 3); m.mh = Math.pow(m.Nv / NC_FREE, 2 / 3); }
+
+  const DIMNAME = { 3: 'Volumen 3D', 2: 'Pozo cuántico 2D', 1: 'Alambre cuántico 1D', 0: 'Punto cuántico 0D' };
+  const LNAME = { 3: 'Confinamiento', 2: 'Ancho del pozo', 1: 'Lado del alambre', 0: 'Lado del punto' };
+  const state = { mat: 'Si', kase: 'n', dopIdx: 0, logN: 16, T: 300, stat: 'fd', dim: 3, L: 8 };
+
+  // ---------- tablas de multiplicidad de niveles: s = suma de n² ----------
+  const NMAX = 48;
+  function table(d) {
+    const map = new Map();
+    if (d === 2) for (let a = 1; a <= NMAX; a++) map.set(a * a, 1);
+    if (d === 1) for (let a = 1; a <= NMAX; a++) for (let b = 1; b <= NMAX; b++) { const s = a * a + b * b; map.set(s, (map.get(s) || 0) + 1); }
+    if (d === 0) for (let a = 1; a <= NMAX; a++) for (let b = 1; b <= NMAX; b++) for (let c = 1; c <= NMAX; c++) { const s = a * a + b * b + c * c; map.set(s, (map.get(s) || 0) + 1); }
+    return [...map.entries()].filter(([s]) => s <= NMAX * NMAX).sort((x, y) => x[0] - y[0]);
+  }
+  const TABLES = { 2: table(2), 1: table(1), 0: table(0) };
+
+  // ---------- funciones de Fermi ----------
+  const SQPI = Math.sqrt(Math.PI);
+  function simpson(fn, a, b, N) { const h = (b - a) / N; let s = 0; for (let i = 0; i <= N; i++) s += fn(a + i * h) * (i === 0 || i === N ? 1 : (i % 2 ? 4 : 2)); return s * h / 3; }
+  function F12(eta) {
+    if (eta < -12) return Math.exp(eta);
+    const umax = Math.sqrt(Math.max(eta, 0) + 45);
+    return (2 / SQPI) * simpson(u => { const x = u * u, ex = x - eta; return ex > 700 ? 0 : 2 * x / (1 + Math.exp(ex)); }, 0, umax, 240);
+  }
+  function Fm12(eta) {
+    if (eta < -12) return Math.exp(eta);
+    const umax = Math.sqrt(Math.max(eta, 0) + 45);
+    return (2 / SQPI) * simpson(u => { const ex = u * u - eta; return ex > 700 ? 0 : 1 / (1 + Math.exp(ex)); }, 0, umax, 200);
+  }
+  // tablas para interpolar F½ y F−½ (η de −12 a 60)
+  const TAB_LO = -12, TAB_HI = 60, TAB_D = 0.02, TAB_N = Math.round((TAB_HI - TAB_LO) / TAB_D);
+  const T12 = new Float64Array(TAB_N + 1), TM12 = new Float64Array(TAB_N + 1);
+  for (let i = 0; i <= TAB_N; i++) { const e = TAB_LO + i * TAB_D; T12[i] = F12(e); TM12[i] = Fm12(e); }
+  function interp(tab, eta, big) {
+    if (eta < TAB_LO) return Math.exp(eta);
+    if (eta >= TAB_HI) return big(eta);
+    const x = (eta - TAB_LO) / TAB_D, i = Math.floor(x), t = x - i;
+    return tab[i] * (1 - t) + tab[Math.min(i + 1, TAB_N)] * t;
+  }
+  const F12f = eta => interp(T12, eta, e => 4 / (3 * SQPI) * Math.pow(e, 1.5) * (1 + Math.PI * Math.PI / (8 * e * e)));
+  const Fm12f = eta => interp(TM12, eta, e => 2 / SQPI * Math.sqrt(e) * (1 - Math.PI * Math.PI / (24 * e * e)));
+  const ln1pexp = x => x > 35 ? x : Math.log1p(Math.exp(x));
+  const ex = x => Math.exp(Math.max(-700, Math.min(700, x)));
+
+  // ---------- modelo de bandas según dimensionalidad ----------
+  // Cada banda = lista de niveles {dE, w}: dE energía de confinamiento, w peso (prefactor por volumen).
+  function bandModel(matKey, dim, L, T) {
+    const m = MATS[matKey], kT = kB * T;
+    const Eg = m.Eg0 - m.a * T * T / (T + m.b);
+    const Ec = Eg, Ev = 0;
+    const Lcm = L * 1e-7;
+    const side = (mass, Nc300) => {
+      const Nc = Nc300 * Math.pow(T / 300, 1.5);
+      if (dim === 3) return { Nc, levels: [{ dE: 0, w: Nc }], E0: 0, mass };
+      const E0 = E0_NM / (mass * L * L);
+      const levels = [];
+      for (const [s, mult] of TABLES[dim]) {
+        const dE = s * E0;
+        if (dE - TABLES[dim][0][0] * E0 > 1.6) break;
+        let w;
+        if (dim === 2) w = mult * A2D * mass * kT / Lcm;                       // × ln(1+e^η)
+        else if (dim === 1) w = mult * C1D * Math.sqrt(mass * kT) * SQPI / (Lcm * Lcm); // × F−½(η)
+        else w = mult * 2 / (Lcm * Lcm * Lcm);                                   // × f
+        levels.push({ dE, w, mult });
+      }
+      return { Nc, levels, E0, mass };
+    };
+    const e = side(m.me, m.Nc), h = side(m.mh, m.Nv);
+    const E1e = Ec + e.levels[0].dE, E1h = Ev - h.levels[0].dE;
+    // N efectivas (límite de Boltzmann)
+    const eff = sd => sd.levels.reduce((a, l) => a + l.w * Math.exp(-(l.dE - sd.levels[0].dE) / kT), 0);
+    return { m, dim, L, T, kT, Eg, Ec, Ev, e, h, E1e, E1h, NcEff: eff(e), NvEff: eff(h), Lcm };
+  }
+  function occSum(M, side, eta0, stat) {
+    // eta0 = (E_F − E_borde)/kT para electrones, (E_borde − E_F)/kT para huecos, sin confinamiento
+    let s = 0;
+    const kT = M.kT;
+    const etaStop = eta0 - side.levels[0].dE / kT - 40;
+    for (const l of side.levels) {
+      const eta = eta0 - l.dE / kT;
+      if (eta < etaStop) break;
+      if (stat === 'mb' || eta < -12) { s += l.w * ex(eta); continue; }
+      if (M.dim === 3) s += l.w * F12f(eta);
+      else if (M.dim === 2) s += l.w * ln1pexp(eta);
+      else if (M.dim === 1) s += l.w * Fm12f(eta);
+      else s += l.w / (1 + ex(-eta));
+    }
+    return s;
+  }
+  function solve(matKey, T, ND, NA, ED, EA, stat, dim, L) {
+    const M = bandModel(matKey, dim, L, T);
+    const { kT, Ec, Ev } = M;
+    const nOf = EF => occSum(M, M.e, (EF - Ec) / kT, stat);
+    const pOf = EF => occSum(M, M.h, (Ev - EF) / kT, stat);
+    const Ed = M.E1e - ED, Ea = M.E1h + EA;
+    const NDp = EF => ND > 0 ? ND / (1 + 2 * ex((EF - Ed) / kT)) : 0;
+    const NAm = EF => NA > 0 ? NA / (1 + 4 * ex((Ea - EF) / kT)) : 0;
+    let lo = M.E1h - 1.2, hi = M.E1e + 1.2;
+    for (let i = 0; i < 56; i++) {
+      const mid = 0.5 * (lo + hi);
+      if (pOf(mid) + NDp(mid) - nOf(mid) - NAm(mid) > 0) lo = mid; else hi = mid;
+    }
+    const EF = 0.5 * (lo + hi);
+    const EgEff = M.E1e - M.E1h;
+    const ni = Math.sqrt(M.NcEff * M.NvEff) * Math.exp(-EgEff / (2 * kT));
+    const Ei = (M.E1e + M.E1h) / 2 + 0.5 * kT * Math.log(M.NvEff / M.NcEff);
+    return Object.assign(M, { EF, n: nOf(EF), p: pOf(EF), ni, Ei, Ed, Ea, EgEff,
+      NDp: NDp(EF), NAm: NAm(EF), ND, NA, stat });
+  }
+  function current(kase, over) {
+    kase = kase || state.kase;
+    const st = Object.assign({}, state, over || {});
+    const m = MATS[st.mat];
+    const N = Math.pow(10, st.logN);
+    const idx = st.dopIdx;
+    const ED = m.donors[kase === 'n' ? Math.min(idx, 2) : 0][1];
+    const EA = m.acceptors[kase === 'p' ? Math.min(idx, 2) : 0][1];
+    return solve(st.mat, st.T, kase === 'n' ? N : 0, kase === 'p' ? N : 0, ED, EA, st.stat, st.dim, st.L);
+  }
+
+  // ---------- densidad de estados por volumen ----------
+  function dosFn(M, side, sign) {
+    // sign +1: electrones (E sobre Ec); −1: huecos (E bajo Ev)
+    const edge = sign > 0 ? M.Ec : M.Ev;
+    const G3 = (2 / SQPI) * side.Nc / Math.pow(M.kT, 1.5);
+    const bulk = E => { const x = sign * (E - edge); return x > 0 ? G3 * Math.sqrt(x) : 0; };
+    if (M.dim === 3) return { g: bulk, bulk };
+    const Lcm = M.Lcm, mass = side.mass;
+    const levels = side.levels;
+    let g;
+    if (M.dim === 2) g = E => { const x = sign * (E - edge); let s = 0; for (const l of levels) { if (l.dE > x) break; s += l.mult * A2D * mass / Lcm; } return s; };
+    else if (M.dim === 1) g = (E, dEg) => { const x = sign * (E - edge); let s = 0; for (const l of levels) { if (l.dE > x) break; s += l.mult * C1D * Math.sqrt(mass) / Math.sqrt(Math.max(x - l.dE, dEg * 0.5)) / (Lcm * Lcm); } return s; };
+    else g = E => { const x = sign * (E - edge); let s = 0; for (const l of levels) { const d = x - l.dE; if (d < -5 * SIG0D) break; if (d > 5 * SIG0D) continue; s += 2 * l.mult * Math.exp(-d * d / (2 * SIG0D * SIG0D)) / (SIG0D * Math.sqrt(2 * Math.PI)); } return s / (Lcm * Lcm * Lcm); };
+    return { g, bulk };
+  }
+
+  // ---------- formato ----------
+  const SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+  const sup = s => String(s).split('').map(c => SUP[c] || c).join('');
+  function sci(x, d) {
+    d = d === undefined ? 2 : d;
+    if (!isFinite(x) || x <= 0) return '≈ 0';
+    let e = Math.floor(Math.log10(x)), mnt = x / Math.pow(10, e);
+    if (+mnt.toFixed(d) >= 10) { mnt /= 10; e += 1; }
+    if (e >= -2 && e <= 3) return x.toPrecision(3);
+    return mnt.toFixed(d) + '×10' + sup(e);
+  }
+  const fmtE = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(3) + ' eV';
+
+  // ---------- figura de convolución ----------
+  const conv = document.getElementById('conv');
+  const W = 960, H = 450, TOP = 34, BOT = 40, PH = H - TOP - BOT;
+  const P = { band: [62, 250], g: [282, 462], f: [494, 674], prod: [708, 940] };
+  const LOGLO = -8, LOGHI = 23;
+  function rng(seed) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
+
+  function drawConv(r) {
+    const Emin = Math.min(r.Ev, r.E1h) - 0.42, Emax = Math.max(r.Ec, r.E1e) + 0.42;
+    const y = E => TOP + (Emax - E) / (Emax - Emin) * PH;
+    const s = [];
+    const kT = r.kT;
+
+    for (const k of Object.keys(P)) {
+      const [x0, x1] = P[k];
+      s.push(`<rect x="${x0}" y="${TOP}" width="${x1 - x0}" height="${y(r.E1e) - TOP}" fill="var(--elec-soft)" opacity="0.45"/>`);
+      s.push(`<rect x="${x0}" y="${y(r.E1h)}" width="${x1 - x0}" height="${TOP + PH - y(r.E1h)}" fill="var(--hole-soft)" opacity="0.45"/>`);
+      s.push(`<rect x="${x0}" y="${y(r.E1e)}" width="${x1 - x0}" height="${y(r.E1h) - y(r.E1e)}" fill="var(--gap)"/>`);
+      s.push(`<rect x="${x0}" y="${TOP}" width="${x1 - x0}" height="${PH}" fill="none" stroke="var(--border)"/>`);
+    }
+    const gTitle = { 3: 'g(E) ∝ √E', 2: 'g(E) escalones', 1: 'g(E) ∝ 1/√E', 0: 'g(E) deltas' }[r.dim];
+    const titles = { band: 'Bandas', g: gTitle, f: 'f(E)', prod: 'n(E), p(E)' };
+    for (const k of Object.keys(P)) s.push(`<text class="ptitle" x="${P[k][0]}" y="${TOP - 12}">${titles[k]}</text>`);
+
+    for (let E = Math.ceil(Emin / 0.5) * 0.5; E <= Emax + 1e-9; E += 0.5) {
+      s.push(`<text class="tick" x="${P.band[0] - 6}" y="${y(E) + 3}" text-anchor="end">${E.toFixed(1)}</text>`);
+      s.push(`<line x1="${P.band[0] - 3}" x2="${P.band[0]}" y1="${y(E)}" y2="${y(E)}" stroke="var(--text-faint)"/>`);
+    }
+    s.push(`<text class="axis-label" transform="translate(16 ${TOP + PH / 2}) rotate(-90)" text-anchor="middle">Energía, E − E_v (eV)</text>`);
+
+    // --- panel 1: bandas ---
+    const [b0, b1] = P.band;
+    const hline = (E, color, w, dash, xa, xb) => s.push(`<line x1="${xa || b0}" x2="${xb || b1}" y1="${y(E)}" y2="${y(E)}" stroke="${color}" stroke-width="${w}" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`);
+    if (r.dim !== 3) {
+      hline(r.Ec, 'var(--text-faint)', 1, '3 3'); hline(r.Ev, 'var(--text-faint)', 1, '3 3');
+      // subbandas / niveles (hasta 7 por banda)
+      r.e.levels.slice(0, 7).forEach((l, i) => { if (r.Ec + l.dE < Emax) hline(r.Ec + l.dE, 'var(--elec)', i ? 0.8 : 2, null, b0 + 6, b1 - 40); });
+      r.h.levels.slice(0, 7).forEach((l, i) => { if (r.Ev - l.dE > Emin) hline(r.Ev - l.dE, 'var(--hole)', i ? 0.8 : 2, null, b0 + 6, b1 - 40); });
+      s.push(`<text class="lvl" x="${b1 - 4}" y="${y(r.Ec) + 13}" text-anchor="end" fill="var(--text-faint)">E_c 3D</text>`);
+      s.push(`<text class="lvl" x="${b1 - 4}" y="${y(r.Ev) - 5}" text-anchor="end" fill="var(--text-faint)">E_v 3D</text>`);
+      s.push(`<text class="lvl" x="${b1 - 4}" y="${y(r.E1e) - 5}" text-anchor="end" fill="var(--elec)">E₁ₑ</text>`);
+      s.push(`<text class="lvl" x="${b1 - 4}" y="${y(r.E1h) + 13}" text-anchor="end" fill="var(--hole)">E₁ₕ</text>`);
+    } else {
+      hline(r.Ec, 'var(--text)', 2); hline(r.Ev, 'var(--text)', 2);
+      s.push(`<text class="lvl" x="${b1 - 4}" y="${y(r.Ec) - 5}" text-anchor="end" fill="var(--text)">E_c</text>`);
+      s.push(`<text class="lvl" x="${b1 - 4}" y="${y(r.Ev) + 14}" text-anchor="end" fill="var(--text)">E_v</text>`);
+    }
+    hline(r.Ei, 'var(--text-faint)', 1.2, '2 4');
+    s.push(`<text class="lvl" x="${b0 + 4}" y="${y(r.Ei) + 14}" fill="var(--text-faint)">E_i</text>`);
+    if (r.ND > 0) {
+      for (let x = b0 + 10; x < b1 - 44; x += 16) s.push(`<line x1="${x}" x2="${x + 8}" y1="${y(r.Ed)}" y2="${y(r.Ed)}" stroke="var(--elec)" stroke-width="2"/>`);
+      s.push(`<text class="lvl" x="${b0 + 4}" y="${y(r.Ed) + 14}" fill="var(--elec)">E_D · ${(100 * r.NDp / r.ND).toFixed(1)} % ionizado</text>`);
+    }
+    if (r.NA > 0) {
+      for (let x = b0 + 10; x < b1 - 44; x += 16) s.push(`<line x1="${x}" x2="${x + 8}" y1="${y(r.Ea)}" y2="${y(r.Ea)}" stroke="var(--hole)" stroke-width="2"/>`);
+      s.push(`<text class="lvl" x="${b0 + 4}" y="${y(r.Ea) - 6}" fill="var(--hole)">E_A · ${(100 * r.NAm / r.NA).toFixed(1)} % ionizado</text>`);
+    }
+    const dots = c => Math.max(0, Math.min(46, Math.round((Math.log10(Math.max(c, 1)) - 4) * 2.6)));
+    let R = rng(7);
+    for (let i = 0; i < dots(r.n); i++) {
+      const px = b0 + 10 + R() * (b1 - b0 - 56), py = y(r.E1e) - 5 - Math.pow(R(), 1.6) * (y(r.E1e) - TOP - 12);
+      s.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" fill="var(--elec)"/>`);
+    }
+    R = rng(13);
+    for (let i = 0; i < dots(r.p); i++) {
+      const px = b0 + 10 + R() * (b1 - b0 - 56), py = y(r.E1h) + 5 + Math.pow(R(), 1.6) * (TOP + PH - y(r.E1h) - 12);
+      s.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" fill="var(--surface)" stroke="var(--hole)" stroke-width="1.6"/>`);
+    }
+
+    // --- muestreo ---
+    const NS = 640, Es = [], dEg = (Emax - Emin) / NS;
+    for (let i = 0; i <= NS; i++) Es.push(Emin + dEg * i);
+    const De = dosFn(r, r.e, +1), Dh = dosFn(r, r.h, -1);
+    const gc = E => De.g(E, dEg), gv = E => Dh.g(E, dEg);
+    const fFD = E => 1 / (1 + ex((E - r.EF) / kT));
+    const fMB = E => ex(-(E - r.EF) / kT);
+    const occ = E => r.stat === 'fd' ? fFD(E) : fMB(E);
+    const emp = E => r.stat === 'fd' ? 1 - fFD(E) : ex((E - r.EF) / kT);
+
+    // --- panel 2: g(E) con referencia 3D ---
+    const [g0, g1] = P.g;
+    const grefC = De.bulk(Emax), grefV = Dh.bulk(Emin);
+    const gxC = v => g0 + Math.min(v / grefC, 1.15) * (g1 - g0 - 18);
+    const gxV = v => g0 + Math.min(v / grefV, 1.15) * (g1 - g0 - 18);
+    const ptsC = [], ptsV = [], bC = [], bV = [];
+    Es.forEach(E => {
+      if (E >= r.Ec) { ptsC.push(`${gxC(gc(E)).toFixed(1)},${y(E).toFixed(1)}`); bC.push(`${gxC(De.bulk(E)).toFixed(1)},${y(E).toFixed(1)}`); }
+      if (E <= r.Ev) { ptsV.push(`${gxV(gv(E)).toFixed(1)},${y(E).toFixed(1)}`); bV.push(`${gxV(Dh.bulk(E)).toFixed(1)},${y(E).toFixed(1)}`); }
+    });
+    s.push(`<clipPath id="gclip"><rect x="${g0}" y="${TOP}" width="${g1 - g0}" height="${PH}"/></clipPath>`);
+    if (r.dim !== 3) {
+      s.push(`<polyline clip-path="url(#gclip)" points="${bC.join(' ')}" fill="none" stroke="var(--text-faint)" stroke-width="1.2" stroke-dasharray="4 3"/>`);
+      s.push(`<polyline clip-path="url(#gclip)" points="${bV.join(' ')}" fill="none" stroke="var(--text-faint)" stroke-width="1.2" stroke-dasharray="4 3"/>`);
+    }
+    s.push(`<polyline clip-path="url(#gclip)" points="${g0},${y(r.Ec)} ${ptsC.join(' ')}" fill="none" stroke="var(--elec)" stroke-width="2"/>`);
+    s.push(`<polyline clip-path="url(#gclip)" points="${ptsV.join(' ')} ${g0},${y(r.Ev)}" fill="none" stroke="var(--hole)" stroke-width="2"/>`);
+    s.push(`<text class="axis-label" x="${(g0 + g1) / 2}" y="${H - 12}" text-anchor="middle">estados/(eV·cm³), relativo</text>`);
+    s.push(`<text class="tick" x="${g1 - 4}" y="${TOP + 12}" text-anchor="end">escala propia por banda</text>`);
+
+    // --- panel 3: f(E) ---
+    const [f0, f1] = P.f;
+    const fx = v => f0 + v * (f1 - f0);
+    s.push(`<polyline points="${Es.filter((_, i) => i % 2 === 0).map(E => `${fx(fFD(E)).toFixed(1)},${y(E).toFixed(1)}`).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>`);
+    if (r.stat === 'mb') {
+      const pm = Es.filter((E, i) => i % 2 === 0 && fMB(E) <= 1.05).map(E => `${fx(Math.min(fMB(E), 1.05)).toFixed(1)},${y(E).toFixed(1)}`).join(' ');
+      s.push(`<polyline points="${pm}" fill="none" stroke="var(--copper)" stroke-width="1.6" stroke-dasharray="5 4"/>`);
+      s.push(`<text class="lvl" x="${f0 + 6}" y="${TOP + 16}" fill="var(--copper)">Boltzmann e^{−(E−E_F)/kT}</text>`);
+    }
+    [0, 0.5, 1].forEach(v => {
+      s.push(`<line x1="${fx(v)}" x2="${fx(v)}" y1="${TOP + PH}" y2="${TOP + PH + 4}" stroke="var(--text-faint)"/>`);
+      s.push(`<text class="tick" x="${fx(v)}" y="${TOP + PH + 15}" text-anchor="middle">${v}</text>`);
+    });
+    s.push(`<line x1="${fx(0.5)}" x2="${fx(0.5)}" y1="${TOP}" y2="${TOP + PH}" stroke="var(--border)" stroke-dasharray="2 3"/>`);
+    s.push(`<text class="axis-label" x="${(f0 + f1) / 2}" y="${H - 12}" text-anchor="middle">probabilidad de ocupación</text>`);
+
+    // --- panel 4: producto (log) ---
+    const [q0, q1] = P.prod;
+    const qx = v => { const L = Math.log10(Math.max(v, 1e-300)); return q0 + Math.max(0, Math.min(1, (L - LOGLO) / (LOGHI - LOGLO))) * (q1 - q0); };
+    const nPts = [], pPts = [];
+    let nPeak = { v: 0, E: r.E1e }, pPeak = { v: 0, E: r.E1h };
+    Es.forEach(E => {
+      if (E >= r.Ec) { const v = gc(E) * occ(E); nPts.push(`${qx(v).toFixed(1)},${y(E).toFixed(1)}`); if (v > nPeak.v) nPeak = { v, E }; }
+      if (E <= r.Ev) { const v = gv(E) * emp(E); pPts.push(`${qx(v).toFixed(1)},${y(E).toFixed(1)}`); if (v > pPeak.v) pPeak = { v, E }; }
+    });
+    s.push(`<polygon points="${q0},${y(r.Ec)} ${nPts.join(' ')} ${q0},${y(Emax)}" fill="var(--elec-soft)" stroke="none"/>`);
+    s.push(`<polyline points="${nPts.join(' ')}" fill="none" stroke="var(--elec)" stroke-width="1.8"/>`);
+    s.push(`<polygon points="${q0},${y(Emin)} ${pPts.join(' ')} ${q0},${y(r.Ev)}" fill="var(--hole-soft)" stroke="none"/>`);
+    s.push(`<polyline points="${pPts.join(' ')}" fill="none" stroke="var(--hole)" stroke-width="1.8"/>`);
+    for (let L = -5; L <= 20; L += 5) {
+      const x = q0 + (L - LOGLO) / (LOGHI - LOGLO) * (q1 - q0);
+      s.push(`<line x1="${x}" x2="${x}" y1="${TOP}" y2="${TOP + PH}" stroke="var(--border)" stroke-dasharray="2 3"/>`);
+      s.push(`<text class="tick" x="${x}" y="${TOP + PH + 15}" text-anchor="middle">10${sup(L)}</text>`);
+    }
+    const anchorFor = v => qx(v) + 6 > q1 - 92 ? 'end' : 'start';
+    const labX = v => anchorFor(v) === 'end' ? qx(v) - 6 : qx(v) + 6;
+    s.push(`<text class="lvl" x="${labX(nPeak.v)}" y="${Math.max(y(nPeak.E) - 4, TOP + 14)}" text-anchor="${anchorFor(nPeak.v)}" fill="var(--elec)" font-weight="600">n = ${sci(r.n)}</text>`);
+    s.push(`<text class="lvl" x="${labX(pPeak.v)}" y="${Math.min(y(pPeak.E) + 14, TOP + PH - 6)}" text-anchor="${anchorFor(pPeak.v)}" fill="var(--hole)" font-weight="600">p = ${sci(r.p)}</text>`);
+    s.push(`<text class="axis-label" x="${(q0 + q1) / 2}" y="${H - 12}" text-anchor="middle">cm⁻³ eV⁻¹ (log)</text>`);
+
+    const yF = y(r.EF);
+    if (yF > TOP && yF < TOP + PH) {
+      s.push(`<line x1="${P.band[0]}" x2="${P.prod[1]}" y1="${yF}" y2="${yF}" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="7 5"/>`);
+      s.push(`<text class="lvl" x="${P.prod[1] - 4}" y="${yF - 5}" text-anchor="end" fill="var(--accent)" font-weight="600">E_F</text>`);
+    }
+    conv.innerHTML = s.join('');
+    const conf = r.dim === 3 ? '' : ` · L = ${state.L} nm · E₁ₑ − E_c = ${(1000 * (r.E1e - r.Ec)).toFixed(0)} meV`;
+    document.getElementById('convNote').textContent = `${state.mat} · ${r.T} K · kT = ${(r.kT * 1000).toFixed(1)} meV · E_g ef. = ${r.EgEff.toFixed(3)} eV${conf}`;
+    document.getElementById('bulkLeg').hidden = r.dim === 3;
+  }
+
+  // ---------- franja de comparación de dimensionalidades ----------
+  const ICON_W = 160, ICON_H = 46;
+  function dimIcon(d) {
+    const x0 = 6, base = ICON_H - 4, s = [];
+    s.push(`<line x1="${x0}" x2="${ICON_W - 4}" y1="${base}" y2="${base}" stroke="var(--text-faint)"/>`);
+    let path = `M${x0},${base}`;
+    const span = ICON_W - 14;
+    if (d === 3) { for (let i = 0; i <= 40; i++) { const x = i / 40; path += ` L${x0 + x * span},${base - Math.sqrt(x) * 34}`; } }
+    if (d === 2) { [0.12, 0.42, 0.9].forEach((e, i, a) => { const yv = base - (i + 1) * 11; path += ` L${x0 + e * span},${base - i * 11} L${x0 + e * span},${yv}`; }); path += ` L${x0 + span},${base - 33}`; }
+    if (d === 1) { const levels = [0.08, 0.33, 0.6, 0.78]; for (let i = 0; i <= 120; i++) { const x = i / 120; let g = 0; levels.forEach(l => { if (x > l) g += 0.06 / Math.sqrt(x - l + 0.004); }); path += ` L${x0 + x * span},${base - Math.min(g * 9, 38)}`; } }
+    if (d === 0) { path = ''; [0.12, 0.36, 0.55, 0.7, 0.86].forEach((e, i) => { const hgt = [14, 30, 24, 38, 30][i]; s.push(`<line x1="${x0 + e * span}" x2="${x0 + e * span}" y1="${base}" y2="${base - hgt}" stroke="var(--accent)" stroke-width="2.2"/>`); }); }
+    if (path) s.push(`<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2"/>`);
+    return `<svg viewBox="0 0 ${ICON_W} ${ICON_H}" aria-hidden="true">${s.join('')}</svg>`;
+  }
+  function drawDimStrip() {
+    const cells = [3, 2, 1, 0].map(d => {
+      const r = current(state.kase, { dim: d });
+      return `<button type="button" class="dimcell ${d === state.dim ? 'active' : ''}" data-dim="${d}" aria-pressed="${d === state.dim}">
+        <span class="dh">${d}D <small>${{ 3: 'volumen', 2: 'pozo', 1: 'alambre', 0: 'punto' }[d]}</small></span>
+        ${dimIcon(d)}
+        <span class="dv">E_g ef. ${r.EgEff.toFixed(3)} eV</span>
+        <span class="dv">nᵢ ${sci(r.ni, 1)} cm⁻³</span>
+      </button>`;
+    });
+    document.getElementById('dimStrip').innerHTML = cells.join('');
+  }
+
+  // ---------- gráfica n(T) ----------
+  const tchart = document.getElementById('tchart');
+  let tCache = null, tKey = '';
+  function drawT(r) {
+    const key = [state.mat, state.kase, state.dopIdx, state.logN, state.stat, state.dim, state.L].join('|');
+    if (key !== tKey) {
+      tKey = key; tCache = [];
+      for (let T = 40; T <= 800; T += 16) tCache.push(current(state.kase, { T }));
+    }
+    const L = 56, Rr = 16, Tp = 14, B = 36, w = 540 - L - Rr, h = 320 - Tp - B;
+    const ylo = 0, yhi = 21;
+    const X = T => L + (T - 40) / 760 * w;
+    const Y = v => { const lg = Math.log10(Math.max(v, 1e-300)); return Tp + (1 - Math.max(0, Math.min(1, (lg - ylo) / (yhi - ylo)))) * h; };
+    const s = [];
+    for (let e = 0; e <= 20; e += 4) {
+      s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(Math.pow(10, e))}" y2="${Y(Math.pow(10, e))}" stroke="var(--border)"/>`);
+      s.push(`<text class="tick" x="${L - 6}" y="${Y(Math.pow(10, e)) + 3}" text-anchor="end">10${sup(e)}</text>`);
+    }
+    for (let T = 100; T <= 800; T += 100) {
+      s.push(`<line x1="${X(T)}" x2="${X(T)}" y1="${Tp + h}" y2="${Tp + h + 4}" stroke="var(--text-faint)"/>`);
+      s.push(`<text class="tick" x="${X(T)}" y="${Tp + h + 15}" text-anchor="middle">${T}</text>`);
+    }
+    s.push(`<line x1="${L}" x2="${L + w}" y1="${Tp + h}" y2="${Tp + h}" stroke="var(--text-faint)"/>`);
+    s.push(`<text class="axis-label" x="${L + w / 2}" y="${318}" text-anchor="middle">Temperatura (K)</text>`);
+    s.push(`<text class="axis-label" transform="translate(13 ${Tp + h / 2}) rotate(-90)" text-anchor="middle">concentración (cm⁻³)</text>`);
+    s.push(`<clipPath id="tclip"><rect x="${L}" y="${Tp}" width="${w}" height="${h}"/></clipPath>`);
+    const line = (k, color, dash, wdt) => `<polyline clip-path="url(#tclip)" points="${tCache.map(d => `${X(d.T).toFixed(1)},${Y(d[k]).toFixed(1)}`).join(' ')}" fill="none" stroke="${color}" stroke-width="${wdt}" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
+    const N = Math.pow(10, state.logN);
+    if (state.kase !== 'i') {
+      s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(N)}" y2="${Y(N)}" stroke="var(--text-faint)" stroke-dasharray="1 4" stroke-width="1.5"/>`);
+      s.push(`<text class="tick" x="${L + w - 4}" y="${Y(N) - 5}" text-anchor="end">${state.kase === 'n' ? 'N_D' : 'N_A'} = ${sci(N, 1)}</text>`);
+    }
+    s.push(line('ni', 'var(--copper)', '6 4', 1.6));
+    s.push(line('p', 'var(--hole)', null, 2.2));
+    s.push(line('n', 'var(--elec)', null, 2.2));
+    s.push(`<line x1="${X(r.T)}" x2="${X(r.T)}" y1="${Tp}" y2="${Tp + h}" stroke="var(--accent)" stroke-width="1.2"/>`);
+    s.push(`<circle cx="${X(r.T)}" cy="${Y(r.n)}" r="4.5" fill="var(--elec)" stroke="var(--surface)" stroke-width="1.5"/>`);
+    s.push(`<circle cx="${X(r.T)}" cy="${Y(r.p)}" r="4.5" fill="var(--hole)" stroke="var(--surface)" stroke-width="1.5"/>`);
+    tchart.innerHTML = s.join('');
+    document.getElementById('tNote').textContent = `${state.mat} · ${state.dim}D · ${state.kase === 'i' ? 'intrínseco' : 'tipo ' + state.kase}`;
+  }
+
+  // ---------- tabla de casos y ecuaciones ----------
+  const caseName = { i: 'Intrínseco', n: 'Tipo n', p: 'Tipo p' };
+  function drawCmp() {
+    const N = Math.pow(10, state.logN);
+    const rows = ['i', 'n', 'p'].map(k => {
+      const r = current(k);
+      const type = r.n > 1.5 * r.p ? 'n' : (r.p > 1.5 * r.n ? 'p' : 'i');
+      const label = type === 'i' ? 'n ≈ p' : (type === 'n' ? 'n ≫ p' : 'p ≫ n');
+      return `<tr data-case="${k}" class="${k === state.kase ? 'active' : ''}" tabindex="0"><td>${caseName[k]}</td><td>${(r.EF - r.Ev).toFixed(3)} eV</td><td class="cn">${sci(r.n)}</td><td class="cp">${sci(r.p)}</td><td><span class="tag ${type}">${label}</span></td></tr>`;
+    });
+    document.querySelector('#cmpTable tbody').innerHTML = rows.join('');
+    document.getElementById('cmpNote').textContent = `${state.mat} · ${state.dim}D · ${state.T} K · N = ${sci(N, 1)}`;
+  }
+
+  function drawEq(r) {
+    const m = r.m;
+    const lines = [];
+    lines.push(`E_g(T) = ${m.Eg0.toFixed(3)} − ${m.a.toExponential(2).replace('e-', '×10⁻')}·T²/(T + ${m.b}) = <span class="hi">${r.Eg.toFixed(3)} eV</span>`);
+    if (r.dim === 3) {
+      lines.push(`g_c(E) = (1/2π²)(2m*ₑ/ħ²)^3/2 √(E − E_c),   m*ₑ = ${m.me.toFixed(3)} m₀`);
+      lines.push(`N_c = ${sci(m.Nc)}·(T/300)^3/2 = ${sci(r.NcEff)}    N_v = ${sci(r.NvEff)} cm⁻³`);
+    } else {
+      const E0e = r.e.E0, E0h = r.h.E0;
+      const geo = { 2: 'n²', 1: '(n_y² + n_z²)', 0: '(n_x² + n_y² + n_z²)' }[r.dim];
+      lines.push(`E_n = E_c + ${geo}·ħ²π²/(2m*L²)   →  ħ²π²/(2m*ₑL²) = ${(1000 * E0e).toFixed(1)} meV,  ħ²π²/(2m*ₕL²) = ${(1000 * E0h).toFixed(1)} meV`);
+      const gform = { 2: `g_c(E) = (m*ₑ/πħ²)·Σ Θ(E − E_n) / L`, 1: `g_c(E) = (1/πħ)√(2m*ₑ)·Σ 1/√(E − E_n) / L²`, 0: `g_c(E) = Σ 2·δ(E − E_n) / L³` }[r.dim];
+      lines.push(`${gform}`);
+      lines.push(`E_g ef. = E_g + E₁ₑ + E₁ₕ = ${r.Eg.toFixed(3)} + ${(r.E1e - r.Ec).toFixed(3)} + ${(r.Ev - r.E1h).toFixed(3)} = <span class="hi">${r.EgEff.toFixed(3)} eV</span>`);
+      lines.push(`N_c ef. = Σ peso·e^{−(E_n − E₁)/kT} = ${sci(r.NcEff)}    N_v ef. = ${sci(r.NvEff)} cm⁻³`);
+    }
+    lines.push(`n_i = √(N_c·N_v)·exp(−E_g/2kT) = <span class="hi">${sci(r.ni)} cm⁻³</span>`);
+    const occName = r.stat === 'mb' ? 'e^η' : { 3: 'F½(η)', 2: 'ln(1 + e^η)', 1: 'F−½(η)', 0: '1/(1 + e^−η)' }[r.dim];
+    lines.push(`<span class="ce">n</span> = Σ peso·${occName},  η₁ = (E_F − E₁ₑ)/kT = ${((r.EF - r.E1e) / r.kT).toFixed(2)}  →  <span class="ce">${sci(r.n)} cm⁻³</span>`);
+    lines.push(`<span class="ch">p</span> = Σ peso·${occName},  η₁ = (E₁ₕ − E_F)/kT = ${((r.E1h - r.EF) / r.kT).toFixed(2)}  →  <span class="ch">${sci(r.p)} cm⁻³</span>`);
+    lines.push(`n·p / n_i² = <span class="hi">${(r.n * r.p / (r.ni * r.ni)).toFixed(3)}</span>${r.stat === 'mb' ? '   (exacto en Boltzmann)' : ''}`);
+    lines.push(`neutralidad: p + N_D⁺ = n + N_A⁻  →  ${sci(r.p)} + ${sci(r.NDp)} = ${sci(r.n)} + ${sci(r.NAm)}`);
+    document.getElementById('eqList').innerHTML = lines.map(l => `<div class="eq-line">${l}</div>`).join('');
+  }
+
+  // ---------- controles ----------
+  const $ = id => document.getElementById(id);
+  function fillDopants() {
+    const m = MATS[state.mat];
+    const list = state.kase === 'p' ? m.acceptors : m.donors;
+    if (state.dopIdx >= list.length) state.dopIdx = 0;
+    $('dopSel').innerHTML = list.map(([name, e], i) => `<option value="${i}" ${i === state.dopIdx ? 'selected' : ''}>${name} · ${state.kase === 'p' ? 'aceptor' : 'donador'} · ${(e * 1000).toFixed(e < 0.01 ? 1 : 0)} meV</option>`).join('');
+    $('dopSel').disabled = state.kase === 'i';
+  }
+  function syncControls() {
+    document.querySelectorAll('#matSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mat === state.mat));
+    document.querySelectorAll('#caseSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.case === state.kase));
+    document.querySelectorAll('#statSeg button').forEach(b => b.setAttribute('aria-pressed', b.dataset.stat === state.stat));
+    document.querySelectorAll('#dimSeg button').forEach(b => b.setAttribute('aria-pressed', +b.dataset.dim === state.dim));
+    $('nSlider').value = state.logN; $('tSlider').value = state.T; $('lSlider').value = state.L;
+    $('nSlider').disabled = state.kase === 'i';
+    $('nBlock').classList.toggle('disabled', state.kase === 'i');
+    $('lSlider').disabled = state.dim === 3;
+    $('lBlock').classList.toggle('disabled', state.dim === 3);
+    $('lName').textContent = LNAME[state.dim];
+    $('lVal').textContent = state.dim === 3 ? 'sin confinar' : state.L.toFixed(1) + ' nm';
+    $('nSym').textContent = state.kase === 'p' ? 'N_A' : 'N_D';
+    $('nVal').textContent = state.kase === 'i' ? 'sin dopar' : sci(Math.pow(10, state.logN), 2) + ' cm⁻³';
+    $('tVal').textContent = state.T + ' K';
+    fillDopants();
+  }
+  function render() {
+    syncControls();
+    const r = current();
+    $('rN').textContent = sci(r.n); $('rP').textContent = sci(r.p); $('rNi').textContent = sci(r.ni);
+    $('rNs').textContent = r.n >= r.p ? 'mayoritarios' : 'minoritarios';
+    $('rPs').textContent = r.p > r.n ? 'mayoritarios' : 'minoritarios';
+    $('rNis').textContent = `${state.mat}, ${state.dim}D, ${state.T} K`;
+    $('rEf').textContent = fmtE(r.EF - r.Ei);
+    const toEdge = Math.min(r.E1e - r.EF, r.EF - r.E1h);
+    $('rEfs').textContent = toEdge < 3 * r.kT ? 'a menos de 3kT de una banda: degenerado' : `E₁ₑ − E_F = ${(r.E1e - r.EF).toFixed(3)} eV`;
+    drawConv(r); drawDimStrip(); drawT(r); drawCmp(); drawEq(r);
+  }
+
+  let pending = false;
+  const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; render(); }); };
+  const onSeg = (id, fn) => document.getElementById(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; fn(b); render(); });
+  onSeg('matSeg', b => { state.mat = b.dataset.mat; state.dopIdx = 0; });
+  onSeg('caseSeg', b => { state.kase = b.dataset.case; state.dopIdx = 0; });
+  onSeg('statSeg', b => { state.stat = b.dataset.stat; });
+  onSeg('dimSeg', b => { state.dim = +b.dataset.dim; });
+  onSeg('dimStrip', b => { state.dim = +b.dataset.dim; });
+  $('dopSel').addEventListener('change', e => { state.dopIdx = +e.target.value; render(); });
+  $('nSlider').addEventListener('input', e => { state.logN = +e.target.value; schedule(); });
+  $('tSlider').addEventListener('input', e => { state.T = +e.target.value; schedule(); });
+  $('lSlider').addEventListener('input', e => { state.L = +e.target.value; schedule(); });
+  document.querySelector('#cmpTable tbody').addEventListener('click', e => { const tr = e.target.closest('tr'); if (!tr) return; state.kase = tr.dataset.case; state.dopIdx = 0; render(); });
+  document.querySelector('#cmpTable tbody').addEventListener('keydown', e => { if (e.key !== 'Enter' && e.key !== ' ') return; const tr = e.target.closest('tr'); if (!tr) return; e.preventDefault(); state.kase = tr.dataset.case; render(); });
+
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let anim = null;
+  function stopAnim() { if (anim) cancelAnimationFrame(anim.id); anim = null; $('sweepT').classList.remove('running'); $('sweepN').classList.remove('running'); }
+  function sweep(btn, key, from, to, dur, round) {
+    if (anim && anim.btn === btn) { stopAnim(); return; }
+    stopAnim();
+    if (key === 'logN' && state.kase === 'i') state.kase = 'n';
+    if (reduce) { state[key] = to; render(); return; }
+    btn.classList.add('running');
+    const t0 = performance.now();
+    anim = { btn, id: 0 };
+    const tick = now => {
+      const k = Math.min(1, (now - t0) / dur);
+      state[key] = round(from + (to - from) * k);
+      render();
+      if (k < 1 && anim) anim.id = requestAnimationFrame(tick); else stopAnim();
+    };
+    anim.id = requestAnimationFrame(tick);
+  }
+  $('sweepT').addEventListener('click', () => sweep($('sweepT'), 'T', 40, 800, 7000, v => Math.round(v)));
+  $('sweepN').addEventListener('click', () => sweep($('sweepN'), 'logN', 13, 19, 6000, v => Math.round(v * 20) / 20));
+  $('resetBtn').addEventListener('click', () => { stopAnim(); Object.assign(state, { mat: 'Si', kase: 'n', dopIdx: 0, logN: 16, T: 300, stat: 'fd', dim: 3, L: 8 }); render(); });
+
+  render();
+})();
+</script>
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.tabs [role="tab"]'));
+  const panels = { lab: document.getElementById('panelLab'), theory: document.getElementById('panelTheory') };
+  function show(name, push) {
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Object.entries(panels).forEach(([k, p]) => { if (p) p.hidden = k !== name; });
+    if (push) { try { history.replaceState(null, '', name === 'theory' ? '#teoria' : location.pathname + location.search); } catch (e) { } }
+    if (name === 'lab') window.dispatchEvent(new Event('resize'));
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); });
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); show(n.dataset.tab, true);
+    });
+  });
+  document.querySelectorAll('.toc a[data-target]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const el = document.getElementById(a.dataset.target); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  document.querySelectorAll('[data-goto-lab]').forEach(b => b.addEventListener('click', () => { show('lab', true); window.scrollTo({ top: 0 }); }));
+  document.querySelectorAll('[data-totop]').forEach(b => b.addEventListener('click', () => { const t = document.querySelector('.toc'); window.scrollTo({ top: 0, behavior: 'smooth' }); if (t) t.querySelector('a') && t.querySelector('a').focus({ preventScroll: true }); }));
+  let start = 'lab'; try { if (/^#teor/i.test(location.hash)) start = 'theory'; } catch (e) { }
+  show(start, false);
+})();
+
+</script>
+</body>
+</html>

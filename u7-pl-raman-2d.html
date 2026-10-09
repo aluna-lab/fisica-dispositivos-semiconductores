@@ -1,0 +1,1564 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Unidades 4 y 7: fotoluminiscencia y Raman de monocapas, bicapas y heteroestructuras de TMDs.">
+<meta name="author" content="Elodie Strupiechonski, Andrés de Luna Bugallo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235B4BC4'/%3E%3Cpath d='M12 22h40M12 42h40' stroke='white' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%232874A6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='40' cy='42' r='5' fill='white' stroke='%23C1440E' stroke-width='3'/%3E%3C/svg%3E">
+<title>Laboratorio PL y Raman 2D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: familia de los laboratorios del curso. Controles fijos a la izquierda;
+     a la derecha el espectro de PL a todo lo ancho, debajo la alineación de bandas junto
+     al potencial del excitón, luego el Raman a todo lo ancho, y al final estados y ecuaciones.
+     Componentes espectrales con la paleta categórica validada (X, T, I, B, D, IX). */
+  :root {
+    --bg: #EEF0F6; --surface: #FFFFFF; --surface-2: #F5F6FB; --border: #D9DCE8;
+    --text: #181A2A; --text-muted: #565A72; --text-faint: #80849A;
+    --accent: #5B4BC4; --accent-ink: #FFFFFF; --accent-soft: #E6E2F8;
+    --copper: #B8763B;
+    --cb: rgba(40,116,166,0.16); --vb: rgba(193,68,14,0.14); --cb-line: #2874A6; --vb-line: #C1440E;
+    --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948; --gray: #9a9db0;
+    --shadow: 0 1px 2px rgba(24,26,42,0.06), 0 6px 18px rgba(24,26,42,0.07);
+    --radius-s: 6px; --radius-m: 10px; --radius-l: 18px;
+    --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+      --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+      --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+      --copper: #C88A4E;
+      --cb: rgba(90,162,214,0.18); --vb: rgba(224,106,58,0.16); --cb-line: #5AA2D6; --vb-line: #E06A3A;
+      --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --gray: #6b6f88;
+      --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+    --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+    --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+    --copper: #C88A4E;
+    --cb: rgba(90,162,214,0.18); --vb: rgba(224,106,58,0.16); --cb-line: #5AA2D6; --vb-line: #E06A3A;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767; --gray: #6b6f88;
+    --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1320px; margin: 0 auto; padding-block: clamp(20px, 4vw, 44px) 64px; padding-inline: clamp(16px, 4vw, 40px); }
+  header.masthead { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(20px, 3vw, 30px); max-width: 820px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5.4vw, 52px); line-height: 0.98; margin: 0; text-wrap: balance; }
+  .subhead { color: var(--text-muted); font-size: 15.5px; max-width: 70ch; margin: 2px 0 0; }
+
+  .app-shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .app-shell { grid-template-columns: minmax(0, 1fr); } }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); }
+
+  .deck { padding: 20px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; }
+  @media (max-width: 960px) { .deck { position: static; max-height: none; } }
+  .deck-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; }
+  .group-title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin: 4px 0 -4px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .flabel { font-size: 12.5px; color: var(--text-muted); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 3px; gap: 3px; }
+  .seg button { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; padding: 7px 3px; border: none; border-radius: 7px; background: transparent; color: var(--text-muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .seg button:focus-visible, .chipbtn:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .chipbtn { font-family: var(--font-body); font-size: 12px; font-weight: 600; padding: 7px 6px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text-muted); cursor: pointer; text-align: left; line-height: 1.2; }
+  .chipbtn small { display: block; font-family: var(--font-mono); font-weight: 400; font-size: 10px; color: var(--text-faint); }
+  .chipbtn[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+  .lasers { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+  .laser { font-family: var(--font-mono); font-size: 11px; padding: 7px 2px 6px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .laser i { width: 13px; height: 13px; border-radius: 50%; display: block; }
+  .laser[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--text); font-weight: 600; }
+  .slider-block { display: flex; flex-direction: column; gap: 4px; }
+  .slider-block.disabled { opacity: 0.4; }
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .slider-name { font-size: 12.5px; font-weight: 600; }
+  .slider-name .sym { color: var(--text-faint); font-weight: 500; font-family: var(--font-mono); font-size: 11.5px; }
+  .slider-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; background: var(--border); outline-offset: 4px; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); }
+  .range-caps { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+  .divider { height: 1px; background: var(--border); border: none; margin: 2px 0; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+  .check input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .params { border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px; display: flex; flex-direction: column; gap: 12px; background: var(--surface-2); }
+  .derived { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); line-height: 1.6; }
+  .derived b { color: var(--text); font-weight: 500; }
+  .btn { font-family: var(--font-body); font-size: 12.5px; font-weight: 600; padding: 8px 10px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.ghost { background: none; border-style: dashed; color: var(--text-muted); font-weight: 500; }
+  .btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .main-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .readout-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  @media (max-width: 1200px) { .readout-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .readout { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rlabel { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .rvalue { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.9vw, 21px); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .readout.hl .rvalue { color: var(--accent); }
+  .rsub { font-size: 11px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  @media (max-width: 1140px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
+  .card-note { font-size: 11.5px; color: var(--text-faint); font-family: var(--font-mono); }
+  .chart-wrap { position: relative; }
+  .scroll-x { overflow-x: auto; }
+  svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+  svg.wide { min-width: 640px; }
+  .caption { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block; }
+  .axis-label { font-family: var(--font-mono); font-size: 11px; fill: var(--text-faint); }
+  .tick { font-family: var(--font-mono); font-size: 10px; fill: var(--text-faint); }
+  .lvl { font-family: var(--font-mono); font-size: 11px; }
+  .plabel { font-family: var(--font-body); font-size: 11.5px; font-weight: 600; fill: var(--text); }
+  .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-family: var(--font-mono); font-size: 11px; padding: 6px 8px; border-radius: 6px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 14px)); opacity: 0; transition: opacity .1s; z-index: 5; }
+  .tip.on { opacity: 1; }
+
+  .ixgrid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; }
+  @media (max-width: 1000px) { .ixgrid { grid-template-columns: minmax(0, 1fr); } }
+  .ixhide[hidden] { display: none; }
+  table.st { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.st th { text-align: left; font-weight: 500; font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.st td { padding: 7px 8px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st td:first-child { font-family: var(--font-body); font-weight: 600; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+  .bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent); vertical-align: middle; margin-right: 6px; opacity: .8; }
+
+  .eq-list { display: flex; flex-direction: column; gap: 6px; }
+  .eq-h { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 6px 0 0; }
+  .eq-line { font-family: var(--font-mono); font-size: 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 7px 11px; overflow-x: auto; white-space: pre; }
+  .eq-line .hi { color: var(--accent); font-weight: 600; }
+
+  .challenge { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1100px) { .challenge { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  @media (max-width: 700px) { .challenge { grid-template-columns: minmax(0, 1fr); } }
+  .q { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; font-size: 13.5px; }
+  .q b { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+  footer.notes { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 12.5px; max-width: 96ch; }
+  footer.notes p { margin: 0 0 6px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+  /* ---- pestañas Laboratorio / Teoría ---- */
+  .tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin: 0 0 18px; box-shadow: var(--shadow); }
+  .tabs button { font-family: var(--font-body); font-weight: 600; font-size: 14px; padding: 8px 20px; border: none; border-radius: 999px; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tabs .tab-ic { font-family: var(--font-mono); font-size: 12px; opacity: 0.8; }
+  .theory { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .theory { grid-template-columns: minmax(0, 1fr); } }
+  .toc { padding: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  @media (max-width: 960px) { .toc { position: static; max-height: none; } }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: t; display: flex; flex-direction: column; gap: 2px; }
+  .toc li { counter-increment: t; }
+  .toc a { display: flex; gap: 10px; padding: 7px 8px; border-radius: var(--radius-s); color: var(--text); text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+  .toc a::before { content: counter(t, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--accent); padding-top: 2px; }
+  .toc a:hover, .toc a:focus-visible { background: var(--accent-soft); outline: none; }
+  .toc-note { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
+  .theory-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .tsec { scroll-margin-top: 16px; gap: 12px; }
+  .tsec h3 { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin: 0; }
+  .tsec h3 .tn { margin-right: 10px; vertical-align: 2px; }
+  .tsec h3 .tn { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.08em; }
+  .tsec p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 78ch; }
+  .tsec p + p { margin-top: 2px; }
+  .feq { font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif; font-size: 20px; line-height: 1.5; text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 16px; overflow-x: auto; white-space: nowrap; color: var(--text); }
+  .feq i { font-style: italic; }
+  .feq .lbl { font-family: var(--font-body); font-size: 12px; color: var(--text-faint); font-style: normal; display: block; margin-top: 2px; white-space: normal; }
+  .feq + .feq { margin-top: -4px; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 3px; line-height: 1.2; }
+  .frac > span { padding: 0 4px; }
+  .frac > span:first-child { border-bottom: 1.2px solid currentColor; padding-bottom: 2px; }
+  .frac > span:last-child { padding-top: 2px; }
+  .rad { display: inline-block; border-top: 1.2px solid currentColor; padding: 2px 3px 0; line-height: 1.25; }
+  .rad .frac { margin-top: 2px; }
+  .feq sub, .feq sup { font-size: 0.68em; }
+  .where { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 13.5px; }
+  .where dt { font-family: 'Cambria Math', 'Times New Roman', serif; font-style: italic; font-size: 15px; color: var(--accent); }
+  .where dd { margin: 0; color: var(--text-muted); }
+  .inlab { border-left: 3px solid var(--copper); background: var(--surface-2); padding: 10px 14px; border-radius: 0 var(--radius-s) var(--radius-s) 0; font-size: 14px !important; color: var(--text-muted); }
+  .inlab b { color: var(--copper); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; display: block; margin-bottom: 2px; }
+  .keyidea { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; font-weight: 500; }
+  .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .tgrid .feq { font-size: 18px; }
+  .ttable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ttable th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .ttable td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  [hidden] { display: none !important; }
+  .th4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--accent); margin: 8px 0 -2px; letter-spacing: 0.01em; }
+  .tfig { margin: 4px 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 14px 12px; }
+  .tfig svg { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; overflow: visible; }
+  .tfig figcaption { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+  .tsec p b { font-weight: 600; }
+  /* ---- regreso al índice del curso ---- */
+  .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 18px; }
+  .topnav .tabs { margin: 0; }
+  a.home-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 9px 16px; box-shadow: var(--shadow); }
+  a.home-link:hover { border-color: var(--accent); color: var(--accent); }
+  a.home-link:focus-visible, a.home-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.home-link .hk { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  a.home-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 40; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 13px; text-decoration: none; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(24,26,42,0.25); }
+  a.home-fab:hover { filter: brightness(1.08); }
+  a.home-fab .hk { font-family: var(--font-mono); font-size: 12px; }
+  @media (max-width: 520px) { a.home-fab .hl { display: none; } a.home-fab { padding: 12px 14px; } }
+  .sec-home { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .sec-home a, .sec-home button { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); text-decoration: none; background: none; border: none; cursor: pointer; padding: 2px 4px; }
+  .sec-home a:hover, .sec-home button:hover { color: var(--accent); }
+
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <span class="eyebrow">Física de Dispositivos Semiconductores · ENESJ · Unidades 4 y 7</span>
+    <h1>Laboratorio PL y Raman 2D</h1>
+    <p class="subhead">Monocapas, bicapas y heteroestructuras de MoS₂, MoSe₂, WS₂ y WSe₂. El excitón se calcula resolviendo la ecuación de Schrödinger con el potencial de Rytova–Keldysh, así que cambiar las masas, la constante dieléctrica del semiconductor o la de su entorno mueve el espectro por razones físicas. Apila dos materiales y la alineación de bandas decide si aparece un excitón intercapa.</p>
+  </header>
+<div class="topnav"><a class="home-link" href="index.html"><span class="hk">←</span>Índice del curso</a><div class="tabs" role="tablist" aria-label="Secciones de la unidad"><button type="button" role="tab" id="tabLab" data-tab="lab" aria-controls="panelLab" aria-selected="true"><span class="tab-ic">◧</span>Laboratorio</button><button type="button" role="tab" id="tabTheory" data-tab="theory" aria-controls="panelTheory" aria-selected="false"><span class="tab-ic">∫</span>Teoría</button></div></div>
+<div id="panelLab" role="tabpanel" aria-labelledby="tabLab">
+
+
+  <div class="app-shell">
+    <aside class="panel deck" aria-label="Controles">
+      <h2 class="deck-title">Controles</h2>
+
+      <p class="group-title">Muestra</p>
+      <div class="field">
+        <span class="flabel" id="lbStruct">Estructura</span>
+        <div class="seg" role="group" aria-labelledby="lbStruct" id="structSeg">
+          <button type="button" data-v="1L">Monocapa</button>
+          <button type="button" data-v="2L">Bicapa</button>
+          <button type="button" data-v="het">Hetero</button>
+        </div>
+      </div>
+      <div class="field">
+        <span class="flabel" id="lbMatA">Capa 1 (inferior)</span>
+        <div class="seg" role="group" aria-labelledby="lbMatA" id="matASeg"></div>
+      </div>
+      <div class="field" id="matBField">
+        <span class="flabel" id="lbMatB">Capa 2 (superior)</span>
+        <div class="seg" role="group" aria-labelledby="lbMatB" id="matBSeg"></div>
+      </div>
+      <div class="slider-block" id="twistBlock">
+        <div class="slider-head"><span class="slider-name">Ángulo de giro <span class="sym">θ</span></span><span class="slider-value" id="twistVal"></span></div>
+        <input type="range" id="twist" min="0" max="60" step="0.25" value="0" aria-label="Ángulo de giro entre capas en grados">
+        <div class="range-caps"><span>0° (R)</span><span>60° (H)</span></div>
+      </div>
+      <div class="slider-block" id="moireBlock">
+        <div class="slider-head"><span class="slider-name">Profundidad moiré <span class="sym">E_m</span></span><span class="slider-value" id="EmVal"></span></div>
+        <input type="range" id="Em" min="0" max="150" step="1" value="90" aria-label="Profundidad del potencial moiré en meV">
+        <div class="range-caps"><span>0 meV</span><span>150 meV</span></div>
+      </div>
+      <div class="slider-block" id="dKSBlock">
+        <div class="slider-head"><span class="slider-name">IX oscuro K–Σ <span class="sym">E_KΣ − E_KK</span></span><span class="slider-value" id="dKSVal"></span></div>
+        <input type="range" id="dKS" min="-80" max="60" step="1" value="-10" aria-label="Energía del IX oscuro K–Sigma respecto al IX brillante, en meV">
+        <div class="range-caps"><span>−80 meV (debajo)</span><span>+60 meV</span></div>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Entorno dieléctrico</p>
+      <div class="chips" id="envChips">
+        <button type="button" class="chipbtn" data-top="1" data-bot="1" data-si="0" data-sig="8" data-nd="3e11">Suspendida<small>ε 1 / 1</small></button>
+        <button type="button" class="chipbtn" data-top="1" data-bot="3.9" data-si="1" data-sig="15" data-nd="1e12">SiO₂ / aire<small>ε 1 / 3.9</small></button>
+        <button type="button" class="chipbtn" data-top="4.5" data-bot="4.5" data-si="1" data-sig="2" data-nd="1e11">hBN / hBN<small>ε 4.5 / 4.5</small></button>
+        <button type="button" class="chipbtn" data-top="4.5" data-bot="3.9" data-si="1" data-sig="8" data-nd="5e11">hBN / SiO₂<small>ε 4.5 / 3.9</small></button>
+      </div>
+      <p class="derived" style="margin:-4px 0 0">Cada entorno ajusta también el desorden y los defectos típicos de esa preparación.</p>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Arriba <span class="sym">ε_sup</span></span><span class="slider-value" id="epsTopVal"></span></div>
+        <input type="range" id="epsTop" min="1" max="12" step="0.1" value="1" aria-label="Constante dieléctrica del medio superior">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Abajo <span class="sym">ε_inf</span></span><span class="slider-value" id="epsBotVal"></span></div>
+        <input type="range" id="epsBot" min="1" max="12" step="0.1" value="3.9" aria-label="Constante dieléctrica del medio inferior">
+        <div class="range-caps"><span>1 vacío</span><span>12</span></div>
+      </div>
+      <label class="check"><input type="checkbox" id="siChk" checked> Sustrato de Si (pico Raman a 520.7 cm⁻¹)</label>
+
+      <hr class="divider">
+      <p class="group-title">Condiciones</p>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Temperatura <span class="sym">T</span></span><span class="slider-value" id="TVal"></span></div>
+        <input type="range" id="T" min="4" max="400" step="1" value="300" aria-label="Temperatura en kelvin">
+        <div class="range-caps"><span>4 K</span><span>400 K</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Electrones libres <span class="sym">n</span></span><span class="slider-value" id="nVal"></span></div>
+        <input type="range" id="n" min="10" max="13" step="0.05" value="12" aria-label="Densidad de electrones, log10 en cm⁻²">
+        <div class="range-caps"><span>10¹⁰ cm⁻²</span><span>10¹³</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Defectos <span class="sym">n_D</span></span><span class="slider-value" id="nDVal"></span></div>
+        <input type="range" id="nD" min="10" max="13" step="0.05" value="12" aria-label="Densidad de defectos, log10 en cm⁻²">
+        <div class="range-caps"><span>10¹⁰ cm⁻²</span><span>10¹³</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Desorden <span class="sym">σ inhomogéneo</span></span><span class="slider-value" id="sigVal"></span></div>
+        <input type="range" id="sigma" min="0.5" max="40" step="0.5" value="15" aria-label="Ensanchamiento inhomogéneo en meV">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Potencia del láser <span class="sym">P</span></span><span class="slider-value" id="PVal"></span></div>
+        <input type="range" id="P" min="-1" max="4" step="0.05" value="2" aria-label="Densidad de potencia del láser, log10 en W/cm²">
+        <div class="range-caps"><span>0.1 W/cm²</span><span>10⁴ W/cm²</span></div>
+      </div>
+      <div class="field">
+        <span class="flabel" id="lbLaser">Láser de excitación</span>
+        <div class="lasers" role="group" aria-labelledby="lbLaser" id="laserGrid"></div>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Parámetros del semiconductor</p>
+      <div class="seg" role="group" aria-label="Capa cuyos parámetros se editan" id="tabSeg">
+        <button type="button" data-v="0">Capa 1</button>
+        <button type="button" data-v="1">Capa 2</button>
+      </div>
+      <div class="params">
+        <div class="slider-block">
+          <div class="slider-head"><span class="slider-name">Masa del electrón <span class="sym">m*ₑ/m₀</span></span><span class="slider-value" id="meVal"></span></div>
+          <input type="range" id="me" min="0.1" max="1.2" step="0.01" aria-label="Masa efectiva del electrón">
+        </div>
+        <div class="slider-block">
+          <div class="slider-head"><span class="slider-name">Masa del hueco <span class="sym">m*ₕ/m₀</span></span><span class="slider-value" id="mhVal"></span></div>
+          <input type="range" id="mh" min="0.1" max="1.2" step="0.01" aria-label="Masa efectiva del hueco">
+        </div>
+        <div class="slider-block">
+          <div class="slider-head"><span class="slider-name">Dieléctrico del TMD <span class="sym">ε∥</span></span><span class="slider-value" id="epsVal"></span></div>
+          <input type="range" id="eps" min="4" max="25" step="0.1" aria-label="Constante dieléctrica en el plano del semiconductor">
+        </div>
+        <div class="field">
+          <span class="flabel" id="lbEb">Energía de enlace del excitón</span>
+          <div class="seg" role="group" aria-labelledby="lbEb" id="ebSeg">
+            <button type="button" data-v="calc">Calculada</button>
+            <button type="button" data-v="man">Manual</button>
+          </div>
+        </div>
+        <div class="slider-block" id="ebBlock">
+          <div class="slider-head"><span class="slider-name">E_b manual</span><span class="slider-value" id="ebVal"></span></div>
+          <input type="range" id="eb" min="0.02" max="0.9" step="0.005" aria-label="Energía de enlace del excitón en eV">
+        </div>
+        <div class="derived" id="derived"></div>
+        <button type="button" class="btn ghost" id="litBtn">Restaurar valores de literatura</button>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Comparar</p>
+      <div class="btnrow">
+        <button type="button" class="btn" id="pinBtn">Fijar referencia</button>
+        <button type="button" class="btn ghost" id="unpinBtn">Quitar referencia</button>
+      </div>
+      <div class="field">
+        <span class="flabel" id="lbScale">Escala de PL</span>
+        <div class="seg" role="group" aria-labelledby="lbScale" id="scaleSeg">
+          <button type="button" data-v="lin">Lineal</button>
+          <button type="button" data-v="log">Logarítmica</button>
+        </div>
+      </div>
+      <button type="button" class="btn ghost" id="resetBtn">Volver al inicio: MoS₂ 1L en SiO₂, 300 K</button>
+    </aside>
+
+    <div class="main-col">
+      <div class="readout-strip">
+        <div class="readout hl"><span class="rlabel">Pico dominante</span><span class="rvalue" id="r1"></span><span class="rsub" id="r1s"></span></div>
+        <div class="readout"><span class="rlabel" id="r2l">Excitón A</span><span class="rvalue" id="r2"></span><span class="rsub" id="r2s"></span></div>
+        <div class="readout"><span class="rlabel">Enlace del excitón</span><span class="rvalue" id="r3"></span><span class="rsub" id="r3s"></span></div>
+        <div class="readout"><span class="rlabel">Gap de cuasipartícula</span><span class="rvalue" id="r4"></span><span class="rsub" id="r4s"></span></div>
+        <div class="readout"><span class="rlabel">Radio del excitón</span><span class="rvalue" id="r5"></span><span class="rsub">r_rms del estado 1s</span></div>
+        <div class="readout"><span class="rlabel">Rendimiento de PL</span><span class="rvalue" id="r6"></span><span class="rsub" id="r6s"></span></div>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Espectro de fotoluminiscencia</h3><span class="card-note" id="plNote"></span></div>
+        <div class="chart-wrap scroll-x" id="plWrap">
+          <svg class="chart wide" id="pl" viewBox="0 0 960 400" role="img" aria-label="Espectro de fotoluminiscencia por componentes"></svg>
+          <div class="tip" id="plTip"></div>
+        </div>
+        <div class="legend" id="plLegend"></div>
+        <p class="caption">Cada componente es un estado con población Nᵢ que emite con tasa k_r,i; su área es k_r,i·Nᵢ por par absorbido. La línea gruesa es la suma que mediría el espectrómetro; la discontinua gris es la referencia que fijaste. Las líneas discontinuas de color son de la capa 2.</p>
+      </section>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Alineación de bandas</h3><span class="card-note" id="bandNote"></span></div>
+          <svg class="chart" id="band" viewBox="0 0 560 440" role="img" aria-label="Bordes de banda respecto al vacío"></svg>
+          <p class="caption" id="bandCap"></p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">El excitón: potencial y niveles</h3><span class="card-note" id="excNote"></span></div>
+          <svg class="chart" id="exc" viewBox="0 0 560 440" role="img" aria-label="Potencial de Keldysh, potencial de Coulomb y niveles 1s, 2s, 3s"></svg>
+          <div class="legend">
+            <span><i class="sw" style="border-color:var(--accent)"></i>Rytova–Keldysh</span>
+            <span><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>Coulomb −e²/(4πε₀κr)</span>
+            <span><i class="sw" style="border-color:var(--copper)"></i>niveles calculados</span>
+            <span id="ixLeg"><i class="sw" style="border-color:var(--s7);border-top-style:dotted"></i>intercapa</span>
+          </div>
+          <p class="caption" id="excCap"></p>
+        </section>
+      </div>
+
+      <section class="panel card" id="ixCard">
+        <div class="card-head"><h3 class="card-title">Estabilidad del excitón intercapa con la temperatura</h3><span class="card-note" id="ixNote"></span></div>
+        <div id="ixEmpty" class="caption" hidden>Esta sección aparece con una heteroestructura tipo II (por ejemplo MoSe₂/WSe₂ o MoS₂/WSe₂).</div>
+        <div class="ixgrid" id="ixBody">
+          <div class="chart-wrap" id="ixTWrap">
+            <svg class="chart" id="ixT" viewBox="0 0 560 340" role="img" aria-label="Intensidad integrada del IX contra temperatura"></svg>
+            <div class="tip" id="ixTTip"></div>
+            <div class="legend">
+              <span><i class="sw" style="border-color:var(--s7)"></i>IX total</span>
+              <span><i class="sw" style="border-color:var(--s8);border-top-style:dashed"></i>atrapado (moiré)</span>
+              <span><i class="sw" style="border-color:var(--s1);border-top-style:dashed"></i>libre K–K</span>
+              <span><i class="sw" style="border-color:var(--s6);border-top-style:dashed"></i>oscuro K–Σ</span>
+              <span><i class="sw" style="border-color:var(--gray)"></i>intracapa</span>
+            </div>
+          </div>
+          <div class="chart-wrap" id="ixFWrap">
+            <svg class="chart" id="ixF" viewBox="0 0 480 340" role="img" aria-label="Fracción de pares intercapa en cada estado contra temperatura"></svg>
+            <div class="tip" id="ixFTip"></div>
+            <div class="legend">
+              <span><i class="sw" style="border-color:var(--s8);border-top-width:8px"></i>atrapados</span>
+              <span><i class="sw" style="border-color:var(--s1);border-top-width:8px"></i>libres K–K</span>
+              <span><i class="sw" style="border-color:var(--s6);border-top-width:8px"></i>oscuros K–Σ</span>
+              <span><i class="sw" style="border-color:var(--gray);border-top-width:8px"></i>ionizados (e y h libres)</span>
+            </div>
+          </div>
+        </div>
+        <p class="caption" id="ixCap"></p>
+      </section>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Espectro Raman</h3><span class="card-note" id="ramNote"></span></div>
+        <div class="chart-wrap scroll-x" id="ramWrap">
+          <svg class="chart wide" id="ram" viewBox="0 0 960 340" role="img" aria-label="Espectro Raman por modos"></svg>
+          <div class="tip" id="ramTip"></div>
+        </div>
+        <p class="caption" id="ramCap"></p>
+      </section>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Estados, poblaciones y tasas</h3><span class="card-note" id="stNote"></span></div>
+          <div class="scroll-x"><table class="st" id="stTable"><thead><tr><th>Estado</th><th>E (eV)</th><th>Población</th><th>k_r (s⁻¹)</th><th>PL</th></tr></thead><tbody></tbody></table></div>
+          <p class="caption">Población: fracción de los pares excitados presentes en cada estado en estado estacionario. Todos los estados pierden pares además por defectos con k_nr = <span id="knrTxt"></span>.</p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Ecuaciones con tus números</h3><span class="card-note" id="eqNote"></span></div>
+          <div class="eq-list" id="eqList"></div>
+        </section>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Retos</h3><span class="card-note">usa los controles; fija una referencia para comparar</span></div>
+        <div class="challenge">
+          <div class="q"><b>Reto 1 · el entorno casi no mueve el pico</b>MoS₂ monocapa a 4 K. Pasa de suspendida a hBN/hBN. ¿Cuánto cambia E_b? ¿Y el gap? ¿Y el pico de PL? Explica la compensación con las dos ecuaciones de la sección «Energía del excitón».</div>
+          <div class="q"><b>Reto 2 · no es hidrógeno</b>Compara las energías 1s, 2s y 3s con las del hidrógeno 2D en el panel del excitón. ¿Por qué la diferencia es mayor en 1s? Reduce ε∥ del TMD a 4 y vuelve a mirar.</div>
+          <div class="q"><b>Reto 3 · monocapa contra bicapa</b>Fija MoS₂ 1L en SiO₂ como referencia y cambia a bicapa. ¿Cuántas veces cae la PL? ¿De dónde sale el pico I? Repite con MoSe₂ y explica por qué la caída es menor.</div>
+          <div class="q"><b>Reto 4 · W contra Mo con la temperatura</b>En hBN/hBN, baja de 300 K a 4 K con MoSe₂ y luego con WSe₂. Observa el estado oscuro D en la tabla. ¿Por qué el WSe₂ tiene un pico debajo del excitón brillante?</div>
+          <div class="q"><b>Reto 5 · excitón intercapa</b>Heteroestructura MoSe₂/WSe₂ en hBN, 4 K. Lee CBO y VBO en el diagrama de bandas y calcula E_IX a mano. Gira la capa 2 de 0° a 3°. ¿Por qué se apaga el IX y no los intracapa?</div>
+          <div class="q"><b>Reto 7 · ¿por qué no se ve el IX a 300 K?</b>MoSe₂/WSe₂ en hBN, θ = 0.5°. En la gráfica de estabilidad, ¿a qué temperatura cae el IX a la mitad? ¿Qué fracción está ionizada a 300 K? Sube la potencia a 10³ W/cm² y explica el cambio con la ecuación de Saha. Pon E_m = 0: ¿qué papel tenía el moiré?</div>
+          <div class="q"><b>Reto 6 · leer el Raman</b>Con MoS₂, usa Δω = A₁g − E¹₂g para distinguir 1L de 2L. Luego sube n de 10¹¹ a 10¹³ cm⁻²: ¿qué modo se mueve y por qué? Sube n_D y busca el pico LA(M).</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  </div>
+<div id="panelTheory" role="tabpanel" aria-labelledby="tabTheory" hidden>
+<div class="theory">
+<nav class="panel toc" aria-label="Contenido de la teoría"><h2 class="deck-title">Teoría · Unidades 4 y 7</h2><ol><li><a href="#t-tmd" data-target="t-tmd">Monocapas de TMD</a></li><li><a href="#t-keldysh" data-target="t-keldysh">Potencial de Rytova–Keldysh</a></li><li><a href="#t-eb" data-target="t-eb">Energía del excitón: enlace y brecha</a></li><li><a href="#t-pl2d" data-target="t-pl2d">Espectro de PL: excitones, triones y estados oscuros</a></li><li><a href="#t-bilayer" data-target="t-bilayer">Monocapa contra bicapa</a></li><li><a href="#t-hetero" data-target="t-hetero">Heteroestructuras y excitón intercapa</a></li><li><a href="#t-raman" data-target="t-raman">Raman: contar capas</a></li></ol><p class="toc-note">Cada fórmula aparece evaluada con tus valores en la pestaña Laboratorio, en «Ecuaciones con tus números».</p><button type="button" class="btn ghost" data-goto-lab>Ir al laboratorio →</button></nav>
+<div class="theory-col">
+<section class="panel card tsec" id="t-tmd">
+  <h3><span class="tn">01</span>Monocapas de TMD</h3>
+  <p>Los dicalcogenuros de metales de transición (MoS₂, MoSe₂, WS₂, WSe₂) son láminas de tres planos atómicos, X–M–X, unidas entre sí por fuerzas de van der Waals. En volumen tienen brecha indirecta; al aislar una sola capa la brecha se vuelve directa, en los puntos K y K′ de la zona de Brillouin hexagonal, y la monocapa emite luz con eficiencia.</p>
+  <p>Al ser tan delgadas, el campo eléctrico entre un electrón y un hueco pasa casi todo por fuera de la lámina, donde el apantallamiento es débil. Por eso los excitones de un TMD están ligados con cientos de meV, contra unos pocos meV en GaAs, y sobreviven a temperatura ambiente.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-keldysh">
+  <h3><span class="tn">02</span>Potencial de Rytova–Keldysh</h3>
+  <p>Una lámina delgada con polarizabilidad 2D se describe con una longitud de apantallamiento r₀. A distancias grandes el potencial es el de Coulomb apantallado por el entorno; a distancias cortas crece solo como un logaritmo.</p>
+  <div class="feq"><i>V</i>(<i>r</i>) = −<span class="frac"><span><i>e</i><sup>2</sup></span><span>8ε<sub>0</sub><i>r</i><sub>0</sub></span></span> <span style="font-size:1.2em">[</span><i>H</i><sub>0</sub><span style="font-size:1.1em">(</span><span class="frac"><span>κ<i>r</i></span><span><i>r</i><sub>0</sub></span></span><span style="font-size:1.1em">)</span> − <i>Y</i><sub>0</sub><span style="font-size:1.1em">(</span><span class="frac"><span>κ<i>r</i></span><span><i>r</i><sub>0</sub></span></span><span style="font-size:1.1em">)</span><span style="font-size:1.2em">]</span></div>
+  <div class="tgrid">
+    <div class="feq"><i>r</i><sub>0</sub> ≈ <span class="frac"><span><i>d</i>(ε<sub>∥</sub> − 1)</span><span>2</span></span><span class="lbl">d = espesor de la capa, ε∥ = constante dieléctrica en el plano</span></div>
+    <div class="feq">κ = <span class="frac"><span>ε<sub>arriba</sub> + ε<sub>abajo</sub></span><span>2</span></span><span class="lbl">apantallamiento del entorno</span></div>
+  </div>
+  <dl class="where"><dt>H₀, Y₀</dt><dd>funciones de Struve y de Bessel de segunda especie</dd><dt>r ≫ r₀</dt><dd>V → −e²/(4πε₀κr), Coulomb en el medio κ</dd><dt>r ≪ r₀</dt><dd>V ∝ ln(r/r₀): mucho más débil que Coulomb</dd></dl>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-eb">
+  <h3><span class="tn">03</span>Energía del excitón: enlace y brecha</h3>
+  <p>El excitón se calcula resolviendo la ecuación de Schrödinger radial con la masa reducida y el potencial de Keldysh. La energía del pico óptico es la brecha de cuasipartícula menos la energía de enlace.</p>
+  <div class="tgrid">
+    <div class="feq">μ = <span class="frac"><span><i>m</i><sub>e</sub> <i>m</i><sub>h</sub></span><span><i>m</i><sub>e</sub> + <i>m</i><sub>h</sub></span></span></div>
+    <div class="feq"><i>E</i><sub>X</sub> = <i>E</i><sub>g</sub><sup>QP</sup> − <i>E</i><sub>b</sub></div>
+  </div>
+  <div class="feq"><i>E</i><sub><i>n</i></sub><sup>2D</sup> = −<span class="frac"><span>Ry*</span><span>(<i>n</i> − ½)<sup>2</sup></span></span>, &nbsp;&nbsp; Ry* = 13.6 eV · <span class="frac"><span>μ/<i>m</i><sub>0</sub></span><span>κ<sup>2</sup></span></span><span class="lbl">referencia: átomo de hidrógeno en 2D (Coulomb puro)</span></div>
+  <p class="keyidea">Un entorno más polarizable reduce E<sub>b</sub> y también la brecha E<sub>g</sub><sup>QP</sup> (renormalización), casi en la misma cantidad. Por eso el pico de PL apenas se mueve aunque E<sub>b</sub> cambie cientos de meV.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-pl2d">
+  <h3><span class="tn">04</span>Espectro de PL: excitones, triones y estados oscuros</h3>
+  <p>El espectro es la suma de varios estados que emiten. Cada uno contribuye con un área proporcional a su población N<sub>i</sub> y a su tasa radiativa k<sub>r,i</sub>, con un ancho que crece con la temperatura y el desorden.</p>
+  <div class="feq"><i>I</i><sub>PL</sub>(<i>E</i>) = Σ<sub><i>i</i></sub> <i>k</i><sub><i>r</i>,<i>i</i></sub> <i>N</i><sub><i>i</i></sub> · <i>L</i>(<i>E</i> − <i>E</i><sub><i>i</i></sub>, Γ<sub><i>i</i></sub>)</div>
+  <div class="feq"><i>E</i><sub>g</sub>(<i>T</i>) = <i>E</i><sub>g</sub>(0) − <i>S</i>⟨ħω⟩<span style="font-size:1.2em">[</span>coth<span class="frac"><span>⟨ħω⟩</span><span>2<i>kT</i></span></span> − 1<span style="font-size:1.2em">]</span><span class="lbl">dependencia con T de O'Donnell y Chen</span></div>
+  <table class="ttable"><thead><tr><th>Estado</th><th>Qué es</th></tr></thead><tbody>
+    <tr><td>A, B</td><td>excitones brillantes de las dos subbandas de valencia separadas por espín–órbita</td></tr>
+    <tr><td>X⁻ (trión)</td><td>excitón con un electrón extra, 20–35 meV abajo de A; crece con el dopaje</td></tr>
+    <tr><td>D (oscuro)</td><td>excitón con espín prohibido; en WSe₂ y WS₂ queda abajo del brillante y domina a baja T</td></tr>
+    <tr><td>L (localizado)</td><td>excitones atrapados en defectos; ancho y abajo del excitón libre</td></tr>
+  </tbody></table>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-bilayer">
+  <h3><span class="tn">05</span>Monocapa contra bicapa</h3>
+  <p>Al apilar dos capas iguales, los estados en Γ (valencia) y entre K y Γ (conducción) se acoplan entre capas y bajan; la brecha se vuelve indirecta. La PL cae uno o dos órdenes de magnitud y aparece un pico ancho I, de la transición indirecta asistida por fonones. Es la forma más rápida de saber si una hojuela es monocapa.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-hetero">
+  <h3><span class="tn">06</span>Heteroestructuras y excitón intercapa</h3>
+  <p>Dos TMD distintos suelen formar una alineación tipo II: el mínimo de conducción está en una capa y el máximo de valencia en la otra. Tras la excitación, el electrón y el hueco se separan en picosegundos (transferencia de carga) y la PL de las capas individuales se apaga. Queda un excitón intercapa (IX), con el electrón y el hueco en capas distintas.</p>
+  <div class="feq"><i>E</i><sub>IX</sub> = <i>E</i><sub>c</sub><sup>(1)</sup> − <i>E</i><sub>v</sub><sup>(2)</sup> − <i>E</i><sub>b</sub><sup>IX</sup><span class="lbl">CB de una capa menos VB de la otra, menos su energía de enlace (menor que la intracapa)</span></div>
+  <p>El IX vive nanosegundos, tiene un dipolo permanente (su energía se mueve con un campo eléctrico perpendicular) y su brillo depende del ángulo de giro θ: solo cerca de 0° o 60° los valles K de ambas capas quedan alineados en momento. Al calentar, el IX se escapa de las trampas del moiré, se disocia en pares libres y se apaga por defectos: a 300 K casi no se observa.</p>
+  <div class="feq"><i>a</i><sub>M</sub> ≈ <span class="frac"><span><i>a</i></span><span>√<span class="rad">δ<sup>2</sup> + θ<sup>2</sup></span></span></span><span class="lbl">periodo del moiré para un desajuste de red δ y un giro pequeño θ (en radianes)</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-raman">
+  <h3><span class="tn">07</span>Raman: contar capas</h3>
+  <p>En la dispersión Raman la luz pierde la energía de un fonón. Los dos modos principales de un TMD son E′ (en el plano) y A′₁ (fuera del plano). Al pasar de monocapa a bicapa, A′₁ se endurece y E′ se ablanda ligeramente; su separación Δω crece y sirve para contar capas (en MoS₂, ~19 cm⁻¹ en monocapa y ~22 cm⁻¹ en bicapa).</p>
+  <div class="feq">ω<sub><i>N</i></sub> = ω<sub>∞</sub> cos<span style="font-size:1.1em">(</span><span class="frac"><span>π</span><span>2<i>N</i></span></span><span style="font-size:1.1em">)</span><span class="lbl">modo de corte (shear) de mayor frecuencia en N capas, modelo de cadena lineal</span></div>
+  <p class="inlab"><b>En el laboratorio</b>El pico del sustrato de Si a 520.7 cm⁻¹ es la referencia de calibración del espectro.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+</div>
+</div>
+</div>
+  <a class="home-fab" href="index.html" aria-label="Ir al índice del curso de Física de Dispositivos Semiconductores"><span class="hk">⌂</span><span class="hl">Índice del curso</span></a>
+<footer class="notes">
+    <p><b>Excitón.</b> Ecuación radial 2D resuelta por diferencias finitas (2200 puntos) con el potencial de Rytova–Keldysh, r₀ = d(ε∥ − 1)/2 y κ = (ε_sup + ε_inf)/2. Masas reducidas y r₀ de referencia según Goryca et al., Nat. Commun. 10, 4172 (2019). En bicapas y heteroestructuras el excitón intracapa usa r₀ + ½r₀ de la otra capa; el intercapa usa V(√(r² + d²)) con r₀ de ambas capas.</p>
+    <p><b>Gap de cuasipartícula.</b> E_g = E_g^∞ + ΔΣ, con ΔΣ el cambio de autoenergía de Coulomb por apantallamiento (factor de forma e^{−qd/2}). E_g^∞ se calibra para que la monocapa en hBN/hBN a 4 K dé el excitón A medido (MoS₂ 1.940, MoSe₂ 1.645, WS₂ 2.088, WSe₂ 1.725 eV). Bordes respecto al vacío con los puntos medios de Kang et al., APL 102, 012111 (2013). Corrimiento con T por O'Donnell–Chen.</p>
+    <p><b>PL.</b> Modelo cinético de estados (excitón brillante X, oscuro D, trión T, indirecto I en bicapas, intercapa IX) con balance detallado y generación absoluta G = P·A/hν (A = 0.08 por capa). La tasa radiativa de X está limitada por el cono de luz; la del IX además por el desajuste de momento ΔK = K√(δ² + θ²). La transferencia de carga intercapa (≈ 50 fs) apaga la PL intracapa en heteroestructuras tipo II. Las pérdidas por defectos crecen con T: k_nr = k_def[1 + 40·e^(−70 meV/kT)].</p>
+    <p><b>Estabilidad del IX.</b> Los pares intercapa se reparten en equilibrio entre IX libre K–K (brillante), IX K–Σ (oscuro en momento, degeneración 6, emisión asistida por fonones), IX atrapado en los mínimos del moiré (ocupación de Langmuir, una exciton por sitio, densidad 2/(√3λ²) con λ = ā/√(δ² + θ²), profundidad suavizada por el tamaño del IX) y pares ionizados según la ecuación de Saha 2D. El atrapado está protegido de los defectos; los libres y los ionizados no. Basado cualitativamente en Mahdikhanysarvejahany et al., npj 2D Mater. Appl. (2021); «Localisation-to-delocalisation transition of moiré excitons in WSe₂/MoSe₂», Nat. Commun. (2024); Dal Conte et al., Nat. Commun. (2023); Kunstmann et al., Nat. Phys. (2018). Todos los valores son aproximados y con fines didácticos.</p>
+    <p><b>Raman.</b> Posiciones a 300 K de literatura para 1L y 2L, corrimiento con T de ≈ −0.013 a −0.016 cm⁻¹/K, suavizamiento del A₁g con electrones (≈ −2 cm⁻¹ por 10¹³ cm⁻²), modo LA(M) proporcional a la densidad de defectos, 2LA(M) resonante con los excitones A y B, y modos de corte y respiración por cadena lineal.</p>
+    <p class="credit">© 2026 Elodie Strupiechonski (ENES Juriquilla, UNAM) y Andrés de Luna Bugallo (CFATA, UNAM). Material didáctico bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+// ===================== MOTOR FÍSICO =====================
+const E2 = 1.439964;        // e²/4πε0 (eV·nm)
+const HB = 0.0380998;       // ħ²/2m0 (eV·nm²)
+const HBARC = 197.327;      // ħc (eV·nm)
+const KB = 8.617333e-5;     // eV/K
+const RY = 13.6057;         // eV
+
+const MAT = {
+  MoS2:  { label: 'MoS₂',  a: 0.316, d: 0.615, me: 0.50, mh: 0.63, eps: 12.06, EA: 1.940, S: 1.90, hw: 0.022, dB: 0.145, dBD: 0.014,  ET: 0.025, mid: -5.065, dI: 0.30, mArea: 16.03, LA: 227,
+    raman: [ { id: 'E2g', name: 'E¹₂g', w1: 385.5, w2: 383.8, I1: 0.45, I2: 0.55, G: 2.6, chi: -0.013, dop: -0.3 },
+             { id: 'A1g', name: 'A₁g', w1: 404.5, w2: 406.0, I1: 1.0, I2: 1.0, G: 3.0, chi: -0.016, dop: -2.2, dopG: 3.3 },
+             { id: '2LA', name: '2LA(M)', w1: 452, w2: 452, I1: 0, I2: 0, G: 10, chi: -0.02, res: [0.05, 1.0] } ],
+    SM: 22.6, LBM: 40.5 },
+  MoSe2: { label: 'MoSe₂', a: 0.329, d: 0.646, me: 0.65, mh: 0.76, eps: 13.07, EA: 1.645, S: 1.95, hw: 0.015, dB: 0.210, dBD: -0.0015, ET: 0.027, mid: -4.565, dI: 0.05, mArea: 23.46, LA: 152,
+    raman: [ { id: 'A1g', name: 'A₁g', w1: 241.0, w2: 242.5, I1: 1.0, I2: 1.0, G: 2.2, chi: -0.010, dop: -1.2, dopG: 2.0 },
+             { id: 'E2g', name: 'E¹₂g', w1: 287.0, w2: 286.5, I1: 0.06, I2: 0.08, G: 3.0, chi: -0.010, dop: 0 },
+             { id: 'B2g', name: 'B¹₂g', w1: null, w2: 353.0, I1: 0, I2: 0.10, G: 3.0, chi: -0.010, dop: 0 } ],
+    SM: 18.2, LBM: 29.9 },
+  WS2:   { label: 'WS₂',   a: 0.315, d: 0.618, me: 0.32, mh: 0.39, eps: 12.00, EA: 2.088, S: 2.00, hw: 0.018, dB: 0.400, dBD: 0.047,  ET: 0.033, mid: -4.730, dI: 0.20, mArea: 24.99, LA: 176,
+    raman: [ { id: 'E2g', name: 'E¹₂g', w1: 356.0, w2: 355.6, I1: 0.35, I2: 0.40, G: 2.8, chi: -0.012, dop: -0.3 },
+             { id: 'A1g', name: 'A₁g', w1: 417.5, w2: 419.0, I1: 0.55, I2: 0.60, G: 3.2, chi: -0.014, dop: -2.0, dopG: 3.0 },
+             { id: '2LA', name: '2LA(M)', w1: 351.5, w2: 351.0, I1: 0, I2: 0, G: 9, chi: -0.02, res: [0.15, 1.4] } ],
+    SM: 19.2, LBM: 32.3 },
+  WSe2:  { label: 'WSe₂',  a: 0.328, d: 0.648, me: 0.36, mh: 0.45, eps: 14.90, EA: 1.725, S: 2.10, hw: 0.015, dB: 0.430, dBD: 0.040,  ET: 0.030, mid: -4.210, dI: 0.08, mArea: 31.77, LA: 131,
+    raman: [ { id: 'A1g', name: 'A₁g', w1: 250.8, w2: 251.7, I1: 1.0, I2: 1.0, G: 2.6, chi: -0.010, dop: -1.0, dopG: 2.0 },
+             { id: 'E2g', name: 'E¹₂g', w1: 249.4, w2: 249.0, I1: 0.45, I2: 0.40, G: 2.6, chi: -0.010, dop: -0.2 },
+             { id: '2LA', name: '2LA(M)', w1: 259.0, w2: 259.0, I1: 0, I2: 0, G: 8, chi: -0.02, res: [0.25, 0.6] },
+             { id: 'B2g', name: 'B¹₂g', w1: null, w2: 309.0, I1: 0, I2: 0.12, G: 3.0, chi: -0.010, dop: 0 } ],
+    SM: 17.0, LBM: 28.0 }
+};
+const MAT_KEYS = Object.keys(MAT);
+
+const K_X0 = 5e12, K_TR = 1e10, K_I = 6e6, K_IX0 = 5e10, K_KI = 2e13, K_CT = 2e13, K_ET = 1e13, Y_B = 8e-4, K_BD = 3e10, C_TRION = 3e-2;
+const BETA_OTHER = 0.5;    // fracción de r0 de la otra capa que apantalla el excitón intracapa
+const DC_FRAC = 0.5;       // corte del factor de forma de la autoenergía, en unidades de d
+
+// ---------- funciones especiales ----------
+function besj0(x) { const ax = Math.abs(x); if (ax < 8) { const y = x * x; const a = 57568490574.0 + y * (-13362590354.0 + y * (651619640.7 + y * (-11214424.18 + y * (77392.33017 + y * (-184.9052456))))); const b = 57568490411.0 + y * (1029532985.0 + y * (9494680.718 + y * (59272.64853 + y * (267.8532712 + y)))); return a / b; } const z = 8 / ax, y = z * z, xx = ax - 0.785398164; const a = 1 + y * (-0.1098628627e-2 + y * (0.2734510407e-4 + y * (-0.2073370639e-5 + y * 0.2093887211e-6))); const b = -0.1562499995e-1 + y * (0.1430488765e-3 + y * (-0.6911147651e-5 + y * (0.7621095161e-6 - y * 0.934935152e-7))); return Math.sqrt(0.636619772 / ax) * (Math.cos(xx) * a - z * Math.sin(xx) * b); }
+function besy0(x) { if (x < 8) { const y = x * x; const a = -2957821389.0 + y * (7062834065.0 + y * (-512359803.6 + y * (10879881.29 + y * (-86327.92757 + y * 228.4622733)))); const b = 40076544269.0 + y * (745249964.8 + y * (7189466.438 + y * (47447.26470 + y * (226.1030244 + y)))); return a / b + 0.636619772 * besj0(x) * Math.log(x); } const z = 8 / x, y = z * z, xx = x - 0.785398164; const a = 1 + y * (-0.1098628627e-2 + y * (0.2734510407e-4 + y * (-0.2073370639e-5 + y * 0.2093887211e-6))); const b = -0.1562499995e-1 + y * (0.1430488765e-3 + y * (-0.6911147651e-5 + y * (0.7621095161e-6 - y * 0.934935152e-7))); return Math.sqrt(0.636619772 / x) * (Math.sin(xx) * a + z * Math.cos(xx) * b); }
+function struveH0(x) { let t = (x / 2) / (0.886226925 * 0.886226925), s = t, k = 0; const q = (x / 2) * (x / 2); while (Math.abs(t) > 1e-17 * Math.max(1, Math.abs(s)) && k < 200) { t *= -q / ((k + 1.5) * (k + 1.5)); s += t; k++; } return s; }
+function HmY(x) { if (x >= 12) { const i = 1 / x, i2 = i * i; return 0.636619772 * (i - i * i2 + 9 * i * i2 * i2 - 225 * i * i2 * i2 * i2); } return struveH0(x) - besy0(x); }
+const VKel = (r, r0, kap) => -E2 * Math.PI / (2 * r0) * HmY(kap * r / r0);
+
+// ---------- ecuación radial 2D por diferencias finitas + Sturm ----------
+const SOLVE_CACHE = new Map();
+function solveExciton(mu, r0, kap, dsep, nlev) {
+  const key = [mu.toFixed(4), r0.toFixed(4), kap.toFixed(3), dsep.toFixed(3), nlev].join('|');
+  if (SOLVE_CACHE.has(key)) return SOLVE_CACHE.get(key);
+  const T = HB / mu;
+  const rmax = 40 * Math.max(1, kap / 4) * Math.max(1, 0.25 / mu) + 10 * dsep, N = 2200, h = rmax / N;
+  const r = new Float64Array(N), dg = new Float64Array(N), of = new Float64Array(N), V = new Float64Array(N);
+  for (let i = 0; i < N; i++) r[i] = (i + 0.5) * h;
+  for (let i = 0; i < N; i++) {
+    const rp = (i + 1) * h, rm = i * h;
+    V[i] = VKel(Math.sqrt(r[i] * r[i] + dsep * dsep), r0, kap);
+    dg[i] = (T * (rp + rm) / (h * h) + r[i] * V[i]) / r[i];
+    if (i < N - 1) of[i] = -T * rp / (h * h) / Math.sqrt(r[i] * r[i + 1]);
+  }
+  const count = x => { let c = 0, q = dg[0] - x; if (q < 0) c++; for (let i = 1; i < N; i++) { q = dg[i] - x - of[i - 1] * of[i - 1] / (q === 0 ? 1e-300 : q); if (q < 0) c++; } return c; };
+  let lo0 = 0; for (let i = 0; i < N; i++) { const g = dg[i] - Math.abs(i > 0 ? of[i - 1] : 0) - Math.abs(of[i]); if (g < lo0) lo0 = g; }
+  const E = [];
+  for (let k = 0; k < nlev; k++) { let lo = lo0, hi = 0; for (let it = 0; it < 56; it++) { const m = (lo + hi) / 2; if (count(m) > k) hi = m; else lo = m; } E.push((lo + hi) / 2); }
+  // vector propio 1s por iteración inversa (Thomas)
+  const shift = E[0] - 1e-7 * Math.abs(E[0]);
+  let y = new Float64Array(N).fill(1);
+  for (let it = 0; it < 3; it++) {
+    const c = new Float64Array(N), dd = new Float64Array(N);
+    let b0 = dg[0] - shift; c[0] = of[0] / b0; dd[0] = y[0] / b0;
+    for (let i = 1; i < N; i++) { const b = dg[i] - shift - of[i - 1] * c[i - 1]; c[i] = i < N - 1 ? of[i] / b : 0; dd[i] = (y[i] - of[i - 1] * dd[i - 1]) / b; }
+    const x = new Float64Array(N); x[N - 1] = dd[N - 1];
+    for (let i = N - 2; i >= 0; i--) x[i] = dd[i] - c[i] * x[i + 1];
+    let nrm = 0; for (let i = 0; i < N; i++) nrm += x[i] * x[i]; nrm = Math.sqrt(nrm);
+    for (let i = 0; i < N; i++) x[i] /= nrm; y = x;
+  }
+  // R(r) = y/√r ; densidad radial P(r) = 2πr|R|² ∝ y²
+  let r2 = 0, nn = 0; for (let i = 0; i < N; i++) { const p = y[i] * y[i]; nn += p; r2 += p * r[i] * r[i]; }
+  const res = { E, rrms: Math.sqrt(r2 / nn), r, P: y.map(v => v * v / (nn * h)), h, N };
+  if (SOLVE_CACHE.size > 120) SOLVE_CACHE.clear();
+  SOLVE_CACHE.set(key, res);
+  return res;
+}
+
+// ---------- renormalización del gap de cuasipartícula ----------
+function deltaEg(r0self, r0other, dil, kap, d) {
+  const dc = DC_FRAC * d, qmax = 60 / dc, N = 1600, h = qmax / N; let s = 0;
+  for (let i = 0; i <= N; i++) {
+    const q = i * h;
+    const f = Math.exp(-q * dc) * (1 / (1 + r0self * q) - 1 / (kap + (r0self + r0other * Math.exp(-q * dil)) * q));
+    s += f * (i === 0 || i === N ? 1 : (i % 2 ? 4 : 2));
+  }
+  return -E2 * s * h / 3;
+}
+const r0Of = p => p.d * (p.eps - 1) / 2;
+const muOf = p => p.me * p.mh / (p.me + p.mh);
+const odonnell = (m, T) => m.S * m.hw * (1 / Math.tanh(m.hw / (2 * KB * Math.max(T, 0.5))) - 1);
+
+// calibración: E_g del material aislado tal que E_A(4 K, hBN/hBN, monocapa) = experimento
+const CAL = {};
+for (const k of MAT_KEYS) {
+  const m = MAT[k], r0 = r0Of(m), eb = -solveExciton(muOf(m), r0, 4.5, 0, 1).E[0];
+  const dg = deltaEg(r0, 0, m.d, 4.5, m.d);
+  CAL[k] = { Eginf: m.EA + eb - dg, rT: m.ET / eb };
+}
+
+// ---------- una capa dentro de su entorno ----------
+function layerModel(key, P, kap, T, otherR0, dil) {
+  // P: parámetros editables {me, mh, eps, ebManual|null}
+  const m = MAT[key], r0 = P.d * (P.eps - 1) / 2, mu = P.me * P.mh / (P.me + P.mh);
+  const r0eff = r0 + BETA_OTHER * otherR0;
+  const sol = solveExciton(mu, r0eff, kap, 0, 3);
+  const ebCalc = -sol.E[0];
+  const eb = P.ebManual != null ? P.ebManual : ebCalc;
+  const dEg = deltaEg(r0, otherR0, dil, kap, P.d);
+  const dT = odonnell(m, T);
+  const EgQP = CAL[key].Eginf + dEg - dT;
+  const EX = EgQP - eb;
+  const mid = m.mid;
+  return { key, m, P, r0, r0eff, mu, sol, ebCalc, eb, dEg, dT, EgQP, EX, CB: mid + EgQP / 2, VB: mid - EgQP / 2,
+    ET: CAL[key].rT * eb, EB: EX + m.dB, ED: EX - m.dBD, Eginf: CAL[key].Eginf };
+}
+
+function linewidth(T) { return 0.002 + 2e-5 * T + 0.045 / (Math.exp(0.025 / (KB * Math.max(T, 1))) - 1); }
+
+// ---------- pérdidas no radiativas activadas térmicamente ----------
+const EA_NR = 0.070, A_NR = 40;           // k_nr(T) = k_def·[1 + A·e^(−E_a/kT)]
+const knrOf = (nD, T) => (1e9 + 1e11 * (nD / 1e12)) * (1 + A_NR * Math.exp(-EA_NR / (KB * Math.max(T, 1))));
+const ABS_LAYER = 0.08;                   // absorbancia por capa
+const K_TRAP = 2e7, K_IXD = 3e6, TRAP_NR = 0.02, G_KS = 6;
+
+// ---------- reparto interno del excitón intercapa ----------
+// Dada la densidad total de pares intercapa N (cm⁻²), reparte entre: IX K–K libre (brillante),
+// IX K–Σ (oscuro en momento), IX atrapado en el moiré (Langmuir) y pares libres ionizados (Saha).
+function ixPartition(ixp, N, T) {
+  const kT = KB * T;
+  const twoPiHb = 2 * Math.PI * (2 * HB) * 1e-14;                 // 2πħ²/m0 en eV·cm²
+  const Nth = 2 * ixp.M * kT / twoPiHb;                             // densidad térmica efectiva del IX K–K (g = 2), cm⁻²
+  const Ssaha = ixp.mu * kT / twoPiHb * Math.exp(-ixp.eb / kT);     // n_e n_h / n_KK
+  const rD = (G_KS / 2) * Math.exp(-ixp.dKS / kT);                  // n_D / n_KK
+  const yfac = Math.exp(Math.min(ixp.Etrap / kT, 650)) / Nth;        // y = n_KK · yfac
+  const occ = y => (y > 1e300 ? 1 : y / (1 + y));
+  const tot = nKK => { const y = nKK * yfac; const nt = ixp.nTrap * occ(y); const nf = Math.sqrt(Ssaha * nKK); return nKK + rD * nKK + nt + nf; };
+  let lo = -320, hi = Math.log10(Math.max(N, 1e-300));
+  for (let i = 0; i < 120; i++) { const m = 0.5 * (lo + hi); if (tot(Math.pow(10, m)) > N) hi = m; else lo = m; }
+  const nKK = Math.pow(10, 0.5 * (lo + hi)), y = nKK * yfac;
+  const p = { nKK, nD: rD * nKK, nT: ixp.nTrap * occ(y), nF: Math.sqrt(Ssaha * nKK), Nth, Ssaha };
+  p.N = p.nKK + p.nD + p.nT + p.nF;
+  return p;
+}
+
+// ---------- modelo completo ----------
+function model(S) {
+  const kap = (S.epsTop + S.epsBot) / 2, T = S.T, kT = KB * T;
+  const EL = HBARC * 2 * Math.PI / S.laser;
+  const knr = knrOf(S.nD, T);
+  const nnm = S.n * 1e-14;               // cm⁻² → nm⁻²
+  const Gabs = S.P * ABS_LAYER / (EL * 1.602177e-19);   // pares/(cm²·s) por capa
+  const layers = [];
+  const pA = S.params[0], pB = S.params[1];
+  if (S.struct === '1L') layers.push(layerModel(S.matA, pA, kap, T, 0, 0));
+  else if (S.struct === '2L') layers.push(layerModel(S.matA, pA, kap, T, pA.d * (pA.eps - 1) / 2, pA.d));
+  else {
+    const rA = pA.d * (pA.eps - 1) / 2, rB = pB.d * (pB.eps - 1) / 2, dil = (pA.d + pB.d) / 2;
+    layers.push(layerModel(S.matA, pA, kap, T, rB, dil));
+    layers.push(layerModel(S.matB, pB, kap, T, rA, dil));
+  }
+
+  const fLC = (E, M) => { const k0 = E / HBARC, ELC = HB * k0 * k0 / M; return { ELC, f: 1 - Math.exp(-ELC / kT) }; };
+  const nodes = [], links = [];
+  const add = st => { st.idx = nodes.length; if (st.knr == null) st.knr = knr; nodes.push(st); return st; };
+  const xNodes = [];
+  layers.forEach((L, li) => {
+    const M = L.P.me + L.P.mh, mT = 2 * L.P.me + L.P.mh;
+    const lc = fLC(L.EX, M);
+    const kX = K_X0 * lc.f;
+    const absorbs = EL > L.EX + 0.01;
+    const X = add({ id: 'X', E: L.EX, g: 1, kr: kX, layer: li, G: absorbs ? Gabs * (S.struct === '2L' ? 2 : 1) : 0, ELC: lc.ELC });
+    const D = add({ id: 'D', E: L.ED, g: 1, kr: 1e-2 * kX, layer: li, G: 0 });
+    links.push([X, D, K_BD]);
+    if (nnm > 0) {
+      const gT = nnm * Math.PI * (2 * HB) * mT / (4 * M * L.P.me * kT);
+      const Tn = add({ id: 'T', E: L.EX - L.ET, g: gT, kr: K_TR, layer: li, G: 0 });
+      links.push([X, Tn, C_TRION * S.n]);
+      L.gT = gT;
+    }
+    xNodes.push(X);
+  });
+  let ix = null, typeInfo = null, IXn = null;
+  if (S.struct === '2L') {
+    const L = layers[0];
+    const I = add({ id: 'I', E: L.EX - MAT[S.matA].dI, g: 6, kr: K_I, layer: 0, G: 0 });
+    links.push([xNodes[0], I, K_KI]);
+  }
+  if (S.struct === 'het') {
+    const [A, B] = layers;
+    const cbL = A.CB < B.CB ? 0 : 1, vbL = A.VB > B.VB ? 0 : 1;
+    typeInfo = { cbL, vbL, type: cbL !== vbL ? 'II' : 'I', CBO: Math.abs(A.CB - B.CB), VBO: Math.abs(A.VB - B.VB) };
+    if (typeInfo.type === 'II') {
+      const Le = layers[cbL], Lh = layers[vbL];
+      const mu = Le.P.me * Lh.P.mh / (Le.P.me + Lh.P.mh), M = Le.P.me + Lh.P.mh;
+      const dil = (A.P.d + B.P.d) / 2;
+      const sol = solveExciton(mu, A.r0 + B.r0, kap, dil, 1);
+      const gapIX = Le.CB - Lh.VB;
+      const EIX = gapIX - (-sol.E[0]);
+      const aA = MAT[S.matA].a, aB = MAT[S.matB].a, abar = (aA + aB) / 2;
+      const delta = Math.abs(aA - aB) / abar;
+      const thDeg = Math.min(S.twist, 60 - S.twist), th = thDeg * Math.PI / 180;
+      const K = 4 * Math.PI / (3 * abar);
+      const dK = K * Math.sqrt(delta * delta + th * th);
+      const EdK = HB * dK * dK / M;
+      const lc = fLC(EIX, M);
+      const kIX = K_IX0 * lc.f * Math.exp(-EdK / kT) + K_IX0 * 1e-4;
+      // moiré: periodo, densidad de sitios y profundidad efectiva vista por un IX de radio r_rms
+      const lam = abar / Math.max(Math.sqrt(delta * delta + th * th), 1e-4);      // nm
+      const smooth = Math.exp(-0.5 * Math.pow(2 * Math.PI * sol.rrms / lam, 2));
+      const nSites = 2 / (Math.sqrt(3) * lam * lam) * 1e14;                        // cm⁻²
+      const Etrap = (S.Emoire / 1000) * smooth;
+      ix = { mu, M, sol, eb: -sol.E[0], gap: gapIX, E: EIX, delta, thDeg, dK, EdK, kIX, dil, Le, Lh, cbL, vbL,
+        lam, smooth, nSites, nTrap: nSites * smooth, Etrap, dKS: S.dKS / 1000, rrms: sol.rrms };
+      IXn = add({ id: 'IX', E: EIX, g: 2, kr: kIX, layer: -1, G: 0 });
+      links.push([xNodes[0], IXn, K_CT]); links.push([xNodes[1], IXn, K_CT]);
+    } else {
+      const wide = layers[0].EX > layers[1].EX ? 0 : 1;
+      links.push([xNodes[wide], xNodes[1 - wide], K_ET]);
+    }
+  }
+
+  // matriz de tasas (el nodo IX tiene tasas efectivas que dependen de su propia densidad → iteración)
+  const n = nodes.length;
+  const lnZ = s => Math.log(s.g) - s.E / kT;
+  const solveLinear = () => {
+    const Am = Array.from({ length: n }, () => new Float64Array(n)), bv = new Float64Array(n);
+    const seen = new Set();
+    links.forEach(([i, j, kf]) => {
+      const key = Math.min(i.idx, j.idx) + '-' + Math.max(i.idx, j.idx);
+      if (seen.has(key)) return; seen.add(key);
+      let hi = i, lo = j;
+      if (lnZ(i) > lnZ(j)) { hi = j; lo = i; }
+      const kb = kf * Math.exp(lnZ(hi) - lnZ(lo));
+      Am[hi.idx][hi.idx] += kf; Am[lo.idx][hi.idx] -= kf;
+      Am[lo.idx][lo.idx] += kb; Am[hi.idx][lo.idx] -= kb;
+    });
+    nodes.forEach((s, i) => { Am[i][i] += s.kr + s.knr; bv[i] = s.G; });
+    const Np = new Array(n).fill(0);
+    const M = Am.map(r => Array.from(r)), v = Array.from(bv);
+    for (let c = 0; c < n; c++) { let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r; [M[c], M[p]] = [M[p], M[c]]; [v[c], v[p]] = [v[p], v[c]];
+      for (let r = c + 1; r < n; r++) { const f = M[r][c] / M[c][c]; for (let k = c; k < n; k++) M[r][k] -= f * M[c][k]; v[r] -= f * v[c]; } }
+    for (let r = n - 1; r >= 0; r--) { let s2 = v[r]; for (let k = r + 1; k < n; k++) s2 -= M[r][k] * Np[k]; Np[r] = s2 / M[r][r]; }
+    return Np;
+  };
+  let Np, part = null;
+  if (IXn) {
+    // N·L(N) = flujo de entrada: se busca por bisección en escala logarítmica
+    const setRates = N => {
+      const p = ixPartition(ix, N, T), Nt = Math.max(p.N, 1e-30);
+      IXn.kr = (ix.kIX * p.nKK + K_IXD * p.nD + K_TRAP * p.nT) / Nt;
+      IXn.knr = (knr * (p.nKK + p.nD + p.nF) + TRAP_NR * knr * p.nT) / Nt;
+      return p;
+    };
+    let lo = 0, hi = 17;
+    for (let it = 0; it < 60; it++) {
+      const m = 0.5 * (lo + hi), N = Math.pow(10, m);
+      setRates(N);
+      const Npp = solveLinear();
+      if (Npp[IXn.idx] > N) lo = m; else hi = m;   // N' > N → el punto fijo está más arriba
+    }
+    const Nix = Math.pow(10, 0.5 * (lo + hi));
+    part = setRates(Nix);
+    Np = solveLinear();
+    ix.part = part;
+  } else Np = solveLinear();
+  nodes.forEach((s, i) => { s.N = Math.max(0, Np[i]); s.PL = s.kr * s.N; });
+  const Ntot = nodes.reduce((a, s) => a + s.N, 0) || 1;
+  nodes.forEach(s => s.f = s.N / Ntot);
+  const Gtot = nodes.reduce((a, m) => a + m.G, 0);
+  const norm = Gtot > 0 ? 1 / Gtot : 0;
+
+  // componentes del espectro (área = fotones por par absorbido)
+  const G0 = linewidth(T), sig = S.sigma / 1000;
+  const comps = [];
+  nodes.forEach(s => {
+    if (s.id === 'IX') return;
+    if (!(s.PL > 0)) return;
+    let gam = G0, sg = sig, tail = 0;
+    if (s.id === 'T') { tail = kT * layers[s.layer].P.me / (layers[s.layer].P.me + layers[s.layer].P.mh); gam = G0 * 1.2; }
+    if (s.id === 'I') { gam = 0.035 + 3 * kT; sg = Math.max(sig, 0.01); }
+    comps.push({ id: s.id, layer: s.layer, E: s.E, A: s.PL * norm, gam, sig: sg, tail, f: s.f, N: s.N, kr: s.kr });
+  });
+  if (IXn && part) {
+    const sub = [
+      { id: 'IX', E: ix.E, n: part.nKK, k: ix.kIX, gam: G0 + 0.004, sg: Math.max(sig * 1.5, 0.004) },
+      { id: 'IXm', E: ix.E - ix.Etrap, n: part.nT, k: K_TRAP, gam: G0 + 0.002, sg: Math.max(sig, 0.006) },
+      { id: 'IXd', E: ix.E + ix.dKS, n: part.nD, k: K_IXD, gam: 0.02 + 2 * kT, sg: Math.max(sig, 0.008) },
+    ];
+    sub.forEach(o => { const PL = o.k * o.n; if (PL > 0) comps.push({ id: o.id, layer: -1, E: o.E, A: PL * norm, gam: o.gam, sig: o.sg, tail: 0, f: 0, N: o.n, kr: o.k }); });
+  }
+  // excitón B: luminiscencia caliente, proporcional a la emisión A de la misma capa (B/A empírico)
+  const RB = { MoS2: 0.12, MoSe2: 0.06, WS2: 0.02, WSe2: 0.02 };
+  layers.forEach((L, li) => {
+    if (!(EL > L.EB + 0.02)) return;
+    const Alayer = nodes.filter(s => s.layer === li && s.id !== 'I').reduce((a, s) => a + s.PL, 0) * norm;
+    const A = RB[L.key] * Alayer;
+    if (A > 0) comps.push({ id: 'B', layer: li, E: L.EB, A, gam: G0 + 0.02, sig, tail: 0, f: 0, N: 0, kr: 0 });
+  });
+  const totalPL = comps.reduce((a, c) => a + c.A, 0);
+  return { S, kap, T, kT, EL, knr, Gabs, layers, nodes, comps, ix, typeInfo, totalPL, yieldPL: Gtot > 0 ? totalPL : 0, Gtot };
+}
+
+// intensidad del IX contra T (para la gráfica de estabilidad)
+function ixVsT(S, Ts) {
+  return Ts.map(T => {
+    const R = model(Object.assign({}, S, { T }));
+    if (!R.ix) return null;
+    const p = R.ix.part, by = id => R.comps.filter(c => c.id === id).reduce((a, c) => a + c.A, 0);
+    const intra = R.comps.filter(c => c.layer >= 0).reduce((a, c) => a + c.A, 0);
+    return { T, IX: by('IX'), IXm: by('IXm'), IXd: by('IXd'), tot: by('IX') + by('IXm') + by('IXd'), intra,
+      fKK: p.nKK / p.N, fD: p.nD / p.N, fT: p.nT / p.N, fF: p.nF / p.N, N: p.N, knr: R.knr };
+  });
+}
+
+// forma de línea: pseudo-Voigt (Thompson) normalizada en área, con cola exponencial opcional
+function pvoigt(x, gam, sig) {
+  const fG = 2.35482 * Math.max(sig, 1e-6), fL = Math.max(gam, 1e-6);
+  const f = Math.pow(fG ** 5 + 2.69269 * fG ** 4 * fL + 2.42843 * fG ** 3 * fL ** 2 + 4.47163 * fG ** 2 * fL ** 3 + 0.07842 * fG * fL ** 4 + fL ** 5, 0.2);
+  const r = fL / f, eta = 1.36603 * r - 0.47719 * r * r + 0.11116 * r ** 3;
+  const L = (f / (2 * Math.PI)) / (x * x + f * f / 4), sg = f / 2.35482, Gs = Math.exp(-x * x / (2 * sg * sg)) / (sg * Math.sqrt(2 * Math.PI));
+  return eta * L + (1 - eta) * Gs;
+}
+function spectrum(R, Es) {
+  const dE = Es[1] - Es[0];
+  const out = R.comps.map(c => {
+    let y = Es.map(E => c.A * pvoigt(E - c.E, c.gam, c.sig));
+    if (c.tail > 0) {
+      const K = Math.min(Es.length, Math.ceil(8 * c.tail / dE)), ker = [];
+      for (let k = 0; k < K; k++) ker.push(Math.exp(-k * dE / c.tail));
+      const s = ker.reduce((a, b) => a + b, 0);
+      y = y.map((_, i) => { let v = 0; for (let k = 0; k < K && i + k < y.length; k++) v += y[i + k] * ker[k]; return v / s; });
+    }
+    // filtro de borde: nada por encima del láser
+    y = y.map((v, i) => Es[i] > R.EL - 0.012 ? 0 : v);
+    return { c, y };
+  });
+  const tot = Es.map((_, i) => out.reduce((a, o) => a + o.y[i], 0));
+  return { parts: out, tot };
+}
+
+// ---------- Raman ----------
+function ramanModes(R) {
+  const S = R.S, T = R.T, modes = [];
+  const n13 = S.n / 1e13, nD13 = S.nD / 1e13;
+  const addLayer = (key, nl, L, tag) => {
+    const m = MAT[key];
+    const Enear = [L.EX, L.EB];
+    m.raman.forEach(md => {
+      const w = nl === 2 ? md.w2 : md.w1; if (w == null) return;
+      let I = nl === 2 ? md.I2 : md.I1;
+      if (md.res) { const dE = Math.min(...Enear.map(e => Math.abs(R.EL - e))); I = md.res[0] + md.res[1] * Math.exp(-0.5 * (dE / 0.1) ** 2); }
+      if (I <= 0) return;
+      const pos = w + md.chi * (T - 300) + (md.dop || 0) * n13;
+      const G = Math.max(0.9, md.G + 0.004 * (T - 300) + (md.dopG || 0) * n13) + 1.0;
+      modes.push({ id: md.id, name: md.name, tag, key, w: pos, I: I * (nl === 2 ? 1.8 : 1), G });
+    });
+    // LA(M) activado por defectos
+    const main = m.raman.find(x => x.id === 'A1g');
+    const ILA = 0.25 * nD13 * main.I1;
+    if (ILA > 0.005) modes.push({ id: 'LA', name: 'LA(M)', tag, key, w: m.LA, I: ILA, G: 9 });
+    if (nl === 2) {
+      modes.push({ id: 'SM', name: 'C (corte)', tag, key, w: m.SM, I: 0.25, G: 1.4 });
+      modes.push({ id: 'LBM', name: 'LB (respiración)', tag, key, w: m.LBM, I: 0.35, G: 2.0 });
+    }
+  };
+  if (S.struct === '1L') addLayer(S.matA, 1, R.layers[0], '');
+  else if (S.struct === '2L') addLayer(S.matA, 2, R.layers[0], '');
+  else {
+    addLayer(S.matA, 1, R.layers[0], MAT[S.matA].label); addLayer(S.matB, 1, R.layers[1], MAT[S.matB].label);
+    const a = MAT[S.matA], b = MAT[S.matB];
+    const kLB = (a.LBM ** 2 * a.mArea / 2 + b.LBM ** 2 * b.mArea / 2) / 2, kSM = (a.SM ** 2 * a.mArea / 2 + b.SM ** 2 * b.mArea / 2) / 2;
+    const inv = 1 / a.mArea + 1 / b.mArea;
+    modes.push({ id: 'LBM', name: 'LB intercapa', tag: 'het', key: 'het', w: Math.sqrt(kLB * inv), I: 0.3, G: 2.5 });
+    const th = Math.min(S.twist, 60 - S.twist);
+    const Ism = 0.22 * Math.exp(-((th / 2.5) ** 2));
+    if (Ism > 0.01) modes.push({ id: 'SM', name: 'C intercapa', tag: 'het', key: 'het', w: Math.sqrt(kSM * inv), I: Ism, G: 1.6 });
+  }
+  if (S.si) modes.push({ id: 'Si', name: 'Si', tag: 'sustrato', key: 'Si', w: 520.7 - 0.022 * (T - 300), I: S.struct === '1L' ? 2.4 : 2.0, G: 3.6 });
+  return modes;
+}
+function ramanSpectrum(modes, xs) {
+  return xs.map(x => modes.reduce((a, m) => a + m.I * (m.G / 2) ** 2 / ((x - m.w) ** 2 + (m.G / 2) ** 2), 0));
+}
+
+// ===================== INTERFAZ =====================
+const $ = id => document.getElementById(id);
+const LASERS = [405, 457, 488, 532, 633];
+const litParams = k => ({ me: MAT[k].me, mh: MAT[k].mh, eps: MAT[k].eps, d: MAT[k].d, ebManual: null, ebMan: 0.3 });
+const DEF = () => ({ struct: '1L', matA: 'MoS2', matB: 'WSe2', twist: 0.5, P: 100, Emoire: 90, dKS: -10, epsTop: 1, epsBot: 3.9, si: true, T: 300, n: 1e12, nD: 1e12, sigma: 15, laser: 532,
+  params: [litParams('MoS2'), litParams('WSe2')], tab: 0, scale: 'lin' });
+const state = DEF();
+let refPL = null, refRam = null;
+
+const COLOR = { X: 'var(--s1)', T: 'var(--s2)', I: 'var(--s3)', B: 'var(--s4)', D: 'var(--s5)', IX: 'var(--s7)', IXm: 'var(--s8)', IXd: 'var(--s6)' };
+const CNAME = { X: 'excitón A (X)', T: 'trión (T)', I: 'indirecto (I)', B: 'excitón B', D: 'oscuro (D)', IX: 'intercapa libre (IX)', IXm: 'intercapa atrapado (IXₘ)', IXd: 'intercapa oscuro K–Σ' };
+
+// ---------- formato ----------
+const SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+const sup = s => String(s).split('').map(c => SUP[c] || c).join('');
+function sci(x, d) {
+  d = d === undefined ? 2 : d;
+  if (!isFinite(x) || x <= 0) return '≈ 0';
+  let e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e);
+  if (+m.toFixed(d) >= 10) { m /= 10; e += 1; }
+  if (e >= -2 && e <= 3) return String(+x.toPrecision(3));
+  return m.toFixed(d) + '×10' + sup(e);
+}
+const meV = x => (x * 1000).toFixed(0) + ' meV';
+const nm = E => (HBARC * 2 * Math.PI / E);
+function niceStep(span, target) { const raw = span / target, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+function wlColor(l) {
+  let r = 0, g = 0, b = 0;
+  if (l < 440) { r = -(l - 440) / 60; b = 1; } else if (l < 490) { g = (l - 440) / 50; b = 1; } else if (l < 510) { g = 1; b = -(l - 510) / 20; }
+  else if (l < 580) { r = (l - 510) / 70; g = 1; } else if (l < 645) { r = 1; g = -(l - 645) / 65; } else { r = 1; }
+  let f = l < 420 ? 0.4 + 0.6 * (l - 380) / 40 : l > 700 ? 0.4 + 0.6 * (780 - l) / 80 : 1; f = Math.max(0.25, Math.min(1, f));
+  const c = v => Math.round(235 * Math.pow(Math.max(0, v) * f, 0.8));
+  return `rgb(${c(r)},${Math.round(c(g) * 0.85)},${c(b)})`;
+}
+const layerName = (R, li) => li < 0 ? 'intercapa' : MAT[R.layers[li].key].label;
+const SHORT = { IXm: 'IXₘ', IXd: 'IX K–Σ' };
+const compLabel = (R, c) => (SHORT[c.id] || c.id) + (R.S.struct === 'het' && c.layer >= 0 ? ' ' + MAT[R.layers[c.layer].key].label : '');
+
+// ---------- controles ----------
+function segBuild(id, items) { $(id).innerHTML = items.map(([v, t]) => `<button type="button" data-v="${v}">${t}</button>`).join(''); }
+segBuild('matASeg', MAT_KEYS.map(k => [k, MAT[k].label]));
+segBuild('matBSeg', MAT_KEYS.map(k => [k, MAT[k].label]));
+$('laserGrid').innerHTML = LASERS.map(l => `<button type="button" class="laser" data-v="${l}"><i style="background:${wlColor(l)}"></i>${l}</button>`).join('');
+const press = (id, val) => document.querySelectorAll(`#${id} button`).forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(val))));
+const setRange = (id, v) => { if (+$(id).value !== v) $(id).value = v; };
+
+function sync() {
+  const S = state, p = S.params[S.tab];
+  press('structSeg', S.struct); press('matASeg', S.matA); press('matBSeg', S.matB); press('laserGrid', S.laser);
+  press('tabSeg', S.tab); press('ebSeg', p.ebManual != null ? 'man' : 'calc'); press('scaleSeg', S.scale);
+  const het = S.struct === 'het';
+  $('matBField').hidden = !het; $('twistBlock').hidden = !het; $('moireBlock').hidden = !het; $('dKSBlock').hidden = !het;
+  document.querySelector('#tabSeg button[data-v="1"]').disabled = !het;
+  document.querySelector('#tabSeg button[data-v="1"]').style.opacity = het ? 1 : 0.35;
+  if (!het && S.tab === 1) S.tab = 0;
+  document.querySelectorAll('#envChips button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.top === S.epsTop && +b.dataset.bot === S.epsBot)));
+  setRange('twist', S.twist); $('twistVal').textContent = S.twist.toFixed(S.twist % 1 ? 2 : 0) + '°';
+  setRange('epsTop', S.epsTop); $('epsTopVal').textContent = S.epsTop.toFixed(1);
+  setRange('epsBot', S.epsBot); $('epsBotVal').textContent = S.epsBot.toFixed(1);
+  $('siChk').checked = S.si;
+  setRange('T', S.T); $('TVal').textContent = S.T + ' K';
+  setRange('n', Math.log10(S.n)); $('nVal').textContent = sci(S.n, 1) + ' cm⁻²';
+  setRange('nD', Math.log10(S.nD)); $('nDVal').textContent = sci(S.nD, 1) + ' cm⁻²';
+  setRange('sigma', S.sigma); $('sigVal').textContent = S.sigma.toFixed(1) + ' meV';
+  setRange('P', Math.log10(S.P)); $('PVal').textContent = (S.P >= 1 ? sci(S.P, 1) : S.P.toFixed(2)) + ' W/cm²';
+  setRange('Em', S.Emoire); $('EmVal').textContent = S.Emoire.toFixed(0) + ' meV';
+  setRange('dKS', S.dKS); $('dKSVal').textContent = (S.dKS > 0 ? '+' : '') + S.dKS.toFixed(0) + ' meV';
+  setRange('me', p.me); $('meVal').textContent = p.me.toFixed(2);
+  setRange('mh', p.mh); $('mhVal').textContent = p.mh.toFixed(2);
+  setRange('eps', p.eps); $('epsVal').textContent = p.eps.toFixed(1);
+  setRange('eb', p.ebMan); $('ebVal').textContent = meV(p.ebMan);
+  $('ebBlock').classList.toggle('disabled', p.ebManual == null); $('eb').disabled = p.ebManual == null;
+}
+
+// ---------- espectro de PL ----------
+let plData = null;
+function drawPL(R) {
+  const W = 960, H = 400, L = 78, Rm = 20, T = 40, B = 46, w = W - L - Rm, h = H - T - B;
+  const Es0 = R.comps.map(c => c.E);
+  let lo = Math.min(...Es0) - 0.17, hi = Math.max(...Es0) + 0.10;
+  if (refPL) { lo = Math.min(lo, refPL.lo); hi = Math.max(hi, refPL.hi); }
+  if (hi - lo < 0.4) { const m = (hi + lo) / 2; lo = m - 0.2; hi = m + 0.2; }
+  const NP = 1800, Es = Array.from({ length: NP }, (_, i) => lo + (hi - lo) * i / (NP - 1));
+  const sp = spectrum(R, Es);
+  const refY = refPL ? Es.map(E => interp(refPL.Es, refPL.tot, E)) : null;
+  let ymax = Math.max(...sp.tot, refY ? Math.max(...refY) : 0) * 1.12 || 1;
+  const logm = state.scale === 'log';
+  const ymin = ymax / 1e4;
+  const X = E => L + (E - lo) / (hi - lo) * w;
+  const Y = v => logm ? T + h - Math.max(0, Math.min(1, (Math.log10(Math.max(v, ymin)) - Math.log10(ymin)) / (Math.log10(ymax) - Math.log10(ymin)))) * h : T + h - Math.min(v / ymax, 1.02) * h;
+  const s = [];
+  // ejes
+  const st = niceStep(hi - lo, 8);
+  for (let E = Math.ceil(lo / st) * st; E <= hi + 1e-9; E += st) {
+    s.push(`<line x1="${X(E)}" x2="${X(E)}" y1="${T}" y2="${T + h}" stroke="var(--border)"/>`);
+    s.push(`<text class="tick" x="${X(E)}" y="${T + h + 16}" text-anchor="middle">${E.toFixed(st < 0.1 ? 2 : 1)}</text>`);
+  }
+  // eje superior en nm
+  const lHi = nm(lo), lLo = nm(hi), stn = niceStep(lHi - lLo, 7);
+  for (let l = Math.ceil(lLo / stn) * stn; l <= lHi; l += stn) {
+    const x = X(HBARC * 2 * Math.PI / l);
+    s.push(`<line x1="${x}" x2="${x}" y1="${T - 4}" y2="${T}" stroke="var(--text-faint)"/>`);
+    s.push(`<text class="tick" x="${x}" y="${T - 8}" text-anchor="middle">${l.toFixed(0)}</text>`);
+  }
+  s.push(`<text class="axis-label" x="${L + w}" y="${T - 22}" text-anchor="end">longitud de onda (nm)</text>`);
+  s.push(`<line x1="${L}" x2="${L + w}" y1="${T + h}" y2="${T + h}" stroke="var(--text-faint)"/>`);
+  s.push(`<line x1="${L}" x2="${L + w}" y1="${T}" y2="${T}" stroke="var(--border)"/>`);
+  s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 8}" text-anchor="middle">energía del fotón (eV)</text>`);
+  if (logm) { for (let e = 0; e <= 4; e++) { const v = ymin * Math.pow(10, e); s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--border)" stroke-dasharray="2 3"/>`); s.push(`<text class="tick" x="${L - 6}" y="${Y(v) + 3}" text-anchor="end">${sci(v, 0)}</text>`); } }
+  else { for (let k = 0; k <= 4; k++) { const v = ymax / 1.12 * k / 4; s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--border)" stroke-dasharray="${k ? '2 3' : ''}"/>`); s.push(`<text class="tick" x="${L - 6}" y="${Y(v) + 3}" text-anchor="end">${k ? sci(v, 1) : '0'}</text>`); } }
+  s.push(`<text class="axis-label" transform="translate(14 ${T + h / 2}) rotate(-90)" text-anchor="middle">intensidad (fotones por par absorbido·eV⁻¹)</text>`);
+  // láser
+  if (R.EL < hi + 0.3) {
+    const xl = X(Math.min(R.EL, hi));
+    if (R.EL <= hi) s.push(`<rect x="${X(R.EL - 0.012)}" y="${T}" width="${Math.max(0, xl - X(R.EL - 0.012))}" height="${h}" fill="var(--text-faint)" opacity="0.10"/>`);
+    if (R.EL <= hi) s.push(`<line x1="${xl}" x2="${xl}" y1="${T}" y2="${T + h}" stroke="${wlColor(state.laser)}" stroke-width="3"/>`);
+    s.push(`<text class="lvl" x="${Math.min(xl, L + w) - 6}" y="${T + 14}" text-anchor="end" fill="var(--text-muted)">${R.EL <= hi ? 'láser ' : 'láser → '}${state.laser} nm, filtrado</text>`);
+  }
+  s.push(`<clipPath id="plc"><rect x="${L}" y="${T}" width="${w}" height="${h}"/></clipPath>`);
+  const path = ys => ys.map((v, i) => `${i ? 'L' : 'M'}${X(Es[i]).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+  if (refY) s.push(`<path clip-path="url(#plc)" d="${path(refY)}" fill="none" stroke="var(--text-faint)" stroke-width="1.6" stroke-dasharray="6 4"/>`);
+  // componentes
+  sp.parts.forEach(({ c, y }) => {
+    const col = COLOR[c.id];
+    const dash = R.S.struct === 'het' && c.layer === 1 ? 'stroke-dasharray="6 3"' : '';
+    if (!logm) s.push(`<path clip-path="url(#plc)" d="${path(y)} L${X(hi)},${Y(0)} L${X(lo)},${Y(0)}Z" fill="${col}" opacity="0.10"/>`);
+    s.push(`<path clip-path="url(#plc)" d="${path(y)}" fill="none" stroke="${col}" stroke-width="1.8" ${dash}/>`);
+  });
+  s.push(`<path clip-path="url(#plc)" d="${path(sp.tot)}" fill="none" stroke="var(--text)" stroke-width="2.4"/>`);
+  // etiquetas directas en los picos más visibles
+  const labs = sp.parts.map(({ c, y }) => { let im = 0; y.forEach((v, i) => { if (v > y[im]) im = i; }); return { c, x: X(Es[im]), y: Y(y[im]), v: y[im] }; })
+    .filter(o => o.v > (logm ? ymin * 3 : ymax * 0.035)).sort((a, b) => b.v - a.v).slice(0, 7).sort((a, b) => a.x - b.x);
+  const placed = [];
+  labs.forEach(o => {
+    let ly = o.y - 10;
+    placed.forEach(p => { if (Math.abs(p.x - o.x) < 70 && Math.abs(p.y - ly) < 14) ly = p.y - 15; });
+    ly = Math.max(T + 26, ly);
+    placed.push({ x: o.x, y: ly });
+    s.push(`<text class="plabel" x="${o.x}" y="${ly}" text-anchor="middle"><tspan fill="${COLOR[o.c.id]}">●</tspan> ${compLabel(R, o.c)} ${o.c.E.toFixed(3)}</text>`);
+  });
+  s.push(`<rect id="plHit" x="${L}" y="${T}" width="${w}" height="${h}" fill="transparent"/>`);
+  $('pl').innerHTML = s.join('');
+  plData = { Es, sp, X, L, w, lo, hi, R };
+  // leyenda
+  const ids = [...new Set(R.comps.map(c => c.id + '|' + c.layer))];
+  $('plLegend').innerHTML = `<span><i class="sw" style="border-color:var(--text)"></i>total</span>` + ids.map(k => { const [id, la] = k.split('|'); const dashed = R.S.struct === 'het' && +la === 1;
+    return `<span><i class="sw" style="border-color:${COLOR[id]};${dashed ? 'border-top-style:dashed' : ''}"></i>${CNAME[id]}${R.S.struct === 'het' && +la >= 0 ? ' · ' + MAT[R.layers[+la].key].label : ''}</span>`; }).join('') + (refPL ? `<span><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>referencia: ${refPL.label}</span>` : '');
+  return sp;
+}
+function interp(xs, ys, x) { if (x <= xs[0] || x >= xs[xs.length - 1]) return 0; let lo = 0, hi = xs.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (xs[m] > x) hi = m; else lo = m; } const t = (x - xs[lo]) / (xs[hi] - xs[lo]); return ys[lo] * (1 - t) + ys[hi] * t; }
+
+// ---------- alineación de bandas ----------
+function drawBand(R) {
+  const W = 560, H = 440, L = 58, Rm = 16, T = 30, B = 30, s = [];
+  const Ls = R.layers;
+  const cbs = Ls.map(l => l.CB), vbs = Ls.map(l => l.VB);
+  let top = Math.max(...cbs) + 0.45, bot = Math.min(...vbs) - 0.45;
+  const Y = E => T + (top - E) / (top - bot) * (H - T - B);
+  const st = 0.5;
+  for (let E = Math.ceil(bot / st) * st; E <= top; E += st) { s.push(`<line x1="${L}" x2="${W - Rm}" y1="${Y(E)}" y2="${Y(E)}" stroke="var(--border)" stroke-dasharray="2 4"/>`); s.push(`<text class="tick" x="${L - 6}" y="${Y(E) + 3}" text-anchor="end">${E.toFixed(1)}</text>`); }
+  s.push(`<text class="axis-label" transform="translate(14 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle">energía respecto al vacío (eV)</text>`);
+  const ncol = Ls.length, gapX = R.S.struct === 'het' ? 70 : 0, colW = R.S.struct === 'het' ? 150 : 210;
+  const total = ncol * colW + (ncol - 1) * gapX, x0 = L + (W - Rm - L - total) / 2 + 10;
+  const cols = [];
+  Ls.forEach((l, i) => {
+    const xa = x0 + i * (colW + gapX), xb = xa + colW;
+    cols.push({ xa, xb });
+    s.push(`<rect x="${xa}" y="${T}" width="${colW}" height="${Y(l.CB) - T}" fill="var(--cb)"/>`);
+    s.push(`<rect x="${xa}" y="${Y(l.VB)}" width="${colW}" height="${H - B - Y(l.VB)}" fill="var(--vb)"/>`);
+    s.push(`<line x1="${xa}" x2="${xb}" y1="${Y(l.CB)}" y2="${Y(l.CB)}" stroke="var(--cb-line)" stroke-width="2.5"/>`);
+    s.push(`<line x1="${xa}" x2="${xb}" y1="${Y(l.VB)}" y2="${Y(l.VB)}" stroke="var(--vb-line)" stroke-width="2.5"/>`);
+    s.push(`<text class="plabel" x="${(xa + xb) / 2}" y="${T - 10}" text-anchor="middle">${MAT[l.key].label}${R.S.struct === '2L' ? ' bicapa' : ''}</text>`);
+    s.push(`<text class="lvl" x="${xb - 4}" y="${Y(l.CB) - 5}" text-anchor="end" fill="var(--cb-line)">E_c ${l.CB.toFixed(2)}</text>`);
+    s.push(`<text class="lvl" x="${xb - 4}" y="${Y(l.VB) + 14}" text-anchor="end" fill="var(--vb-line)">E_v ${l.VB.toFixed(2)}</text>`);
+    // nivel del excitón
+    const yx = Y(l.VB + l.EX);
+    s.push(`<line x1="${xa + 8}" x2="${xb - 8}" y1="${yx}" y2="${yx}" stroke="var(--s1)" stroke-width="1.6" stroke-dasharray="4 3"/>`);
+    const xm = xa + 26;
+    s.push(`<line x1="${xm}" x2="${xm}" y1="${Y(l.CB)}" y2="${yx}" stroke="var(--copper)" stroke-width="1.4"/>`);
+    s.push(`<text class="lvl" x="${xm + 5}" y="${(Y(l.CB) + yx) / 2 + 4}" fill="var(--copper)">E_b ${meV(l.eb)}</text>`);
+    s.push(`<text class="lvl" x="${xa + 8}" y="${yx + 13}" fill="var(--s1)">X ${l.EX.toFixed(3)} eV</text>`);
+    s.push(`<text class="lvl" x="${i === 1 ? xb - 6 : xa + 6}" y="${Y(l.VB) - 8}" text-anchor="${i === 1 ? 'end' : 'start'}" fill="var(--text-muted)">E_g ${l.EgQP.toFixed(2)} eV</text>`);
+    if (R.S.struct === '2L') {
+      const dI = MAT[l.key].dI, yG = Y(l.VB + 0.6 * dI), yL = Y(l.CB - 0.4 * dI);
+      s.push(`<line x1="${xa + colW * 0.55}" x2="${xb}" y1="${yG}" y2="${yG}" stroke="var(--vb-line)" stroke-width="1.6" stroke-dasharray="5 3"/>`);
+      s.push(`<line x1="${xa + colW * 0.55}" x2="${xb}" y1="${yL}" y2="${yL}" stroke="var(--cb-line)" stroke-width="1.6" stroke-dasharray="5 3"/>`);
+      s.push(`<text class="lvl" x="${xa + colW * 0.55 - 4}" y="${yG + 4}" text-anchor="end" fill="var(--vb-line)">Γ</text>`);
+      s.push(`<text class="lvl" x="${xa + colW * 0.55 - 4}" y="${yL + 4}" text-anchor="end" fill="var(--cb-line)">Λ</text>`);
+    }
+  });
+  let cap = '';
+  if (R.S.struct === 'het') {
+    const ti = R.typeInfo, [cA, cB] = cols;
+    const xm = (cA.xb + cB.xa) / 2;
+    // CBO y VBO
+    s.push(`<line x1="${xm}" x2="${xm}" y1="${Y(R.layers[0].CB)}" y2="${Y(R.layers[1].CB)}" stroke="var(--cb-line)" stroke-width="1.2"/>`);
+    s.push(`<text class="lvl" x="${xm}" y="${Math.min(Y(R.layers[0].CB), Y(R.layers[1].CB)) - 22}" text-anchor="middle" fill="var(--cb-line)">CBO ${meV(ti.CBO)}</text>`);
+    s.push(`<line x1="${xm}" x2="${xm}" y1="${Y(R.layers[0].VB)}" y2="${Y(R.layers[1].VB)}" stroke="var(--vb-line)" stroke-width="1.2"/>`);
+    s.push(`<text class="lvl" x="${xm}" y="${Math.max(Y(R.layers[0].VB), Y(R.layers[1].VB)) + 30}" text-anchor="middle" fill="var(--vb-line)">VBO ${meV(ti.VBO)}</text>`);
+    if (ti.type === 'II' && R.ix) {
+      const ce = cols[R.ix.cbL], ch = cols[R.ix.vbL];
+      const xe = R.ix.cbL === 0 ? ce.xb - 18 : ce.xa + 18, xh = R.ix.vbL === 0 ? ch.xb - 18 : ch.xa + 18;
+      const ye = Y(R.layers[R.ix.cbL].CB) + 2, yh = Y(R.layers[R.ix.vbL].VB) - 2;
+      s.push(`<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`);
+      s.push(`<line x1="${xe}" x2="${xh}" y1="${ye}" y2="${yh}" stroke="var(--s7)" stroke-width="2.4" marker-end="url(#ar)"/>`);
+      s.push(`<circle cx="${xe}" cy="${ye + 5}" r="4.5" fill="var(--cb-line)"/><circle cx="${xh}" cy="${yh - 5}" r="4.5" fill="var(--surface)" stroke="var(--vb-line)" stroke-width="1.8"/>`);
+      const lft = xe < xh;
+      s.push(`<text class="plabel" x="${(xe + xh) / 2 + (lft ? -10 : 10)}" y="${(ye + yh) / 2}" text-anchor="${lft ? 'end' : 'start'}" fill="var(--s7)">IX ${R.ix.E.toFixed(3)} eV</text>`);
+      cap = `Tipo II: el electrón baja a ${MAT[R.layers[R.ix.cbL].key].label} y el hueco sube a ${MAT[R.layers[R.ix.vbL].key].label}. E_IX = E_c − E_v − E_b,IX = ${R.ix.gap.toFixed(3)} − ${R.ix.eb.toFixed(3)} = ${R.ix.E.toFixed(3)} eV.`;
+    } else cap = `Tipo I: el mínimo de la banda de conducción y el máximo de la de valencia están en la misma capa; los pares se transfieren a la de menor gap y no hay excitón intercapa.`;
+    $('bandNote').textContent = `heteroestructura tipo ${ti.type}`;
+  } else if (R.S.struct === '2L') {
+    cap = `En la bicapa el máximo de valencia pasa a Γ y el mínimo de conducción a Λ (líneas discontinuas): el gap fundamental es indirecto y el pico I aparece ${meV(MAT[R.layers[0].key].dI)} por debajo del excitón A.`;
+    $('bandNote').textContent = 'gap indirecto';
+  } else {
+    cap = `La línea discontinua azul es el excitón: queda E_b por debajo del borde de conducción. Un entorno con más κ baja E_c y sube E_v (el gap se cierra), pero también reduce E_b.`;
+    $('bandNote').textContent = `κ = ${R.kap.toFixed(2)}`;
+  }
+  $('band').innerHTML = s.join('');
+  $('bandCap').textContent = cap;
+}
+
+// ---------- potencial del excitón ----------
+function drawExc(R) {
+  const W = 560, H = 440, L = 56, Rm = 70, T = 20, B = 40, w = W - L - Rm, h = H - T - B, s = [];
+  const li = Math.min(state.tab, R.layers.length - 1), Ly = R.layers[li], sol = Ly.sol;
+  const E1 = sol.E[0];
+  const rmaxP = Math.min(20, Math.max(3, 5 * sol.rrms));
+  const ymin = Math.min(1.6 * E1, R.ix ? 1.6 * R.ix.sol.E[0] : 0), ymax = 0.06 * Math.abs(ymin);
+  const X = r => L + r / rmaxP * w, Y = E => T + (ymax - E) / (ymax - ymin) * h;
+  const st = niceStep(rmaxP, 6);
+  for (let r = 0; r <= rmaxP + 1e-9; r += st) { s.push(`<line x1="${X(r)}" x2="${X(r)}" y1="${T}" y2="${T + h}" stroke="var(--border)"/>`); s.push(`<text class="tick" x="${X(r)}" y="${T + h + 15}" text-anchor="middle">${+r.toPrecision(3)}</text>`); }
+  const se = niceStep(ymax - ymin, 6);
+  for (let E = Math.ceil(ymin / se) * se; E <= ymax; E += se) { s.push(`<text class="tick" x="${L - 6}" y="${Y(E) + 3}" text-anchor="end">${(E * 1000).toFixed(0)}</text>`); }
+  s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--text-faint)"/>`);
+  s.push(`<text class="lvl" x="${L + w + 4}" y="${Y(0) + 4}" fill="var(--text-faint)">continuo</text>`);
+  s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 6}" text-anchor="middle">separación electrón–hueco r (nm)</text>`);
+  s.push(`<text class="axis-label" transform="translate(13 ${T + h / 2}) rotate(-90)" text-anchor="middle">energía (meV)</text>`);
+  s.push(`<clipPath id="excClip"><rect x="${L}" y="${T}" width="${w}" height="${h}"/></clipPath>`);
+  const NP = 240, pts = (fn) => Array.from({ length: NP }, (_, i) => { const r = 0.01 + rmaxP * i / (NP - 1); return `${i ? 'L' : 'M'}${X(r).toFixed(1)},${Y(fn(r)).toFixed(1)}`; }).join('');
+  const kap = R.kap;
+  s.push(`<path clip-path="url(#excClip)" d="${pts(r => -E2 / (kap * r))}" fill="none" stroke="var(--text-faint)" stroke-width="1.5" stroke-dasharray="5 4"/>`);
+  s.push(`<path clip-path="url(#excClip)" d="${pts(r => VKel(r, Ly.r0eff, kap))}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>`);
+  // densidad radial del 1s
+  const P = sol.P; let pm = 0; for (let i = 0; i < sol.N; i++) if (sol.r[i] < rmaxP && P[i] > pm) pm = P[i];
+  const amp = 0.45 * Math.abs(E1);
+  let d = `M${X(0)},${Y(E1)}`;
+  for (let i = 0; i < sol.N; i += 3) { if (sol.r[i] > rmaxP) break; d += ` L${X(sol.r[i]).toFixed(1)},${Y(E1 + amp * P[i] / pm).toFixed(1)}`; }
+  d += ` L${X(Math.min(rmaxP, sol.r[sol.N - 1]))},${Y(E1)} Z`;
+  s.push(`<path clip-path="url(#excClip)" d="${d}" fill="var(--copper)" opacity="0.18"/>`);
+  // niveles
+  const names = ['1s', '2s', '3s'];
+  const mu = Ly.mu, Ryd = RY * mu / (kap * kap);
+  sol.E.forEach((E, k) => {
+    s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(E)}" y2="${Y(E)}" stroke="var(--copper)" stroke-width="${k ? 1.2 : 2}"/>`);
+    s.push(`<text class="lvl" x="${L + w + 4}" y="${Y(E) + 4}" fill="var(--copper)">${names[k]} ${(E * 1000).toFixed(0)}</text>`);
+    const EH = -Ryd / ((k + 0.5) ** 2);
+    if (EH > ymin) { s.push(`<line x1="${L + w - 14}" x2="${L + w}" y1="${Y(EH)}" y2="${Y(EH)}" stroke="var(--text-faint)" stroke-width="2"/>`); }
+  });
+  s.push(`<text class="tick" x="${L + w - 7}" y="${T + 10}" text-anchor="middle">H₂D</text>`);
+  if (Ly.P.ebManual != null) {
+    s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(-Ly.eb)}" y2="${Y(-Ly.eb)}" stroke="var(--s2)" stroke-width="1.6" stroke-dasharray="3 3"/>`);
+    s.push(`<text class="lvl" x="${L + 6}" y="${Y(-Ly.eb) - 5}" fill="var(--s2)">E_b manual ${meV(Ly.eb)}</text>`);
+  }
+  if (R.ix && R.ix.E) {
+    const dil = R.ix.dil, r0 = R.layers[0].r0 + R.layers[1].r0;
+    s.push(`<path clip-path="url(#excClip)" d="${pts(r => VKel(Math.sqrt(r * r + dil * dil), r0, kap))}" fill="none" stroke="var(--s7)" stroke-width="2" stroke-dasharray="2 3"/>`);
+    const Ei = R.ix.sol.E[0];
+    s.push(`<line x1="${L + w * 0.45}" x2="${L + w}" y1="${Y(Ei)}" y2="${Y(Ei)}" stroke="var(--s7)" stroke-width="1.6"/>`);
+    s.push(`<text class="lvl" x="${L + w * 0.45}" y="${Y(Ei) - 5}" fill="var(--s7)">IX 1s ${(Ei * 1000).toFixed(0)}</text>`);
+  }
+  $('ixLeg').hidden = !R.ix;
+  $('exc').innerHTML = s.join('');
+  $('excNote').textContent = `${MAT[Ly.key].label} · μ = ${mu.toFixed(3)} m₀ · r₀ = ${Ly.r0eff.toFixed(2)} nm · κ = ${kap.toFixed(2)}`;
+  const EH1 = -Ryd / 0.25;
+  $('excCap').textContent = `Cerca del excitón el potencial crece como ln r, no como 1/r: el apantallamiento del propio TMD debilita la atracción a corta distancia. Por eso E_1s = ${meV(-E1)} queda muy por debajo del hidrógeno 2D con la misma κ (${meV(-EH1)}), mientras que 2s y 3s, más extensos, se acercan a la serie hidrogénica (marcas grises a la derecha). La sombra es la densidad radial 2πr|ψ₁ₛ|².`;
+}
+
+// ---------- Raman ----------
+let ramData = null;
+function drawRam(R) {
+  const W = 960, H = 340, L = 56, Rm = 20, T = 18, B = 42, w = W - L - Rm, h = H - T - B;
+  const modes = ramanModes(R);
+  const lo = 0, hi = 560, NP = 1400, xs = Array.from({ length: NP }, (_, i) => lo + (hi - lo) * i / (NP - 1));
+  const ys = ramanSpectrum(modes, xs).map((v, i) => xs[i] < 7 ? 0 : v);
+  const refY = refRam ? refRam.ys : null;
+  const ymax = Math.max(...ys, refY ? Math.max(...refY) : 0) * 1.22 || 1;
+  const X = x => L + (x - lo) / (hi - lo) * w, Y = v => T + h - Math.min(v / ymax, 1.02) * h;
+  const s = [];
+  s.push(`<rect x="${X(0)}" y="${T}" width="${X(8) - X(0)}" height="${h}" fill="var(--text-faint)" opacity="0.15"/>`);
+  s.push(`<text class="tick" x="${X(9)}" y="${T + h - 6}">filtro</text>`);
+  for (let x = 0; x <= hi; x += 50) { s.push(`<line x1="${X(x)}" x2="${X(x)}" y1="${T}" y2="${T + h}" stroke="var(--border)"/>`); s.push(`<text class="tick" x="${X(x)}" y="${T + h + 15}" text-anchor="middle">${x}</text>`); }
+  s.push(`<line x1="${L}" x2="${L + w}" y1="${T + h}" y2="${T + h}" stroke="var(--text-faint)"/>`);
+  s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 6}" text-anchor="middle">corrimiento Raman (cm⁻¹)</text>`);
+  s.push(`<text class="axis-label" transform="translate(14 ${T + h / 2}) rotate(-90)" text-anchor="middle">intensidad (u. a.)</text>`);
+  const path = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${X(xs[i]).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+  if (refY) s.push(`<path d="${path(refY)}" fill="none" stroke="var(--text-faint)" stroke-width="1.5" stroke-dasharray="6 4"/>`);
+  s.push(`<path d="${path(ys)} L${X(hi)},${Y(0)} L${X(lo)},${Y(0)}Z" fill="var(--accent)" opacity="0.10"/>`);
+  s.push(`<path d="${path(ys)}" fill="none" stroke="var(--accent)" stroke-width="2"/>`);
+  // etiquetas
+  const lab = modes.filter(m => m.I >= 0.05).map(m => ({ m, x: X(m.w), y: Y(ramanSpectrum(modes, [m.w])[0]) })).sort((a, b) => a.x - b.x);
+  const placed = [];
+  lab.forEach(o => {
+    let ly = o.y - 8;
+    for (const p of placed) if (Math.abs(p.x - o.x) < 62 && Math.abs(p.y - ly) < 26) ly = p.y - 26;
+    ly = Math.max(T + 22, ly);
+    placed.push({ x: o.x, y: ly });
+    const tag = o.m.tag && o.m.tag !== 'het' && o.m.tag !== 'sustrato' ? ' · ' + o.m.tag : '';
+    s.push(`<text class="plabel" x="${o.x}" y="${ly - 12}" text-anchor="middle">${o.m.name}${tag}</text>`);
+    s.push(`<text class="tick" x="${o.x}" y="${ly}" text-anchor="middle">${o.m.w.toFixed(1)}</text>`);
+  });
+  s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="transparent"/>`);
+  $('ram').innerHTML = s.join('');
+  ramData = { xs, ys, modes, X, L, w, lo, hi };
+  // nota y pie
+  const S = R.S;
+  let note = `láser ${S.laser} nm (${R.EL.toFixed(2)} eV)`, cap = '';
+  const m0 = MAT[S.matA];
+  const A = modes.find(m => m.id === 'A1g' && (m.key === S.matA)), E = modes.find(m => m.id === 'E2g' && (m.key === S.matA));
+  if (S.struct !== 'het' && A && E && (S.matA === 'MoS2' || S.matA === 'WS2')) {
+    const dw = A.w - E.w;
+    note += ` · Δω = ${dw.toFixed(1)} cm⁻¹`;
+    cap = `Δω = A₁g − E¹₂g = ${dw.toFixed(1)} cm⁻¹. ${S.matA === 'MoS2' ? 'En MoS₂, Δω ≈ 19 cm⁻¹ indica monocapa y ≈ 22 cm⁻¹ bicapa.' : 'En WS₂ la separación crece de ≈ 61 a ≈ 63 cm⁻¹ de 1L a 2L.'} `;
+  } else if (S.struct === 'het') {
+    cap = `Cada capa conserva sus modos de monocapa. Los modos intercapa de baja frecuencia (por debajo de 50 cm⁻¹) solo aparecen si la interfaz está acoplada; el de corte (C) se apaga al girar las capas porque pierde el registro atómico.`;
+  } else cap = `En ${m0.label} el modo dominante es A₁g; ${S.struct === '2L' ? 'el modo B¹₂g y los de baja frecuencia (corte C y respiración LB) solo existen con dos o más capas.' : 'en la bicapa aparecerán B¹₂g y los modos de baja frecuencia.'} `;
+  if (S.struct !== 'het') {
+    const sm = modes.find(m => m.id === 'SM');
+    if (sm) cap += ` Cadena lineal: ω_C(N) = ω_C(∞)·√(1 + cos(π/N))/√2 → ω_C(2) = ${sm.w.toFixed(1)} cm⁻¹.`;
+  }
+  if (S.n >= 3e12) cap += ` Con n = ${sci(S.n, 1)} cm⁻² el A₁g se suaviza y ensancha (acoplamiento electrón–fonón); el E¹₂g casi no se mueve.`;
+  if (S.nD >= 2e12) cap += ` El modo LA(M) crece con los defectos (n_D = ${sci(S.nD, 1)} cm⁻²).`;
+  $('ramNote').textContent = note;
+  $('ramCap').textContent = cap;
+  return { xs, ys };
+}
+
+// ---------- tabla de estados ----------
+function drawStates(R) {
+  const rows = R.nodes.filter(s => s.id !== 'IX').slice().sort((a, b) => b.E - a.E);
+  const totPL = R.totalPL || 1;
+  const Ntot = R.nodes.reduce((a, s) => a + s.N, 0) || 1;
+  let ixRows = '';
+  if (R.ix && R.ix.part) {
+    const p = R.ix.part, byc = id => (R.comps.find(c => c.id === id) || { A: 0 }).A;
+    const row = (id, name, E, n, k, A) => `<tr><td><i class="dot" style="background:${id ? COLOR[id] : 'var(--gray)'}"></i>${name}</td><td>${E == null ? '—' : E.toFixed(3)}</td><td>${(100 * n / Ntot).toPrecision(2)} %</td><td>${k ? sci(k, 1) : '—'}</td><td><i class="bar" style="width:${Math.max(1, 60 * A / totPL).toFixed(0)}px"></i>${(100 * A / totPL).toPrecision(2)} %</td></tr>`;
+    ixRows = row('IX', CNAME.IX, R.ix.E, p.nKK, R.ix.kIX, byc('IX')) + row('IXm', CNAME.IXm, R.ix.E - R.ix.Etrap, p.nT, K_TRAP, byc('IXm')) + row('IXd', CNAME.IXd, R.ix.E + R.ix.dKS, p.nD, K_IXD, byc('IXd')) + row(null, 'pares ionizados (Saha)', null, p.nF, 0, 0);
+  }
+  $('stTable').querySelector('tbody').innerHTML = ixRows + rows.map(s => {
+    const name = CNAME[s.id] + (R.S.struct === 'het' && s.layer >= 0 ? ' · ' + MAT[R.layers[s.layer].key].label : '');
+    const pl = s.PL / totPL;
+    return `<tr><td><i class="dot" style="background:${COLOR[s.id]}"></i>${name}</td><td>${s.E.toFixed(3)}</td><td>${(100 * s.N / Ntot).toPrecision(2)} %</td><td>${sci(s.kr, 1)}</td><td><i class="bar" style="width:${Math.max(1, 60 * pl).toFixed(0)}px"></i>${(100 * pl).toPrecision(2)} %</td></tr>`;
+  }).join('') + R.comps.filter(c => c.id === 'B').map(c => `<tr><td><i class="dot" style="background:${COLOR.B}"></i>excitón B (caliente)${R.S.struct === 'het' ? ' · ' + MAT[R.layers[c.layer].key].label : ''}</td><td>${c.E.toFixed(3)}</td><td>—</td><td>—</td><td><i class="bar" style="width:${Math.max(1, 60 * c.A / totPL).toFixed(0)}px"></i>${(100 * c.A / totPL).toPrecision(2)} %</td></tr>`).join('');
+  $('knrTxt').textContent = sci(R.knr, 1) + ' s⁻¹ (incluye la activación térmica)';
+  $('stNote').textContent = `${R.T} K · kT = ${(R.kT * 1000).toFixed(1)} meV`;
+}
+
+// ---------- ecuaciones ----------
+function drawEq(R) {
+  const li = Math.min(state.tab, R.layers.length - 1), Ly = R.layers[li], P = Ly.P, m = MAT[Ly.key];
+  const lines = [];
+  const H = t => lines.push(`<p class="eq-h">${t}</p>`), Q = t => lines.push(`<div class="eq-line">${t}</div>`);
+  H(`Potencial de Rytova–Keldysh · ${m.label}`);
+  Q(`V(r) = −(e²/8ε₀r₀)·[H₀(κr/r₀) − Y₀(κr/r₀)]`);
+  Q(`r₀ = d(ε∥ − 1)/2 = ${P.d.toFixed(3)}·(${P.eps.toFixed(1)} − 1)/2 = ${Ly.r0.toFixed(2)} nm${Ly.r0eff > Ly.r0 + 1e-6 ? `   (+ ½ r₀ de la otra capa → ${Ly.r0eff.toFixed(2)} nm)` : ''}`);
+  Q(`κ = (ε_sup + ε_inf)/2 = (${state.epsTop.toFixed(1)} + ${state.epsBot.toFixed(1)})/2 = ${R.kap.toFixed(2)}`);
+  H('Ecuación de Schrödinger radial (m = 0)');
+  Q(`−(ħ²/2μ)(R″ + R′/r) + V(r)R = E R,   μ = mₑmₕ/(mₑ + mₕ) = ${P.me.toFixed(2)}·${P.mh.toFixed(2)}/${(P.me + P.mh).toFixed(2)} = ${Ly.mu.toFixed(3)} m₀`);
+  Q(`E₁ₛ = <span class="hi">${(Ly.sol.E[0] * 1000).toFixed(0)} meV</span>   E₂ₛ = ${(Ly.sol.E[1] * 1000).toFixed(0)}   E₃ₛ = ${(Ly.sol.E[2] * 1000).toFixed(0)}   hidrógeno 2D: −Ry·μ/[κ²(n − ½)²] = ${(-RY * Ly.mu / (R.kap ** 2) / 0.25 * 1000).toFixed(0)}, ${(-RY * Ly.mu / (R.kap ** 2) / 2.25 * 1000).toFixed(0)}, ${(-RY * Ly.mu / (R.kap ** 2) / 6.25 * 1000).toFixed(0)}`);
+  H('Energía del excitón');
+  Q(`ΔΣ = −(e²/4πε₀)∫dq e^(−qd/2)[1/(1 + r₀q) − 1/(κ + r₀,tot(q)q)] = <span class="hi">${meV(Ly.dEg)}</span>`);
+  Q(`E_g = E_g^∞ + ΔΣ − ΔE(T) = ${Ly.Eginf.toFixed(3)} ${Ly.dEg < 0 ? '−' : '+'} ${Math.abs(Ly.dEg).toFixed(3)} − ${Ly.dT.toFixed(3)} = ${Ly.EgQP.toFixed(3)} eV`);
+  Q(`E_X = E_g − E_b = ${Ly.EgQP.toFixed(3)} − ${Ly.eb.toFixed(3)} = <span class="hi">${Ly.EX.toFixed(3)} eV</span>  (${nm(Ly.EX).toFixed(0)} nm)${P.ebManual != null ? '   E_b manual' : ''}`);
+  Q(`ΔE(T) = S⟨ħω⟩[coth(⟨ħω⟩/2kT) − 1] = ${m.S}·${(m.hw * 1000).toFixed(0)} meV·[coth(${(m.hw / (2 * R.kT)).toFixed(2)}) − 1] = ${meV(Ly.dT)}`);
+  H('Forma de línea y poblaciones');
+  Q(`Γ(T) = Γ₀ + c₁T + Γ_ph/(e^(Ω/kT) − 1) = ${meV(linewidth(R.T))}   ⊗ Gauss σ = ${state.sigma.toFixed(1)} meV`);
+  const xN = R.nodes.find(s => s.id === 'X' && s.layer === li);
+  if (xN) Q(`k_X = k₀[1 − e^(−E_LC/kT)],  E_LC = ħ²k₀²/2M = ${(xN.ELC * 1e6).toFixed(2)} µeV  →  k_X = ${sci(xN.kr, 1)} s⁻¹`);
+  if (Ly.gT) Q(`trión: N_T/N_X|eq = n·πħ²m_T/(4m_X mₑ kT)·e^(E_T/kT) = ${sci(Ly.gT * Math.exp(Ly.ET / R.kT), 2)},  E_T = ${meV(Ly.ET)}`);
+  Q(`I(E) = Σᵢ k_r,i Nᵢ · V(E − Eᵢ; Γ, σ),   0 = Gᵢ − (k_r,i + k_nr)Nᵢ + Σⱼ(kⱼᵢNⱼ − kᵢⱼNᵢ)`);
+  if (R.ix) {
+    H('Excitón intercapa');
+    Q(`V_IX(r) = V(√(r² + d²)),  d = ${R.ix.dil.toFixed(3)} nm,  μ_IX = ${R.ix.mu.toFixed(3)} m₀  →  E_b,IX = ${meV(R.ix.eb)}`);
+    Q(`E_IX = E_c(${MAT[R.layers[R.ix.cbL].key].label}) − E_v(${MAT[R.layers[R.ix.vbL].key].label}) − E_b,IX = ${R.ix.gap.toFixed(3)} − ${R.ix.eb.toFixed(3)} = <span class="hi">${R.ix.E.toFixed(3)} eV</span>`);
+    const p = R.ix.part;
+    H('Estabilidad del IX (equilibrio entre estados intercapa)');
+    Q(`Saha 2D: n_e·n_h/n_KK = (μkT/2πħ²)·e^(−E_b,IX/kT) = ${sci(p.Ssaha, 2)} cm⁻²  →  ionizados ${(100 * p.nF / p.N).toPrecision(2)} % de N = ${sci(p.N, 2)} cm⁻²`);
+    Q(`moiré: λ = ā/√(δ² + θ²) = ${R.ix.lam.toFixed(1)} nm,  n_sitios = 2/(√3λ²) = ${sci(R.ix.nSites, 2)} cm⁻²,  E_trap = E_m·e^(−½(2πr/λ)²) = ${meV(R.ix.Etrap)}`);
+    Q(`Langmuir: n_trap = n_sitios·y/(1 + y),  y = (n_KK/N_th)·e^(E_trap/kT)  →  atrapados ${(100 * p.nT / p.N).toPrecision(2)} %`);
+    Q(`K–Σ: n_D/n_KK = (6/2)·e^(−(E_KΣ − E_KK)/kT) = ${sci(p.nD / Math.max(p.nKK, 1e-300), 2)}`);
+    Q(`k_nr(T) = k_def[1 + 40·e^(−70 meV/kT)] = ${sci(R.knr, 2)} s⁻¹;  atrapados: ${TRAP_NR}·k_nr`);
+    Q(`ΔK = K√(δ² + θ²) = ${(4 * Math.PI / (3 * ((MAT[state.matA].a + MAT[state.matB].a) / 2))).toFixed(2)}·√(${R.ix.delta.toFixed(4)}² + ${(R.ix.thDeg * Math.PI / 180).toFixed(4)}²) = ${R.ix.dK.toFixed(3)} nm⁻¹,  e^(−ħ²ΔK²/2MkT) = ${Math.exp(-R.ix.EdK / R.kT).toExponential(1)}`);
+  }
+  $('eqList').innerHTML = lines.join('');
+  $('eqNote').textContent = `capa ${li + 1} · ${m.label}`;
+}
+
+// ---------- lecturas ----------
+function drawReadouts(R, sp) {
+  let im = 0; sp.tot.forEach((v, i) => { if (v > sp.tot[im]) im = i; });
+  const Ep = plData.Es[im];
+  const dom = R.comps.slice().sort((a, b) => b.A - a.A)[0];
+  $('r1').textContent = R.totalPL > 0 ? Ep.toFixed(3) + ' eV' : '—';
+  $('r1s').textContent = R.totalPL > 0 ? `${nm(Ep).toFixed(0)} nm · ${dom ? CNAME[dom.id] : ''}` : 'el láser no excita la muestra';
+  const li = Math.min(state.tab, R.layers.length - 1), Ly = R.layers[li];
+  if (R.ix) { $('r2l').textContent = 'Excitón intercapa'; $('r2').textContent = R.ix.E.toFixed(3) + ' eV'; $('r2s').textContent = `E_b,IX ${meV(R.ix.eb)} · ${(100 * R.ix.part.nF / R.ix.part.N).toFixed(0)} % ionizado`; }
+  else { $('r2l').textContent = 'Excitón A'; $('r2').textContent = Ly.EX.toFixed(3) + ' eV'; $('r2s').textContent = `${nm(Ly.EX).toFixed(0)} nm · ${MAT[Ly.key].label}`; }
+  $('r3').textContent = meV(Ly.eb); $('r3s').textContent = Ly.P.ebManual != null ? 'fijada a mano' : `calculada · κ = ${R.kap.toFixed(2)}`;
+  $('r4').textContent = Ly.EgQP.toFixed(3) + ' eV'; $('r4s').textContent = `ΔΣ por apantallamiento ${meV(Ly.dEg)}`;
+  $('r5').textContent = Ly.sol.rrms.toFixed(2) + ' nm';
+  $('r6').textContent = R.yieldPL > 0 ? (R.yieldPL >= 1e-3 ? (100 * R.yieldPL).toPrecision(3) + ' %' : sci(100 * R.yieldPL, 1) + ' %') : '—';
+  $('r6s').textContent = refPL && refPL.yieldPL > 0 && R.yieldPL > 0 ? `${(R.yieldPL / refPL.yieldPL).toPrecision(2)}× la referencia` : 'fotones por par absorbido';
+  const p = Ly.P;
+  $('derived').innerHTML = `μ = <b>${Ly.mu.toFixed(3)}</b> m₀ · M = <b>${(p.me + p.mh).toFixed(2)}</b> m₀<br>r₀ = d(ε∥ − 1)/2 = <b>${Ly.r0.toFixed(2)}</b> nm (d = ${p.d.toFixed(3)} nm)<br>E_b calculada = <b>${meV(Ly.ebCalc)}</b>`;
+  $('plNote').textContent = `${R.S.struct === '1L' ? 'monocapa' : R.S.struct === '2L' ? 'bicapa' : 'heteroestructura'} · ${R.T} K · Γ = ${meV(linewidth(R.T))} · σ = ${state.sigma.toFixed(1)} meV`;
+}
+
+
+// ---------- estabilidad del IX contra T ----------
+const TS = [4, 6, 8, 10, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100, 115, 130, 150, 170, 190, 210, 240, 270, 300, 330, 360, 400];
+let ixTimer = null, ixData = null;
+function scheduleIX(S, R) {
+  const isII = R.ix && R.typeInfo && R.typeInfo.type === 'II';
+  $('ixBody').hidden = !isII; $('ixEmpty').hidden = isII; $('ixCap').hidden = !isII;
+  $('ixNote').textContent = isII ? `${MAT[S.matA].label}/${MAT[S.matB].label} · θ = ${S.twist}° · P = ${sci(S.P, 1)} W/cm²` : '';
+  if (!isII) return;
+  clearTimeout(ixTimer);
+  ixTimer = setTimeout(() => { ixData = ixVsT(S, TS).filter(Boolean); drawIX(ixData, R); }, ixData ? 160 : 0);
+}
+function drawIX(rows, R) {
+  // intensidad integrada (log)
+  { const W = 560, H = 340, L = 58, Rm = 16, T = 16, B = 40, w = W - L - Rm, h = H - T - B, s = [];
+    const all = rows.flatMap(r => [r.tot, r.intra]).filter(v => v > 0);
+    const yhi = Math.ceil(Math.log10(Math.max(...all))), ylo = Math.max(yhi - 7, Math.floor(Math.log10(Math.min(...all))));
+    const X = t => L + (Math.log10(t) - Math.log10(4)) / (Math.log10(400) - Math.log10(4)) * w;
+    const Y = v => T + h - Math.max(0, Math.min(1, (Math.log10(Math.max(v, 1e-300)) - ylo) / (yhi - ylo))) * h;
+    for (let e = ylo; e <= yhi; e++) { s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(10 ** e)}" y2="${Y(10 ** e)}" stroke="var(--border)"/>`); s.push(`<text class="tick" x="${L - 6}" y="${Y(10 ** e) + 3}" text-anchor="end">10${sup(e)}</text>`); }
+    [4, 10, 20, 50, 100, 200, 300, 400].forEach(t => { s.push(`<line x1="${X(t)}" x2="${X(t)}" y1="${T}" y2="${T + h}" stroke="var(--border)" stroke-dasharray="2 3"/>`); s.push(`<text class="tick" x="${X(t)}" y="${T + h + 15}" text-anchor="middle">${t}</text>`); });
+    s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 6}" text-anchor="middle">temperatura (K, escala log)</text>`);
+    s.push(`<text class="axis-label" transform="translate(13 ${T + h / 2}) rotate(-90)" text-anchor="middle">PL integrada por par absorbido</text>`);
+    const line = (k, col, wd, dash) => `<polyline points="${rows.map(r => `${X(r.T).toFixed(1)},${Y(r[k]).toFixed(1)}`).join(' ')}" fill="none" stroke="${col}" stroke-width="${wd}" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
+    s.push(line('intra', 'var(--gray)', 1.8));
+    s.push(line('IXm', 'var(--s8)', 1.6, '5 3'));
+    s.push(line('IX', 'var(--s1)', 1.6, '5 3'));
+    s.push(line('IXd', 'var(--s6)', 1.6, '5 3'));
+    s.push(line('tot', 'var(--s7)', 2.8));
+    // T½ del IX
+    const r0 = rows[0], half = r0.tot / 2; let Th = null;
+    for (let i = 1; i < rows.length; i++) if (rows[i].tot < half && rows[i - 1].tot >= half) { const a = rows[i - 1], b = rows[i]; const f = Math.log(a.tot / half) / Math.log(a.tot / b.tot); Th = Math.exp(Math.log(a.T) + f * (Math.log(b.T) - Math.log(a.T))); break; }
+    if (Th) { s.push(`<line x1="${X(Th)}" x2="${X(Th)}" y1="${Y(half)}" y2="${T + h}" stroke="var(--s7)" stroke-dasharray="2 3"/>`); s.push(`<text class="lvl" x="${X(Th) + 4}" y="${T + h - 6}" fill="var(--s7)">T½ ≈ ${Th.toFixed(0)} K</text>`); }
+    // T actual
+    const cur = R.T;
+    s.push(`<line x1="${X(Math.max(4, cur))}" x2="${X(Math.max(4, cur))}" y1="${T}" y2="${T + h}" stroke="var(--text)" stroke-width="1.2"/>`);
+    s.push(`<text class="lvl" x="${X(Math.max(4, cur)) + (cur > 200 ? -4 : 4)}" y="${T + 12}" text-anchor="${cur > 200 ? 'end' : 'start'}" fill="var(--text)">${cur} K</text>`);
+    s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="transparent"/>`);
+    $('ixT').innerHTML = s.join('');
+    ixData.geomT = { X, L, w };
+    const rRT = rows.find(r => r.T === 300), drop = rRT && rRT.tot > 0 ? r0.tot / rRT.tot : NaN;
+    const ratio = rRT && rRT.intra > 0 ? rRT.tot / rRT.intra : NaN;
+    $('ixCap').textContent = `Del 4 K a 300 K la PL del IX cae ${isFinite(drop) ? sci(drop, 1) : '—'} veces${Th ? `; la mitad se pierde hacia ${Th.toFixed(0)} K` : ''}. A 300 K el IX emite ${isFinite(ratio) ? (ratio >= 1 ? ratio.toPrecision(2) + ' veces más' : (1 / ratio).toPrecision(2) + ' veces menos') : '—'} que los excitones intracapa. A baja T los IX quedan en los mínimos del moiré, protegidos de los defectos. Al calentar escapan, pasan a estados oscuros K–Σ o se ionizan (Saha), y como emiten en ns–µs pierden la competencia con k_nr(T).`;
+  }
+  // fracciones apiladas
+  { const W = 480, H = 340, L = 46, Rm = 14, T = 16, B = 40, w = W - L - Rm, h = H - T - B, s = [];
+    const X = t => L + (Math.log10(t) - Math.log10(4)) / (Math.log10(400) - Math.log10(4)) * w;
+    const Y = v => T + h - v * h;
+    const keys = [['fT', 'var(--s8)'], ['fKK', 'var(--s1)'], ['fD', 'var(--s6)'], ['fF', 'var(--gray)']];
+    let cum = rows.map(() => 0);
+    keys.forEach(([k, col]) => {
+      const top = rows.map((r, i) => cum[i] + r[k]);
+      const up = rows.map((r, i) => `${X(r.T).toFixed(1)},${Y(top[i]).toFixed(1)}`), dn = rows.map((r, i) => `${X(r.T).toFixed(1)},${Y(cum[i]).toFixed(1)}`).reverse();
+      s.push(`<polygon points="${up.join(' ')} ${dn.join(' ')}" fill="${col}" opacity="0.85" stroke="var(--surface)" stroke-width="1"/>`);
+      cum = top;
+    });
+    [0, 0.5, 1].forEach(f => s.push(`<text class="tick" x="${L - 6}" y="${Y(f) + 3}" text-anchor="end">${(f * 100).toFixed(0)} %</text>`));
+    [4, 10, 20, 50, 100, 200, 400].forEach(t => s.push(`<text class="tick" x="${X(t)}" y="${T + h + 15}" text-anchor="middle">${t}</text>`));
+    s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 6}" text-anchor="middle">temperatura (K, escala log)</text>`);
+    s.push(`<line x1="${X(Math.max(4, R.T))}" x2="${X(Math.max(4, R.T))}" y1="${T}" y2="${T + h}" stroke="var(--text)" stroke-width="1.4"/>`);
+    s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="transparent"/>`);
+    $('ixF').innerHTML = s.join('');
+    ixData.geomF = { X, L, w };
+  }
+}
+function nearestRow(geom, sx) {
+  if (!ixData || !geom || sx < geom.L || sx > geom.L + geom.w) return null;
+  let best = ixData[0], bd = Infinity; ixData.forEach(r => { const d = Math.abs(geom.X(r.T) - sx); if (d < bd) { bd = d; best = r; } }); return best;
+}
+
+// ---------- render ----------
+let lastR = null, lastPL = null, lastRam = null;
+function render() {
+  sync();
+  const S = { struct: state.struct, matA: state.matA, matB: state.matB, twist: state.twist, epsTop: state.epsTop, epsBot: state.epsBot, si: state.si, T: state.T, n: state.n, nD: state.nD, sigma: state.sigma, laser: state.laser, P: state.P, Emoire: state.Emoire, dKS: state.dKS,
+    params: state.params.map(p => ({ me: p.me, mh: p.mh, eps: p.eps, d: p.d, ebManual: p.ebManual })) };
+  const R = model(S);
+  lastR = R;
+  lastPL = drawPL(R);
+  drawBand(R); drawExc(R);
+  lastRam = drawRam(R);
+  drawStates(R); drawEq(R); drawReadouts(R, lastPL);
+  scheduleIX(S, R);
+}
+let pending = false;
+const schedule = () => { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; render(); }); };
+
+// ---------- eventos ----------
+const onSeg = (id, fn) => $(id).addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.disabled) return; fn(b.dataset.v, b); render(); });
+onSeg('structSeg', v => { state.struct = v; if (v === 'het' && state.matB === state.matA) state.matB = MAT_KEYS.find(k => k !== state.matA); });
+onSeg('matASeg', v => { state.matA = v; state.params[0] = litParams(v); if (state.struct === 'het' && state.matB === v) { state.matB = MAT_KEYS.find(k => k !== v); state.params[1] = litParams(state.matB); } });
+onSeg('matBSeg', v => { state.matB = v; state.params[1] = litParams(v); });
+onSeg('laserGrid', v => { state.laser = +v; });
+onSeg('tabSeg', v => { state.tab = +v; });
+onSeg('scaleSeg', v => { state.scale = v; });
+onSeg('ebSeg', v => { const p = state.params[state.tab]; if (v === 'man') { p.ebMan = +(lastR ? lastR.layers[Math.min(state.tab, lastR.layers.length - 1)].ebCalc : 0.3).toFixed(3); p.ebManual = p.ebMan; } else p.ebManual = null; });
+onSeg('envChips', (v, b) => { state.epsTop = +b.dataset.top; state.epsBot = +b.dataset.bot; state.si = b.dataset.si === '1'; state.sigma = +b.dataset.sig; state.nD = +b.dataset.nd; });
+const onRange = (id, fn) => $(id).addEventListener('input', e => { fn(+e.target.value); schedule(); });
+onRange('twist', v => state.twist = v);
+onRange('epsTop', v => state.epsTop = v);
+onRange('epsBot', v => state.epsBot = v);
+onRange('T', v => state.T = v);
+onRange('n', v => state.n = Math.pow(10, v));
+onRange('nD', v => state.nD = Math.pow(10, v));
+onRange('sigma', v => state.sigma = v);
+onRange('P', v => state.P = Math.pow(10, v));
+onRange('Em', v => state.Emoire = v);
+onRange('dKS', v => state.dKS = v);
+onRange('me', v => state.params[state.tab].me = v);
+onRange('mh', v => state.params[state.tab].mh = v);
+onRange('eps', v => state.params[state.tab].eps = v);
+onRange('eb', v => { const p = state.params[state.tab]; p.ebMan = v; if (p.ebManual != null) p.ebManual = v; });
+$('siChk').addEventListener('change', e => { state.si = e.target.checked; render(); });
+$('litBtn').addEventListener('click', () => { const k = state.tab === 0 ? state.matA : state.matB; state.params[state.tab] = litParams(k); render(); });
+$('pinBtn').addEventListener('click', () => {
+  if (!lastR) return;
+  const S = lastR.S;
+  const label = (S.struct === 'het' ? `${MAT[S.matA].label}/${MAT[S.matB].label}` : `${MAT[S.matA].label} ${S.struct}`) + `, ${S.T} K, κ ${lastR.kap.toFixed(1)}`;
+  refPL = { Es: plData.Es.slice(), tot: lastPL.tot.slice(), lo: plData.lo, hi: plData.hi, label, yieldPL: lastR.yieldPL };
+  refRam = { ys: lastRam.ys.slice() };
+  render();
+});
+$('unpinBtn').addEventListener('click', () => { refPL = null; refRam = null; render(); });
+$('resetBtn').addEventListener('click', () => { Object.assign(state, DEF()); refPL = null; refRam = null; render(); });
+
+// tooltips
+function tip(svgId, wrapId, tipId, fn) {
+  const svg = $(svgId), wrap = $(wrapId), t = $(tipId);
+  svg.addEventListener('pointermove', e => {
+    const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, sx = (e.clientX - r.left) * vb.width / r.width;
+    const html = fn(sx); if (!html) { t.classList.remove('on'); return; }
+    const wr = wrap.getBoundingClientRect();
+    t.innerHTML = html; t.style.left = (e.clientX - wr.left + wrap.scrollLeft) + 'px'; t.style.top = (e.clientY - wr.top) + 'px'; t.classList.add('on');
+  });
+  svg.addEventListener('pointerleave', () => t.classList.remove('on'));
+}
+tip('pl', 'plWrap', 'plTip', sx => {
+  if (!plData || sx < plData.L || sx > plData.L + plData.w) return null;
+  const E = plData.lo + (sx - plData.L) / plData.w * (plData.hi - plData.lo);
+  const i = Math.round((E - plData.Es[0]) / (plData.Es[1] - plData.Es[0]));
+  const parts = plData.sp.parts.map(p => ({ c: p.c, v: p.y[i] })).filter(o => o.v > plData.sp.tot[i] * 0.03).sort((a, b) => b.v - a.v).slice(0, 4);
+  return `${E.toFixed(3)} eV · ${nm(E).toFixed(1)} nm<br>total ${sci(plData.sp.tot[i], 2)}` + parts.map(o => `<br>${compLabel(plData.R, o.c)}: ${(100 * o.v / (plData.sp.tot[i] || 1)).toFixed(0)} %`).join('');
+});
+tip('ixT', 'ixTWrap', 'ixTTip', sx => { const r = nearestRow(ixData && ixData.geomT, sx); return r ? `${r.T} K<br>IX total ${sci(r.tot, 2)}<br>atrapado ${sci(r.IXm, 1)} · libre ${sci(r.IX, 1)}<br>K–Σ ${sci(r.IXd, 1)} · intracapa ${sci(r.intra, 1)}` : null; });
+tip('ixF', 'ixFWrap', 'ixFTip', sx => { const r = nearestRow(ixData && ixData.geomF, sx); const p = v => (100 * v).toPrecision(2) + ' %'; return r ? `${r.T} K · N = ${sci(r.N, 1)} cm⁻²<br>atrapados ${p(r.fT)} · libres ${p(r.fKK)}<br>K–Σ ${p(r.fD)} · ionizados ${p(r.fF)}` : null; });
+tip('ram', 'ramWrap', 'ramTip', sx => {
+  if (!ramData || sx < ramData.L || sx > ramData.L + ramData.w) return null;
+  const x = ramData.lo + (sx - ramData.L) / ramData.w * (ramData.hi - ramData.lo);
+  const near = ramData.modes.slice().sort((a, b) => Math.abs(a.w - x) - Math.abs(b.w - x))[0];
+  return `${x.toFixed(1)} cm⁻¹` + (near && Math.abs(near.w - x) < 12 ? `<br>${near.name}${near.tag && near.tag !== 'het' ? ' · ' + near.tag : ''}: ${near.w.toFixed(1)} cm⁻¹<br>FWHM ${near.G.toFixed(1)} cm⁻¹` : '');
+});
+
+render();
+
+})();
+</script>
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.tabs [role="tab"]'));
+  const panels = { lab: document.getElementById('panelLab'), theory: document.getElementById('panelTheory') };
+  function show(name, push) {
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Object.entries(panels).forEach(([k, p]) => { if (p) p.hidden = k !== name; });
+    if (push) { try { history.replaceState(null, '', name === 'theory' ? '#teoria' : location.pathname + location.search); } catch (e) { } }
+    if (name === 'lab') window.dispatchEvent(new Event('resize'));
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); });
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); show(n.dataset.tab, true);
+    });
+  });
+  document.querySelectorAll('.toc a[data-target]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const el = document.getElementById(a.dataset.target); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  document.querySelectorAll('[data-goto-lab]').forEach(b => b.addEventListener('click', () => { show('lab', true); window.scrollTo({ top: 0 }); }));
+  document.querySelectorAll('[data-totop]').forEach(b => b.addEventListener('click', () => { const t = document.querySelector('.toc'); window.scrollTo({ top: 0, behavior: 'smooth' }); if (t) t.querySelector('a') && t.querySelector('a').focus({ preventScroll: true }); }));
+  let start = 'lab'; try { if (/^#teor/i.test(location.hash)) start = 'theory'; } catch (e) { }
+  show(start, false);
+})();
+
+</script>
+</body>
+</html>

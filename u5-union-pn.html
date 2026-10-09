@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Unidad 5: diagrama de bandas, Poisson, ley de la unión, curva I–V, capacitancia C–V y ruptura de la unión p–n.">
+<meta name="author" content="Elodie Strupiechonski, Andrés de Luna Bugallo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235B4BC4'/%3E%3Cpath d='M12 22h40M12 42h40' stroke='white' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%232874A6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='40' cy='42' r='5' fill='white' stroke='%23C1440E' stroke-width='3'/%3E%3C/svg%3E">
+<title>Laboratorio de la Unión p–n</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  
+  :root {
+    --bg: #EEF0F6; --surface: #FFFFFF; --surface-2: #F5F6FB; --border: #D9DCE8;
+    --text: #181A2A; --text-muted: #565A72; --text-faint: #80849A;
+    --accent: #5B4BC4; --accent-ink: #FFFFFF; --accent-soft: #E6E2F8;
+    --copper: #B8763B;
+    --elec: #2874A6; --elec-soft: rgba(40,116,166,0.14);
+    --hole: #C1440E; --hole-soft: rgba(193,68,14,0.12);
+    --gap: rgba(86,90,114,0.07);
+    --atomA: #6A5BD0; --atomB: #1C9474; --bond: #9AA0B8; --plane: rgba(184,118,59,0.30); --planeEdge: #B8763B;
+    --phonon: #1C9474;
+    --shadow: 0 1px 2px rgba(24,26,42,0.06), 0 6px 18px rgba(24,26,42,0.07);
+    --radius-s: 6px; --radius-m: 10px; --radius-l: 18px;
+    --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+      --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+      --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+      --copper: #C88A4E;
+      --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.18);
+      --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.16); --gap: rgba(162,165,190,0.06);
+      --atomA: #9C92F0; --atomB: #2DB58C; --bond: #5A5F7A; --plane: rgba(200,138,78,0.30); --planeEdge: #C88A4E;
+      --phonon: #2DB58C;
+      --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+    --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+    --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+    --copper: #C88A4E;
+    --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.18);
+    --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.16); --gap: rgba(162,165,190,0.06);
+    --atomA: #9C92F0; --atomB: #2DB58C; --bond: #5A5F7A; --plane: rgba(200,138,78,0.30); --planeEdge: #C88A4E;
+    --phonon: #2DB58C;
+    --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1300px; margin: 0 auto; padding-block: clamp(20px, 4vw, 44px) 64px; padding-inline: clamp(16px, 4vw, 40px); }
+  header.masthead { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(20px, 3vw, 30px); max-width: 820px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5.4vw, 52px); line-height: 0.98; margin: 0; text-wrap: balance; }
+  .subhead { color: var(--text-muted); font-size: 15.5px; max-width: 70ch; margin: 2px 0 0; }
+  .app-shell { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .app-shell { grid-template-columns: minmax(0, 1fr); } }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); }
+  .deck { padding: 20px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; }
+  @media (max-width: 960px) { .deck { position: static; max-height: none; } }
+  .deck-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; }
+  .group-title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin: 4px 0 -4px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .flabel { font-size: 12.5px; color: var(--text-muted); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 3px; gap: 3px; }
+  .seg button { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; padding: 7px 3px; border: none; border-radius: 7px; background: transparent; color: var(--text-muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .seg button:focus-visible, .btn:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .miller { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .miller label { display: flex; flex-direction: column; gap: 3px; font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+  select { font-family: var(--font-mono); font-size: 14px; padding: 6px 8px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn { font-family: var(--font-mono); font-size: 12px; font-weight: 500; padding: 6px 9px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.ghost { background: none; border-style: dashed; color: var(--text-muted); font-family: var(--font-body); }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+  .check input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .slider-block { display: flex; flex-direction: column; gap: 4px; }
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .slider-name { font-size: 12.5px; font-weight: 600; }
+  .slider-name .sym { color: var(--text-faint); font-weight: 500; font-family: var(--font-mono); font-size: 11.5px; }
+  .slider-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; background: var(--border); outline-offset: 4px; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); }
+  .range-caps { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+  .divider { height: 1px; background: var(--border); border: none; margin: 2px 0; }
+
+  .main-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .readout-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  @media (max-width: 1200px) { .readout-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .readout { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rlabel { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .rvalue { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.9vw, 21px); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .readout.hl .rvalue { color: var(--accent); }
+  .rsub { font-size: 11px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  @media (max-width: 1100px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .kpgrid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 14px; }
+  @media (max-width: 800px) { .kpgrid { grid-template-columns: minmax(0, 1fr); } }
+  .card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
+  .card-note { font-size: 11.5px; color: var(--text-faint); font-family: var(--font-mono); }
+  .stage { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); position: relative; touch-action: none; cursor: grab; }
+  .stage:active { cursor: grabbing; }
+  .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; max-width: 100%; }
+  .stage .hint { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); pointer-events: none; }
+  .chart-wrap { position: relative; }
+  .scroll-x { overflow-x: auto; }
+  svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+  svg.wide { min-width: 640px; }
+  .caption { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block; }
+  .dotk { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .axis-label { font-family: var(--font-mono); font-size: 11px; fill: var(--text-faint); }
+  .tick { font-family: var(--font-mono); font-size: 10px; fill: var(--text-faint); }
+  .lvl { font-family: var(--font-mono); font-size: 11px; }
+  .plabel { font-family: var(--font-body); font-size: 11.5px; font-weight: 600; fill: var(--text); }
+  .klabel { font-family: var(--font-body); font-size: 13px; font-weight: 600; fill: var(--text); }
+  .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-family: var(--font-mono); font-size: 11px; padding: 6px 8px; border-radius: 6px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 14px)); opacity: 0; transition: opacity .1s; z-index: 5; }
+  .tip.on { opacity: 1; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  .facts div { background: var(--surface); padding: 8px 10px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 8px; }
+  .facts b { font-family: var(--font-mono); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.st th { text-align: left; font-weight: 500; font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.st td { padding: 7px 8px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st td:first-child { font-family: var(--font-body); font-weight: 600; }
+  table.st tr.active td { background: var(--accent-soft); }
+  .eq-list { display: flex; flex-direction: column; gap: 6px; }
+  .eq-h { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 6px 0 0; }
+  .eq-line { font-family: var(--font-mono); font-size: 12px; line-height: 1.55; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 7px 11px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  table.st .ex { color: var(--text-faint); font-size: 0.92em; }
+  .eq-line .hi { color: var(--accent); font-weight: 600; }
+  .challenge { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1100px) { .challenge { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  @media (max-width: 700px) { .challenge { grid-template-columns: minmax(0, 1fr); } }
+  .q { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; font-size: 13.5px; }
+  .q b { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+  .progress { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); }
+  footer.notes { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 12.5px; max-width: 96ch; }
+  footer.notes p { margin: 0 0 6px; }
+  .stack2 { display: flex; flex-direction: column; gap: 18px; }
+  [hidden] { display: none !important; }
+  .simstage { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  .simstage canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .kpgrid.wide-left { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  @media (max-width: 800px) { .kpgrid.wide-left { grid-template-columns: minmax(0, 1fr); } }
+  .slider-value input[type="number"] { width: 72px; font-family: var(--font-mono); font-size: 13px; color: var(--accent); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 2px 6px; text-align: right; }
+  .chips .btn[hidden] { display: none; }
+  .readout-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 520px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* ---- pestañas Laboratorio / Teoría ---- */
+  .tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin: 0 0 18px; box-shadow: var(--shadow); }
+  .tabs button { font-family: var(--font-body); font-weight: 600; font-size: 14px; padding: 8px 20px; border: none; border-radius: 999px; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tabs .tab-ic { font-family: var(--font-mono); font-size: 12px; opacity: 0.8; }
+  .theory { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .theory { grid-template-columns: minmax(0, 1fr); } }
+  .toc { padding: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  @media (max-width: 960px) { .toc { position: static; max-height: none; } }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: t; display: flex; flex-direction: column; gap: 2px; }
+  .toc li { counter-increment: t; }
+  .toc a { display: flex; gap: 10px; padding: 7px 8px; border-radius: var(--radius-s); color: var(--text); text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+  .toc a::before { content: counter(t, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--accent); padding-top: 2px; }
+  .toc a:hover, .toc a:focus-visible { background: var(--accent-soft); outline: none; }
+  .toc-note { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
+  .theory-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .tsec { scroll-margin-top: 16px; gap: 12px; }
+  .tsec h3 { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin: 0; }
+  .tsec h3 .tn { margin-right: 10px; vertical-align: 2px; }
+  .tsec h3 .tn { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.08em; }
+  .tsec p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 78ch; }
+  .tsec p + p { margin-top: 2px; }
+  .feq { font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif; font-size: 20px; line-height: 1.5; text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 16px; overflow-x: auto; white-space: nowrap; color: var(--text); }
+  .feq i { font-style: italic; }
+  .feq .lbl { font-family: var(--font-body); font-size: 12px; color: var(--text-faint); font-style: normal; display: block; margin-top: 2px; white-space: normal; }
+  .feq + .feq { margin-top: -4px; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 3px; line-height: 1.2; }
+  .frac > span { padding: 0 4px; }
+  .frac > span:first-child { border-bottom: 1.2px solid currentColor; padding-bottom: 2px; }
+  .frac > span:last-child { padding-top: 2px; }
+  .rad { display: inline-block; border-top: 1.2px solid currentColor; padding: 2px 3px 0; line-height: 1.25; }
+  .rad .frac { margin-top: 2px; }
+  .feq sub, .feq sup { font-size: 0.68em; }
+  .where { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 13.5px; }
+  .where dt { font-family: 'Cambria Math', 'Times New Roman', serif; font-style: italic; font-size: 15px; color: var(--accent); }
+  .where dd { margin: 0; color: var(--text-muted); }
+  .inlab { border-left: 3px solid var(--copper); background: var(--surface-2); padding: 10px 14px; border-radius: 0 var(--radius-s) var(--radius-s) 0; font-size: 14px !important; color: var(--text-muted); }
+  .inlab b { color: var(--copper); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; display: block; margin-bottom: 2px; }
+  .keyidea { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; font-weight: 500; }
+  .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .tgrid .feq { font-size: 18px; }
+  .ttable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ttable th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .ttable td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  [hidden] { display: none !important; }
+  .th4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--accent); margin: 8px 0 -2px; letter-spacing: 0.01em; }
+  .tfig { margin: 4px 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 14px 12px; }
+  .tfig svg { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; overflow: visible; }
+  .tfig figcaption { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+  .tsec p b { font-weight: 600; }
+  /* ---- regreso al índice del curso ---- */
+  .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 18px; }
+  .topnav .tabs { margin: 0; }
+  a.home-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 9px 16px; box-shadow: var(--shadow); }
+  a.home-link:hover { border-color: var(--accent); color: var(--accent); }
+  a.home-link:focus-visible, a.home-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.home-link .hk { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  a.home-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 40; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 13px; text-decoration: none; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(24,26,42,0.25); }
+  a.home-fab:hover { filter: brightness(1.08); }
+  a.home-fab .hk { font-family: var(--font-mono); font-size: 12px; }
+  @media (max-width: 520px) { a.home-fab .hl { display: none; } a.home-fab { padding: 12px 14px; } }
+  .sec-home { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .sec-home a, .sec-home button { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); text-decoration: none; background: none; border: none; cursor: pointer; padding: 2px 4px; }
+  .sec-home a:hover, .sec-home button:hover { color: var(--accent); }
+
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <span class="eyebrow">Física de Dispositivos Semiconductores · ENESJ · Unidad 5</span>
+    <h1>Laboratorio de la Unión p–n</h1>
+    <p class="subhead">Junta un lado p y un lado n y deja que los portadores se difundan hasta que el campo de la región de agotamiento los detenga. Cambia los dopajes, el voltaje y la temperatura y sigue el diagrama de bandas, la carga, el campo, los minoritarios inyectados, la curva I–V, la capacitancia y la ruptura.</p>
+  </header>
+<div class="topnav"><a class="home-link" href="index.html"><span class="hk">←</span>Índice del curso</a><div class="tabs" role="tablist" aria-label="Secciones de la unidad"><button type="button" role="tab" id="tabLab" data-tab="lab" aria-controls="panelLab" aria-selected="true"><span class="tab-ic">◧</span>Laboratorio</button><button type="button" role="tab" id="tabTheory" data-tab="theory" aria-controls="panelTheory" aria-selected="false"><span class="tab-ic">∫</span>Teoría</button></div></div>
+<div id="panelLab" role="tabpanel" aria-labelledby="tabLab">
+
+
+  <div class="app-shell">
+    <aside class="panel deck" aria-label="Controles">
+      <h2 class="deck-title">Controles</h2>
+
+      <p class="group-title">Unión</p>
+      <div class="seg" role="group" aria-label="Material" id="matSeg">
+        <button type="button" data-v="Si">Si</button>
+        <button type="button" data-v="GaAs">GaAs</button>
+      </div>
+      <div class="seg" role="group" aria-label="Perfil de dopaje" id="profSeg">
+        <button type="button" data-v="abrupt">Abrupta</button>
+        <button type="button" data-v="graded">Gradual lineal</button>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Aceptores, lado p <span class="sym">N_A</span></span><span class="slider-value" id="NAVal"></span></div>
+        <input type="range" id="logNA" min="14" max="19" step="0.05" value="17" aria-label="Logaritmo del dopaje de aceptores">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Donadores, lado n <span class="sym">N_D</span></span><span class="slider-value" id="NDVal"></span></div>
+        <input type="range" id="logND" min="14" max="19" step="0.05" value="16" aria-label="Logaritmo del dopaje de donadores">
+        <div class="range-caps"><span>10¹⁴ cm⁻³</span><span>10¹⁹ cm⁻³</span></div>
+      </div>
+      <div class="slider-block" id="gradBlock">
+        <div class="slider-head"><span class="slider-name">Gradiente de dopaje <span class="sym">a</span></span><span class="slider-value" id="aVal"></span></div>
+        <input type="range" id="logA" min="18" max="24" step="0.05" value="21" aria-label="Logaritmo del gradiente de dopaje">
+        <div class="range-caps"><span>10¹⁸ cm⁻⁴</span><span>10²⁴ cm⁻⁴</span></div>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Polarización</p>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Voltaje aplicado <span class="sym">V_a</span></span><span class="slider-value" id="VaVal"></span></div>
+        <input type="range" id="Va" min="-10" max="1.0" step="0.01" value="0" aria-label="Voltaje aplicado en volts">
+        <div class="range-caps"><span>−10 V (inversa)</span><span>+1.0 V (directa)</span></div>
+      </div>
+      <div class="chips" id="vChips">
+        <button type="button" class="btn" data-va="0">equilibrio</button>
+        <button type="button" class="btn" data-va="0.6">+0.6 V</button>
+        <button type="button" class="btn" data-va="-5">−5 V</button>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Temperatura <span class="sym">T</span></span><span class="slider-value" id="TVal"></span></div>
+        <input type="range" id="T" min="250" max="450" step="1" value="300" aria-label="Temperatura en kelvin">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Tiempo de vida <span class="sym">τ</span></span><span class="slider-value" id="tauVal"></span></div>
+        <input type="range" id="logTau" min="-9" max="-5" step="0.05" value="-6" aria-label="Logaritmo del tiempo de vida en segundos">
+        <div class="range-caps"><span>1 ns</span><span>10 µs</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Resistencia en serie <span class="sym">R_s</span></span><span class="slider-value" id="RsVal"></span></div>
+        <input type="range" id="Rs" min="1" max="50" step="0.5" value="5" aria-label="Resistencia en serie en ohms">
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Gráficas</p>
+      <div class="field">
+        <span class="flabel" id="lbScale">Escala de la curva I–V</span>
+        <div class="seg" role="group" aria-labelledby="lbScale" id="scaleSeg">
+          <button type="button" data-v="lin">Lineal</button>
+          <button type="button" data-v="log">Logarítmica</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="unkChk"> Datos C–V de una muestra desconocida</label>
+      <label class="check"><input type="checkbox" id="fitChk"> Mostrar el ajuste lineal</label>
+      <button type="button" class="btn ghost" id="resetBtn">Volver al inicio: Si 10¹⁷ / 10¹⁶, 0 V</button>
+    </aside>
+
+    <div class="main-col">
+      <div class="readout-strip">
+        <div class="readout hl"><span class="rlabel">Potencial interno</span><span class="rvalue" id="r1"></span><span class="rsub" id="r1s"></span></div>
+        <div class="readout"><span class="rlabel">Ancho de agotamiento</span><span class="rvalue" id="r2"></span><span class="rsub" id="r2s"></span></div>
+        <div class="readout"><span class="rlabel">Campo máximo</span><span class="rvalue" id="r3"></span><span class="rsub" id="r3s"></span></div>
+        <div class="readout"><span class="rlabel">Capacitancia</span><span class="rvalue" id="r4"></span><span class="rsub">área 100 µm × 100 µm</span></div>
+        <div class="readout hl"><span class="rlabel">Corriente</span><span class="rvalue" id="r5"></span><span class="rsub" id="r5s"></span></div>
+        <div class="readout"><span class="rlabel">Ruptura</span><span class="rvalue" id="r6"></span><span class="rsub" id="r6s"></span></div>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Diagrama de bandas</h3><span class="card-note" id="bandNote"></span></div>
+        <div class="chart-wrap scroll-x"><svg class="chart wide" id="band" viewBox="0 0 960 360" role="img" aria-label="Diagrama de bandas de la unión p-n"></svg></div>
+        <div class="legend">
+          <span><i class="sw" style="border-color:var(--text)"></i>E_c y E_v</span>
+          <span><i class="sw" style="border-color:var(--text-faint);border-top-style:dotted"></i>E_i (nivel intrínseco)</span>
+          <span><i class="sw" style="border-color:var(--elec);border-top-style:dashed"></i>E_Fn (cuasinivel de electrones)</span>
+          <span><i class="sw" style="border-color:var(--hole);border-top-style:dashed"></i>E_Fp (cuasinivel de huecos)</span>
+          <span><i class="dotk" style="background:var(--accent-soft);border-radius:2px"></i>región de agotamiento</span>
+        </div>
+        <p class="caption" id="bandCap"></p>
+      </section>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Carga, campo y potencial (Poisson)</h3><span class="card-note" id="poisNote"></span></div>
+        <div class="chart-wrap scroll-x"><svg class="chart wide" id="pois" viewBox="0 0 960 480" role="img" aria-label="Densidad de carga, campo eléctrico y potencial contra posición"></svg></div>
+        <p class="caption">Aproximación de agotamiento: dentro de W no hay portadores libres y solo quedan los iones fijos. Integrar ρ/ε da el campo; integrar el campo da el potencial. El área bajo |𝓔| es V_bi − V.</p>
+      </section>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Portadores: la ley de la unión</h3><span class="card-note" id="minNote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="minc" viewBox="0 0 520 400" role="img" aria-label="Concentración de electrones y huecos en escala logarítmica a través de la unión"></svg></div>
+          <div class="legend">
+            <span><i class="sw" style="border-color:var(--elec)"></i>n(x)</span>
+            <span><i class="sw" style="border-color:var(--hole)"></i>p(x)</span>
+          </div>
+          <p class="caption" id="minCap"></p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Curva I–V</h3><span class="card-note" id="ivNote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="iv" viewBox="0 0 520 400" role="img" aria-label="Curva corriente contra voltaje del diodo"></svg><div class="tip" id="ivTip"></div></div>
+          <div class="legend">
+            <span><i class="sw" style="border-color:var(--accent)"></i>total (con R_s)</span>
+            <span><i class="sw" style="border-color:var(--elec);border-top-style:dashed"></i>difusión ideal</span>
+            <span><i class="sw" style="border-color:var(--copper);border-top-style:dashed"></i>recombinación en W</span>
+          </div>
+          <p class="caption" id="ivCap"></p>
+        </section>
+      </div>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Ruptura en inversa</h3><span class="card-note" id="brNote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="br" viewBox="0 0 520 380" role="img" aria-label="Corriente en polarización inversa hasta la ruptura"></svg></div>
+          <p class="caption" id="brCap"></p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Capacitancia: C–V</h3><span class="card-note" id="cvNote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="cv" viewBox="0 0 520 380" role="img" aria-label="Inverso del cuadrado de la capacitancia contra voltaje"></svg><div class="tip" id="cvTip"></div></div>
+          <p class="caption" id="cvCap"></p>
+        </section>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Ecuaciones con tus números</h3><span class="card-note" id="eqNote"></span></div>
+        <div class="eq-list" id="eqList"></div>
+      </section>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Retos</h3><span class="card-note">usa los controles para responder</span></div>
+        <div class="challenge">
+          <div class="q"><b>Reto 1 · diseña V_bi = 0.75 V</b>En Si a 300 K, encuentra dos pares (N_A, N_D) distintos que den V_bi = 0.75 V. ¿Cuál de los dos tiene la región de agotamiento más ancha y la capacitancia más baja?</div>
+          <div class="q"><b>Reto 2 · unión asimétrica</b>Pon N_A = 10¹⁹ y N_D = 10¹⁵. ¿En qué lado cae casi todo el agotamiento? ¿Qué término de J₀ domina y qué portador lleva la corriente en directa?</div>
+          <div class="q"><b>Reto 3 · factor de idealidad</b>En escala logarítmica, mide la pendiente en mV por década a 0.2 V y a 0.6 V. Baja τ a 1 ns: ¿hasta qué voltaje domina la recombinación (120 mV/década)? ¿Qué pasa arriba de 0.8 V?</div>
+          <div class="q"><b>Reto 4 · extrae N_D de datos C–V</b>Activa la muestra desconocida (p⁺n de Si). Con la pendiente de 1/C² contra V calcula N_D y con la intersección calcula V_bi. Luego activa el ajuste para comprobar.</div>
+          <div class="q"><b>Reto 5 · Zener o avalancha</b>Compara una unión 10¹⁹/10¹⁹ con una 10¹⁹/10¹⁶. ¿Cuál rompe por tunelamiento y cuál por avalancha? Sube T de 300 a 400 K: ¿hacia dónde se mueve V_br en cada caso?</div>
+          <div class="q"><b>Reto 6 · el diodo como termómetro</b>Lee en las ecuaciones cuánto baja el voltaje a 1 mA por cada kelvin. ¿Por qué baja si la corriente es fija? Pista: n_i² crece como e^(−E_g/kT).</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  </div>
+<div id="panelTheory" role="tabpanel" aria-labelledby="tabTheory" hidden>
+<div class="theory">
+<nav class="panel toc" aria-label="Contenido de la teoría"><h2 class="deck-title">Teoría · Unidad 5</h2><ol><li><a href="#t-eq" data-target="t-eq">Equilibrio y potencial interno</a></li><li><a href="#t-poisson" data-target="t-poisson">Aproximación de agotamiento y ecuación de Poisson</a></li><li><a href="#t-w" data-target="t-w">Ancho de la región de agotamiento</a></li><li><a href="#t-cap" data-target="t-cap">Capacitancia de la unión y perfil C–V</a></li><li><a href="#t-ley" data-target="t-ley">Ley de la unión e inyección de minoritarios</a></li><li><a href="#t-diodo" data-target="t-diodo">Ecuación del diodo ideal (Shockley)</a></li><li><a href="#t-desv" data-target="t-desv">Desviaciones del caso ideal</a></li><li><a href="#t-rupt" data-target="t-rupt">Ruptura: avalancha y Zener</a></li></ol><p class="toc-note">Cada fórmula aparece evaluada con tus valores en la pestaña Laboratorio, en «Ecuaciones con tus números».</p><button type="button" class="btn ghost" data-goto-lab>Ir al laboratorio →</button></nav>
+<div class="theory-col">
+<section class="panel card tsec" id="t-eq">
+  <h3><span class="tn">01</span>Equilibrio y potencial interno</h3>
+  <p>Al juntar un lado p con un lado n, los electrones se difunden hacia p y los huecos hacia n. Dejan atrás donadores y aceptores ionizados, fijos en la red, que crean un campo eléctrico. El proceso se detiene cuando la corriente de deriva cancela a la de difusión: el nivel de Fermi queda plano en todo el dispositivo y las bandas se doblan qV<sub>bi</sub>.</p>
+  <div class="feq"><i>V</i><sub>bi</sub> = <span class="frac"><span><i>kT</i></span><span><i>q</i></span></span> ln <span class="frac"><span><i>N</i><sub>A</sub> <i>N</i><sub>D</sub></span><span><i>n</i><sub>i</sub><sup>2</sup></span></span><span class="lbl">unión abrupta, estadística de Boltzmann</span></div>
+  <p>V<sub>bi</sub> no se puede medir con un voltímetro: en los contactos metálicos aparecen potenciales de contacto que lo compensan exactamente.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-poisson">
+  <h3><span class="tn">02</span>Aproximación de agotamiento y ecuación de Poisson</h3>
+  <p>Se supone que en la región −x<sub>p</sub> &lt; x &lt; x<sub>n</sub> no quedan portadores libres y solo hay iones (densidad −qN<sub>A</sub> y +qN<sub>D</sub>), y que fuera de ella el material es neutro. Integrando Poisson una vez se obtiene el campo, triangular; integrando otra vez, el potencial, parabólico.</p>
+  <div class="feq"><span class="frac"><span><i>d</i><sup>2</sup>ψ</span><span><i>dx</i><sup>2</sup></span></span> = −<span class="frac"><span>ρ(<i>x</i>)</span><span>ε</span></span>, &nbsp;&nbsp; 𝓔 = −<span class="frac"><span><i>d</i>ψ</span><span><i>dx</i></span></span></div>
+  <div class="tgrid">
+    <div class="feq"><i>N</i><sub>A</sub> <i>x</i><sub>p</sub> = <i>N</i><sub>D</sub> <i>x</i><sub>n</sub><span class="lbl">la carga total es cero</span></div>
+    <div class="feq">𝓔<sub>max</sub> = <span class="frac"><span><i>q</i><i>N</i><sub>D</sub><i>x</i><sub>n</sub></span><span>ε</span></span><span class="lbl">en la unión metalúrgica, x = 0</span></div>
+  </div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-w">
+  <h3><span class="tn">03</span>Ancho de la región de agotamiento</h3>
+  <p>El área bajo el triángulo de campo es la caída de potencial V<sub>bi</sub> − V. De ahí sale W, que crece como la raíz del voltaje en inversa y se angosta en directa. Casi todo el agotamiento cae en el lado menos dopado.</p>
+  <div class="feq"><i>W</i> = <i>x</i><sub>n</sub> + <i>x</i><sub>p</sub> = √<span class="rad"><span class="frac"><span>2ε(<i>V</i><sub>bi</sub> − <i>V</i>)</span><span><i>q</i></span></span> <span class="frac"><span><i>N</i><sub>A</sub> + <i>N</i><sub>D</sub></span><span><i>N</i><sub>A</sub> <i>N</i><sub>D</sub></span></span></span></div>
+  <div class="feq"><i>W</i> = <span style="font-size:1.2em">[</span><span class="frac"><span>12ε(<i>V</i><sub>bi</sub> − <i>V</i>)</span><span><i>q</i><i>a</i></span></span><span style="font-size:1.2em">]</span><sup>1/3</sup>, &nbsp;&nbsp; <i>V</i><sub>bi</sub> = <span class="frac"><span>2<i>kT</i></span><span><i>q</i></span></span> ln <span class="frac"><span><i>aW</i></span><span>2<i>n</i><sub>i</sub></span></span><span class="lbl">unión gradual lineal, N_D − N_A = a·x</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-cap">
+  <h3><span class="tn">04</span>Capacitancia de la unión y perfil C–V</h3>
+  <p>Un pequeño cambio de voltaje mueve los bordes de W y descubre o cubre carga fija: la unión se comporta como un capacitor de placas paralelas separadas W. Graficar 1/C² contra V da una recta cuya pendiente mide el dopaje del lado menos dopado. Es la técnica estándar para medir perfiles de dopaje.</p>
+  <div class="tgrid">
+    <div class="feq"><i>C</i><sub>j</sub> = <span class="frac"><span>ε<i>A</i></span><span><i>W</i></span></span></div>
+    <div class="feq"><span class="frac"><span>1</span><span><i>C</i><sup>2</sup></span></span> = <span class="frac"><span>2(<i>V</i><sub>bi</sub> − <i>V</i>)</span><span><i>q</i>ε<i>A</i><sup>2</sup><i>N</i></span></span></div>
+  </div>
+  <div class="feq"><i>N</i> = <span class="frac"><span>2</span><span><i>q</i>ε<i>A</i><sup>2</sup> |<i>d</i>(1/<i>C</i><sup>2</sup>)/<i>dV</i>|</span></span><span class="lbl">la intersección de la recta con el eje V da V_bi; en una unión gradual la recta aparece en 1/C³</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-ley">
+  <h3><span class="tn">05</span>Ley de la unión e inyección de minoritarios</h3>
+  <p>Con voltaje aplicado, la barrera cambia a q(V<sub>bi</sub> − V) y la población de portadores capaces de cruzarla cambia como e<sup>qV/kT</sup>. En el borde de la región de agotamiento los minoritarios quedan multiplicados por ese factor; luego se difunden y se recombinan en una longitud de difusión.</p>
+  <div class="feq"><i>p</i><sub>n</sub>(<i>x</i><sub>n</sub>) = <i>p</i><sub>n0</sub> <i>e</i><sup><i>qV</i>/<i>kT</i></sup>, &nbsp;&nbsp; <i>n</i><sub>p</sub>(−<i>x</i><sub>p</sub>) = <i>n</i><sub>p0</sub> <i>e</i><sup><i>qV</i>/<i>kT</i></sup><span class="lbl">ley de la unión (baja inyección)</span></div>
+  <div class="feq">Δ<i>p</i>(<i>x</i>) = <i>p</i><sub>n0</sub>(<i>e</i><sup><i>qV</i>/<i>kT</i></sup> − 1) <i>e</i><sup>−(<i>x</i> − <i>x</i><sub>n</sub>)/<i>L</i><sub>p</sub></sup>, &nbsp;&nbsp; <i>L</i><sub>p</sub> = √<span class="rad"><i>D</i><sub>p</sub>τ<sub>p</sub></span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-diodo">
+  <h3><span class="tn">06</span>Ecuación del diodo ideal (Shockley)</h3>
+  <p>La corriente es la difusión de minoritarios en los bordes: J = qD·dΔp/dx evaluada en x<sub>n</sub>, más el término equivalente de electrones en el lado p. En inversa la corriente se satura en −J₀, la de los minoritarios que llegan al borde y caen por el campo.</p>
+  <div class="feq"><i>J</i> = <i>J</i><sub>0</sub> <span style="font-size:1.2em">(</span><i>e</i><sup><i>qV</i>/<i>kT</i></sup> − 1<span style="font-size:1.2em">)</span>, &nbsp;&nbsp; <i>J</i><sub>0</sub> = <i>q</i><i>n</i><sub>i</sub><sup>2</sup> <span style="font-size:1.2em">(</span><span class="frac"><span><i>D</i><sub>n</sub></span><span><i>L</i><sub>n</sub><i>N</i><sub>A</sub></span></span> + <span class="frac"><span><i>D</i><sub>p</sub></span><span><i>L</i><sub>p</sub><i>N</i><sub>D</sub></span></span><span style="font-size:1.2em">)</span></div>
+  <p>J₀ ∝ n<sub>i</sub>² ∝ e<sup>−E<sub>g</sub>/kT</sup>: es la razón por la que un diodo de GaAs necesita más voltaje que uno de Si para la misma corriente, y por la que J₀ se duplica cada pocos kelvin.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-desv">
+  <h3><span class="tn">07</span>Desviaciones del caso ideal</h3>
+  <p>Una curva real se describe con un factor de idealidad n, medido en la pendiente de ln I contra V.</p>
+  <div class="feq"><i>I</i> ≈ <i>I</i><sub>0</sub> <i>e</i><sup><i>qV</i>/<i>nkT</i></sup>, &nbsp;&nbsp; <i>n</i> = <span class="frac"><span><i>q</i></span><span><i>kT</i></span></span> <span class="frac"><span><i>dV</i></span><span><i>d</i> ln <i>I</i></span></span><span class="lbl">n = 1: 60 mV por década a 300 K; n = 2: 120 mV por década</span></div>
+  <table class="ttable"><thead><tr><th>Régimen</th><th>Origen</th><th>n</th></tr></thead><tbody>
+    <tr><td>Bajo voltaje</td><td>recombinación SRH dentro de W: J<sub>r</sub> = (qn<sub>i</sub>W/2τ)(e<sup>qV/2kT</sup> − 1)</td><td>2</td></tr>
+    <tr><td>Voltaje medio</td><td>difusión de minoritarios (Shockley)</td><td>1</td></tr>
+    <tr><td>Alta inyección</td><td>Δp comparable a N<sub>D</sub>: crece también la concentración de mayoritarios</td><td>2</td></tr>
+    <tr><td>Alta corriente</td><td>caída I·R<sub>s</sub> en las regiones neutras y contactos</td><td>curva casi lineal</td></tr>
+  </tbody></table>
+  <div class="feq"><span class="frac"><span><i>dV</i></span><span><i>dT</i></span></span><span style="font-size:1.1em">|</span><sub><i>I</i></sub> ≈ −<span class="frac"><span><i>E</i><sub>g</sub>/<i>q</i> − <i>V</i> + 3<i>kT</i>/<i>q</i></span><span><i>T</i></span></span> ≈ −2 mV/K<span class="lbl">a corriente fija, el voltaje baja al calentar: el diodo es un termómetro</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-rupt">
+  <h3><span class="tn">08</span>Ruptura: avalancha y Zener</h3>
+  <p>En inversa, cuando el campo máximo llega a un valor crítico, la corriente crece de golpe. Hay dos mecanismos.</p>
+  <p><b>Avalancha.</b> Un portador acelerado por el campo gana suficiente energía para crear otro par al chocar (ionización por impacto), y estos a su vez crean más. Domina en uniones poco dopadas, con W ancha; V<sub>br</sub> sube con la temperatura porque los fonones frenan a los portadores.</p>
+  <p><b>Zener (tunelamiento).</b> Con dopajes altos W es de pocos nanómetros y los electrones de la banda de valencia del lado p atraviesan la barrera hacia la banda de conducción del lado n. V<sub>br</sub> baja con la temperatura porque la brecha se cierra.</p>
+  <div class="tgrid">
+    <div class="feq"><i>V</i><sub>br</sub> ≈ <span class="frac"><span>ε𝓔<sub>c</sub><sup>2</sup></span><span>2<i>q</i><i>N</i><sub>B</sub></span></span><span class="lbl">unión de un lado; N_B = dopaje del lado menos dopado</span></div>
+    <div class="feq"><i>M</i> = <span class="frac"><span>1</span><span>1 − (<i>V</i>/<i>V</i><sub>br</sub>)<sup><i>n</i></sup></span></span><span class="lbl">multiplicación de Miller, n ≈ 3–6</span></div>
+  </div>
+  <p>Regla práctica: V<sub>br</sub> &lt; 4E<sub>g</sub>/q es Zener; V<sub>br</sub> &gt; 6E<sub>g</sub>/q es avalancha; en medio actúan los dos (en Si, alrededor de 5–7 V). Por eso los diodos Zener de ~5.6 V tienen coeficiente de temperatura casi cero.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+</div>
+</div>
+</div>
+  <a class="home-fab" href="index.html" aria-label="Ir al índice del curso de Física de Dispositivos Semiconductores"><span class="hk">⌂</span><span class="hl">Índice del curso</span></a>
+<footer class="notes">
+    <p><b>Modelo.</b> Aproximación de agotamiento con ionización completa y estadística de Boltzmann (V_bi deja de ser exacta arriba de ~10¹⁹ cm⁻³). Diodo largo de Shockley con movilidades de Arora (Si) y Sotoodeh (GaAs) evaluadas al dopaje de cada lado; τ_n = τ_p = τ. Recombinación en la región de agotamiento con J_r = qn_iW/(2τ)·(e^(V/2V_T) − 1). Alta inyección con el lado menos dopado. Área de 10⁻⁴ cm².</p>
+    <p><b>Ruptura.</b> Avalancha con el campo crítico 𝓔_c ≈ 4×10⁵/[1 − ⅓log₁₀(N/10¹⁶)] V/cm (Sze y Ng) y coeficiente de temperatura de +0.09 %/K. Tunelamiento cuando 𝓔_max ≈ 10⁶ V/cm (escalado con E_g^(3/2)). Gana el que ocurre a menor voltaje. Multiplicación de Miller M = 1/[1 − (V/V_br)ⁿ].</p>
+    <p class="credit">© 2026 Elodie Strupiechonski (ENES Juriquilla, UNAM) y Andrés de Luna Bugallo (CFATA, UNAM). Material didáctico bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+// ---------- utilidades compartidas ----------
+const $ = id => document.getElementById(id);
+const SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '+': '' };
+const sup = s => String(s).split('').map(c => SUP[c] ?? c).join('');
+function sci(x, d = 2) {
+  if (!isFinite(x)) return '—';
+  if (x === 0) return '0';
+  const s = x < 0 ? '−' : ''; x = Math.abs(x);
+  let e = Math.floor(Math.log10(x)), m = x / 10 ** e;
+  if (+m.toFixed(d - 1) >= 10) { m /= 10; e += 1; }
+  if (e >= -2 && e <= 3) return s + String(+x.toPrecision(d + 1));
+  return `${s}${m.toFixed(d - 1)}×10${sup(e)}`;
+}
+const fmt = (x, d = 2) => (x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const KB = 8.617333e-5, Q = 1.602177e-19, EPS0 = 8.8541878e-14; // eV/K, C, F/cm
+function bindSeg(id, get, set) {
+  const el = $(id);
+  el.addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b) return; set(b.dataset.v); });
+  return () => el.querySelectorAll('button[data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(get()))));
+}
+// Ejes genéricos para SVG. xs/ys: {min,max,log}
+function axes(o) {
+  const { W, H, L, R, T, B, xs, ys } = o, w = W - L - R, h = H - T - B;
+  const tx = v => xs.log ? Math.log10(v) : v, ty = v => ys.log ? Math.log10(v) : v;
+  const x0 = tx(xs.min), x1 = tx(xs.max), y0 = ty(ys.min), y1 = ty(ys.max);
+  const X = v => L + (tx(v) - x0) / (x1 - x0) * w, Y = v => T + h - (ty(v) - y0) / (y1 - y0) * h;
+  const s = [];
+  const ticks = (sc, a, b) => {
+    if (sc.log) { const out = []; for (let e = Math.ceil(a - 1e-9); e <= b + 1e-9; e++) out.push(10 ** e); return out; }
+    const span = b - a, raw = span / (sc.n || 6), p = 10 ** Math.floor(Math.log10(raw)), m = raw / p, st = (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p;
+    const out = []; for (let v = Math.ceil(a / st - 1e-9) * st; v <= b + 1e-9 * st; v += st) out.push(Math.abs(v) < st * 1e-9 ? 0 : v); return out;
+  };
+  const lab = (v, sc) => sc.fmt ? sc.fmt(v) : sc.log ? `10${sup(Math.round(Math.log10(v)))}` : String(+v.toPrecision(4)).replace('-', '−');
+  const xt = ticks(xs, x0, x1), yt = ticks(ys, y0, y1);
+  const step = xs.log && xt.length > 9 ? 2 : 1, ystep = ys.log && yt.length > 9 ? 2 : 1;
+  yt.forEach((v, i) => { s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--border)" stroke-dasharray="${v === 0 && !ys.log ? '' : '2 4'}"/>`); if (i % ystep === 0) s.push(`<text class="tick" x="${L - 6}" y="${Y(v) + 3}" text-anchor="end">${lab(v, ys)}</text>`); });
+  xt.forEach((v, i) => { s.push(`<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${T + h}" stroke="var(--border)" stroke-dasharray="${v === 0 && !xs.log ? '' : '2 4'}"/>`); if (i % step === 0) s.push(`<text class="tick" x="${X(v)}" y="${T + h + 14}" text-anchor="middle">${lab(v, xs)}</text>`); });
+  s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="none" stroke="var(--text-faint)" stroke-width="1"/>`);
+  if (o.xlabel) s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 4}" text-anchor="middle">${o.xlabel}</text>`);
+  if (o.ylabel) s.push(`<text class="axis-label" transform="translate(13 ${T + h / 2}) rotate(-90)" text-anchor="middle">${o.ylabel}</text>`);
+  const clip = o.clip || ('c' + Math.random().toString(36).slice(2, 7));
+  s.push(`<clipPath id="${clip}"><rect x="${L}" y="${T}" width="${w}" height="${h}"/></clipPath>`);
+  const line = (pts, attrs) => `<polyline clip-path="url(#${clip})" points="${pts.filter(p => isFinite(p[0]) && isFinite(p[1])).map(p => X(p[0]).toFixed(1) + ',' + clamp(Y(p[1]), -9999, 9999).toFixed(1)).join(' ')}" fill="none" ${attrs}/>`;
+  return { X, Y, s, w, h, L, T, line, clip, inv: px => { const t = x0 + (px - L) / w * (x1 - x0); return xs.log ? 10 ** t : t; } };
+}
+function hoverChart(svgId, tipId, fn) {
+  const svg = $(svgId), tip = $(tipId);
+  const move = e => {
+    const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, px = (e.clientX - r.left) / r.width * vb.width, py = (e.clientY - r.top) / r.height * vb.height;
+    const html = fn(px, py);
+    if (!html) { tip.classList.remove('on'); return; }
+    tip.innerHTML = html; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.classList.add('on');
+  };
+  svg.addEventListener('pointermove', move); svg.addEventListener('pointerleave', () => tip.classList.remove('on'));
+}
+// ---------- física de materiales compartida ----------
+// Eg(T) de Varshni; Nc, Nv ∝ T^(3/2); movilidad: Arora (Si) y Caughey–Thomas de Sotoodeh (GaAs).
+const SEMI = {
+  Si: { label: 'Si', eps: 11.7, Eg0: 1.17, va: 4.73e-4, vb: 636, Nc: 2.86e19, Nv: 3.10e19, mce: 0.26, mch: 0.36 },
+  GaAs: { label: 'GaAs', eps: 12.9, Eg0: 1.519, va: 5.405e-4, vb: 204, Nc: 4.7e17, Nv: 9.0e18, mce: 0.067, mch: 0.34 }
+};
+const Eg = (m, T) => SEMI[m].Eg0 - SEMI[m].va * T * T / (T + SEMI[m].vb);
+const Nc = (m, T) => SEMI[m].Nc * (T / 300) ** 1.5, Nv = (m, T) => SEMI[m].Nv * (T / 300) ** 1.5;
+const ni = (m, T) => Math.sqrt(Nc(m, T) * Nv(m, T)) * Math.exp(-Eg(m, T) / (2 * KB * T));
+// movilidad (cm²/V·s) de electrones ('n') o huecos ('p') con N impurezas ionizadas totales
+function mobility(m, car, N, T) {
+  const Tn = T / 300; N = Math.max(N, 1);
+  if (m === 'Si') {
+    const al = 0.88 * Tn ** -0.146;
+    if (car === 'n') return 88 * Tn ** -0.57 + 7.4e8 * T ** -2.33 / (1 + (N / (1.26e17 * Tn ** 2.4)) ** al);
+    return 54.3 * Tn ** -0.57 + 1.36e8 * T ** -2.23 / (1 + (N / (2.35e17 * Tn ** 2.4)) ** al);
+  }
+  const P = car === 'n' ? { mx: 9400, mn: 500, Nr: 6e16, al: 0.394, t1: 2.1, t2: 3.0 } : { mx: 491.5, mn: 20, Nr: 1.48e17, al: 0.38, t1: 2.2, t2: 3.0 };
+  return P.mn + (P.mx * (1 / Tn) ** P.t1 - P.mn) / (1 + (N / (P.Nr * Tn ** P.t2)) ** P.al);
+}
+// portadores con ionización completa (tipo 'n' o 'p', dopaje N)
+function carriers(m, type, N, T) {
+  const n_i = ni(m, T), maj = N / 2 + Math.sqrt((N / 2) ** 2 + n_i * n_i), min = n_i * n_i / maj;
+  return type === 'n' ? { n: maj, p: min, ni: n_i } : { n: min, p: maj, ni: n_i };
+}
+// ---------- Laboratorio de la Unión p–n ----------
+const DEF = { mat: 'Si', prof: 'abrupt', logNA: 17, logND: 16, logA: 21, Va: 0, T: 300, logTau: -6, Rs: 5, scale: 'lin', unk: false, fit: false };
+const state = { ...DEF };
+const AREA = 1e-4; // cm²
+const UNK = { mat: 'Si', NA: 1e19, ND: 3.7e15, T: 300 };
+
+// ---------- física de la unión ----------
+function params(o) {
+  const m = o.mat, T = o.T, NA = o.NA, ND = o.ND, Vt = KB * T, n_i = ni(m, T), eps = SEMI[m].eps * EPS0;
+  const tau = o.tau ?? 1e-6;
+  let Vbi, a = o.a;
+  if (o.prof === 'graded') {
+    let W = 1e-5; Vbi = 0.7;
+    for (let i = 0; i < 60; i++) { W = Math.cbrt(12 * eps * Vbi / (Q * a)); Vbi = 2 * Vt * Math.log(a * W / (2 * n_i)); if (Vbi < 0.05) Vbi = 0.05; }
+  } else Vbi = Vt * Math.log(NA * ND / (n_i * n_i));
+  const mun = mobility(m, 'n', NA, T), mup = mobility(m, 'p', ND, T);
+  const Dn = mun * Vt, Dp = mup * Vt, Ln = Math.sqrt(Dn * tau), Lp = Math.sqrt(Dp * tau);
+  const J0 = Q * n_i * n_i * (Dn / (Ln * NA) + Dp / (Lp * ND));
+  const Nlow = Math.min(NA, ND);
+  const P = { m, T, NA, ND, a, prof: o.prof, Vt, ni: n_i, eps, tau, Vbi, mun, mup, Dn, Dp, Ln, Lp, J0, Nlow, Eg: Eg(m, T) };
+  P.br = breakdown(P);
+  return P;
+}
+function geom(P, Vj) {
+  const Vd = Math.max(P.Vbi - Vj, 0.02), eps = P.eps;
+  if (P.prof === 'graded') {
+    const W = Math.cbrt(12 * eps * Vd / (Q * P.a));
+    return { Vd, W, xn: W / 2, xp: W / 2, Emax: Q * P.a * W * W / (8 * eps) };
+  }
+  const Neff = P.NA * P.ND / (P.NA + P.ND), W = Math.sqrt(2 * eps * Vd / (Q * Neff));
+  const xn = W * P.NA / (P.NA + P.ND), xp = W * P.ND / (P.NA + P.ND);
+  return { Vd, W, xn, xp, Emax: Q * P.ND * xn / eps, Neff };
+}
+// potencial ψ(x) (0 en el lado p, V_d en el lado n), campo y carga
+function psi(P, G, x) {
+  if (P.prof === 'graded') {
+    const h = G.W / 2; if (x <= -h) return 0; if (x >= h) return G.Vd;
+    return Q * P.a / (2 * P.eps) * (G.W * G.W * x / 4 - x * x * x / 3) + G.Vd / 2;
+  }
+  if (x <= -G.xp) return 0; if (x >= G.xn) return G.Vd;
+  if (x <= 0) return Q * P.NA * (x + G.xp) ** 2 / (2 * P.eps);
+  return G.Vd - Q * P.ND * (G.xn - x) ** 2 / (2 * P.eps);
+}
+function field(P, G, x) {
+  if (P.prof === 'graded') { const h = G.W / 2; if (Math.abs(x) >= h) return 0; return -Q * P.a / (2 * P.eps) * (h * h - x * x); }
+  if (x <= -G.xp || x >= G.xn) return 0;
+  return x <= 0 ? -Q * P.NA * (x + G.xp) / P.eps : -Q * P.ND * (G.xn - x) / P.eps;
+}
+function rho(P, G, x) { // en unidades de q (cm⁻³)
+  if (P.prof === 'graded') { const h = G.W / 2; return Math.abs(x) < h ? P.a * x : 0; }
+  if (x <= -G.xp || x >= G.xn) return 0; return x <= 0 ? -P.NA : P.ND;
+}
+function breakdown(P) {
+  const m = P.m, eps = P.eps, Eg300 = Eg(m, 300), tcA = 1 + 9e-4 * (P.T - 300);
+  const Et = 1e6 * (P.Eg / 1.12) ** 1.5; // campo de tunelamiento
+  let Va, Vt0;
+  const Vbi0 = Math.max(P.Vbi, 0.3);
+  if (P.prof === 'graded') {
+    Va = 60 * (Eg300 / 1.1) ** 1.2 * (P.a / 3e20) ** -0.4 * tcA;
+    const Wt = Math.sqrt(8 * eps * Et / (Q * P.a)); Vt0 = Q * P.a * Wt ** 3 / (12 * eps) - Vbi0;
+  } else {
+    const NB = P.NA * P.ND / (P.NA + P.ND), Nc = Math.min(NB, 3e18);
+    const Ec = 4e5 * (Eg300 / 1.12) ** 0.75 / (1 - Math.log10(Nc / 1e16) / 3);
+    Va = (eps * Ec * Ec / (2 * Q * NB) - Vbi0) * tcA;
+    Vt0 = eps * Et * Et / (2 * Q * NB) - Vbi0;
+  }
+  Va = Math.max(Va, 0.5); Vt0 = Math.max(Vt0, 0.3);
+  const V = Math.min(Va, Vt0), r = V / P.Eg;
+  const mech = r < 4 ? 'tunelamiento (Zener)' : r > 6 ? 'avalancha' : 'mixta (Zener + avalancha)';
+  const nb = r < 4 ? 1.6 : r > 6 ? 4 : 1.6 + (r - 4) / 2 * 2.4;
+  return { V, Vav: Va, Vtun: Vt0, mech, nb };
+}
+function jParts(P, Vj) {
+  const Vt = P.Vt, G = geom(P, Vj);
+  const ex = Math.exp(Math.min(Vj / Vt, 700));
+  const hi = 2 / (1 + Math.sqrt(1 + 4 * P.ni * P.ni * ex / (P.Nlow * P.Nlow)));
+  const Jd = P.J0 * (ex - 1) * (Vj > 0 ? hi : 1);
+  const Jr = Q * P.ni * G.W / (2 * P.tau) * (Math.exp(Math.min(Vj / (2 * Vt), 700)) - 1);
+  let M = 1; if (Vj < 0) { const u = Math.min(-Vj / P.br.V, 1 - 1e-12); M = 1 / (1 - u ** P.br.nb); }
+  return { Jd, Jr, M, I: AREA * (Jd + Jr) * M, G };
+}
+function solveVj(P, Va, Rs) {
+  const g = Vj => Vj + jParts(P, Vj).I * Rs - Va;
+  let lo = -P.br.V * (1 - 1e-10), hi = Math.max(Va, 0) + 1e-9;
+  if (g(lo) > 0) return lo;
+  for (let i = 0; i < 90; i++) { const mid = (lo + hi) / 2; if (g(mid) > 0) hi = mid; else lo = mid; }
+  return (lo + hi) / 2;
+}
+function vAtCurrent(P, I, Rs) { let lo = 0, hi = 2; for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (jParts(P, mid).I > I) hi = mid; else lo = mid; } return lo + I * Rs; }
+const curP = () => params({ mat: state.mat, T: state.T, NA: 10 ** state.logNA, ND: 10 ** state.logND, a: 10 ** state.logA, prof: state.prof, tau: 10 ** state.logTau });
+
+// ---------- formato ----------
+function fI(I) { const a = Math.abs(I), s = I < 0 ? '−' : ''; if (a >= 1) return s + a.toFixed(3) + ' A'; if (a >= 1e-3) return s + (a * 1e3).toFixed(a >= 1e-2 ? 2 : 3) + ' mA'; if (a >= 1e-6) return s + (a * 1e6).toFixed(2) + ' µA'; if (a >= 1e-9) return s + (a * 1e9).toFixed(2) + ' nA'; return s + sci(a, 2) + ' A'; }
+function fL(cm) { const um = cm * 1e4; return um >= 1 ? um.toFixed(um >= 10 ? 1 : 3) + ' µm' : (um * 1e3).toFixed(1) + ' nm'; }
+
+// ---------- diagrama de bandas ----------
+function drawBands(P, Vj) {
+  const G = geom(P, Vj), kT = P.Vt;
+  const W = G.xn + G.xp, xa = -G.xp - 0.6 * W, xb = G.xn + 0.6 * W;
+  const Ecn = kT * Math.log(Nc(P.m, P.T) / P.ND);
+  const Ec = x => Ecn + (G.Vd - psi(P, G, x)), Ev = x => Ec(x) - P.Eg, Ei = x => Ec(x) - P.Eg / 2 + kT / 2 * Math.log(Nv(P.m, P.T) / Nc(P.m, P.T));
+  const EFp0 = -Vj;
+  const EFn = x => { if (x >= -G.xp) return 0; const d = Math.exp((x + G.xp) / P.Ln); return EFp0 + kT * Math.log(1 + (Math.exp(Vj / kT) - 1) * d); };
+  const EFp = x => { if (x <= G.xn) return EFp0; const d = Math.exp(-(x - G.xn) / P.Lp); return -kT * Math.log(1 + (Math.exp(Vj / kT) - 1) * d); };
+  const xs = []; for (let i = 0; i <= 300; i++) xs.push(xa + (xb - xa) * i / 300);
+  const vals = xs.flatMap(x => [Ec(x), Ev(x)]); const lo = Math.min(...vals), hi = Math.max(...vals), pad = 0.15 * (hi - lo);
+  const A = axes({ W: 960, H: 360, L: 60, R: 70, T: 14, B: 40, xs: { min: xa * 1e4, max: xb * 1e4, n: 8 }, ys: { min: lo - pad, max: hi + pad, n: 6 }, xlabel: 'posición x (µm)   ·   lado p a la izquierda, lado n a la derecha', ylabel: 'energía (eV)', clip: 'cBand' });
+  const s = A.s;
+  s.splice(0, 0, `<rect x="${A.X(-G.xp * 1e4)}" y="${A.T}" width="${A.X(G.xn * 1e4) - A.X(-G.xp * 1e4)}" height="${A.h}" fill="var(--accent-soft)"/>`);
+  const L = (f, attrs) => s.push(A.line(xs.map(x => [x * 1e4, f(x)]), attrs));
+  L(Ei, 'stroke="var(--text-faint)" stroke-width="1.2" stroke-dasharray="1.5 3"');
+  L(Ec, 'stroke="var(--text)" stroke-width="2.4"'); L(Ev, 'stroke="var(--text)" stroke-width="2.4"');
+  L(EFn, 'stroke="var(--elec)" stroke-width="2" stroke-dasharray="7 4"'); L(EFp, 'stroke="var(--hole)" stroke-width="2" stroke-dasharray="7 4"');
+  const xr = A.L + A.w + 6, xl = A.L - 4;
+  s.push(`<text class="lvl" x="${xr}" y="${A.Y(Ec(xb)) + 4}">E_c</text><text class="lvl" x="${xr}" y="${A.Y(Ev(xb)) + 4}">E_v</text><text class="lvl" x="${xr}" y="${A.Y(0) + 4}" fill="var(--elec)">E_Fn</text>`);
+  if (Math.abs(Vj) > 0.03) s.push(`<text class="lvl" x="${A.L + 6}" y="${A.Y(EFp0) + (Vj > 0 ? 14 : -6)}" fill="var(--hole)">E_Fp</text>`);
+  else s.push(`<text class="lvl" x="${A.L + 6}" y="${A.Y(0) - 6}" fill="var(--accent)">E_F</text>`);
+  // barrera
+  const xB = A.X(xa * 1e4) + 70, top = Ec(xa), bot = Ec(xb);
+  s.push(`<line x1="${xB}" x2="${xB}" y1="${A.Y(top)}" y2="${A.Y(bot)}" stroke="var(--copper)" stroke-width="2"/><line x1="${xB - 6}" x2="${A.X(xb * 1e4)}" y1="${A.Y(bot)}" y2="${A.Y(bot)}" stroke="var(--copper)" stroke-dasharray="2 3"/>`);
+  s.push(`<text class="lvl" x="${xB + 6}" y="${(A.Y(top) + A.Y(bot)) / 2 + 4}" fill="var(--copper)">q(V_bi − V) = ${G.Vd.toFixed(3)} eV</text>`);
+  if (Math.abs(Vj) > 0.03) { const xq = A.X(xb * 1e4) - 30; s.push(`<line x1="${xq}" x2="${xq}" y1="${A.Y(0)}" y2="${A.Y(EFp0)}" stroke="var(--accent)" stroke-width="1.6"/><text class="lvl" x="${xq - 6}" y="${(A.Y(0) + A.Y(EFp0)) / 2 + 4}" text-anchor="end" fill="var(--accent)">qV = ${Vj.toFixed(3)} eV</text>`); }
+  s.push(`<text class="plabel" x="${A.L + 10}" y="${A.T + 18}">p · N_A = ${sci(P.NA, 2)}</text><text class="plabel" x="${A.L + A.w - 10}" y="${A.T + 18}" text-anchor="end">n · N_D = ${sci(P.ND, 2)}</text>`);
+  $('band').innerHTML = s.join('');
+  $('bandNote').textContent = `${SEMI[P.m].label} · ${P.T} K · ${P.prof === 'graded' ? 'gradual' : 'abrupta'}`;
+  let cap;
+  if (Math.abs(Vj) < 0.01) cap = `En equilibrio el nivel de Fermi es plano. Las bandas se doblan ${P.Vbi.toFixed(3)} eV: es la barrera que frena la difusión de electrones hacia p y de huecos hacia n.`;
+  else if (Vj > 0) cap = `En directa los cuasiniveles se separan qV = ${Vj.toFixed(3)} eV dentro de la región de agotamiento y la barrera baja a ${G.Vd.toFixed(3)} eV. La población que la cruza crece como e^(qV/kT): se inyectan minoritarios a cada lado y se recombinan en una longitud de difusión.`;
+  else cap = `En inversa la barrera sube a ${G.Vd.toFixed(2)} eV y W crece. Casi ningún portador mayoritario la cruza; solo pasan los minoritarios que llegan al borde y caen por el campo, por eso la corriente se satura en −I₀.`;
+  $('bandCap').textContent = cap;
+  return G;
+}
+function drawPoisson(P, Vj) {
+  const G = geom(P, Vj), W = G.xn + G.xp, xa = -G.xp - 0.6 * W, xb = G.xn + 0.6 * W;
+  const xs = []; for (let i = 0; i <= 400; i++) xs.push(xa + (xb - xa) * i / 400);
+  const xsC = { min: xa * 1e4, max: xb * 1e4, n: 8 };
+  const panels = [
+    { f: x => rho(P, G, x) * Q, lab: 'ρ (C/cm³)', col: 'var(--accent)', fill: true },
+    { f: x => field(P, G, x), lab: '𝓔 (V/cm)', col: 'var(--copper)', fill: true },
+    { f: x => psi(P, G, x), lab: 'ψ (V)', col: 'var(--elec)', fill: false }
+  ];
+  let out = '';
+  panels.forEach((pn, i) => {
+    const v = xs.map(pn.f), lo = Math.min(0, ...v), hi = Math.max(0, ...v), pad = 0.12 * (hi - lo || 1);
+    const A = axes({ W: 960, H: 160, L: 92, R: 20, T: 10, B: i === 2 ? 34 : 18, xs: { ...xsC, fmt: i === 2 ? undefined : (() => '') }, ys: { min: lo - pad, max: hi + pad, n: 3, fmt: t => sci(t, 2) }, xlabel: i === 2 ? 'posición x (µm)' : '', ylabel: pn.lab, clip: 'cP' + i });
+    if (pn.fill) A.s.push(`<polygon clip-path="url(#cP${i})" points="${A.X(xa * 1e4)},${A.Y(0)} ${xs.map((x, k) => A.X(x * 1e4).toFixed(1) + ',' + A.Y(v[k]).toFixed(1)).join(' ')} ${A.X(xb * 1e4)},${A.Y(0)}" fill="${pn.col}" opacity="0.14"/>`);
+    A.s.push(A.line(xs.map((x, k) => [x * 1e4, v[k]]), `stroke="${pn.col}" stroke-width="2.2"`));
+    if (i === 1) { const xm = P.prof === 'graded' ? 0 : 0; A.s.push(`<text class="lvl" x="${A.X(xm) + 8}" y="${A.Y(-G.Emax) + 12}" fill="var(--copper)">𝓔_max = −${sci(G.Emax, 3)} V/cm</text>`); }
+    if (i === 0 && P.prof === 'abrupt') A.s.push(`<text class="lvl" x="${A.X(-G.xp * 1e4) - 4}" y="${A.Y(-Q * P.NA) + 14}" text-anchor="end" fill="var(--accent)">−qN_A</text><text class="lvl" x="${A.X(G.xn * 1e4) + 4}" y="${A.Y(Q * P.ND) - 4}" fill="var(--accent)">+qN_D</text>`);
+    if (i === 2) A.s.push(`<text class="lvl" x="${A.L + A.w - 6}" y="${A.Y(G.Vd) + 14}" text-anchor="end" fill="var(--elec)">V_bi − V = ${G.Vd.toFixed(3)} V</text>`);
+    [-G.xp, G.xn].forEach(xe => A.s.push(`<line x1="${A.X(xe * 1e4)}" x2="${A.X(xe * 1e4)}" y1="${A.T}" y2="${A.T + A.h}" stroke="var(--accent)" stroke-dasharray="3 3" opacity="0.7"/>`));
+    out += `<g transform="translate(0 ${i * 160})">${A.s.join('')}</g>`;
+  });
+  $('pois').innerHTML = out;
+  $('poisNote').textContent = `x_p = ${fL(G.xp)} · x_n = ${fL(G.xn)}`;
+}
+function drawMinority(P, Vj) {
+  const G = geom(P, Vj), kT = P.Vt, n_i = P.ni, ex = Math.exp(Vj / kT);
+  const np0 = n_i * n_i / P.NA, pn0 = n_i * n_i / P.ND;
+  const W = 520, H = 400, L = 62, R = 14, T = 14, B = 46, w = W - L - R, h = H - T - B;
+  const f1 = 0.38, f2 = 0.62, Lp4 = 4 * P.Lp, Ln4 = 4 * P.Ln;
+  const Xp = x => L + (x + G.xp + Ln4) / Ln4 * f1 * w, Xd = x => L + (f1 + (x + G.xp) / (G.xn + G.xp) * (f2 - f1)) * w, Xn = x => L + (f2 + (x - G.xn) / Lp4 * (1 - f2)) * w;
+  const ymin = 1, ymax = 1e20, Y = v => T + h - (Math.log10(clamp(v, ymin, ymax * 10)) - 0) / 20 * h;
+  const s = [];
+  for (let e = 0; e <= 20; e += 4) s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(10 ** e)}" y2="${Y(10 ** e)}" stroke="var(--border)" stroke-dasharray="2 4"/><text class="tick" x="${L - 6}" y="${Y(10 ** e) + 3}" text-anchor="end">10${sup(e)}</text>`);
+  s.push(`<rect x="${L + f1 * w}" y="${T}" width="${(f2 - f1) * w}" height="${h}" fill="var(--accent-soft)"/>`);
+  s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="none" stroke="var(--text-faint)"/>`);
+  s.push(`<clipPath id="cMin"><rect x="${L}" y="${T}" width="${w}" height="${h}"/></clipPath>`);
+  // lado p neutro
+  const dn = x => np0 * (ex - 1) * Math.exp((x + G.xp) / P.Ln);
+  const pts = (arr) => arr.filter(q => isFinite(q[1])).map(q => q[0].toFixed(1) + ',' + Y(q[1]).toFixed(1)).join(' ');
+  const pA = [], nA = [];
+  for (let i = 0; i <= 80; i++) { const x = -G.xp - Ln4 + Ln4 * i / 80; const d = dn(x); nA.push([Xp(x), Math.max(np0 + d, ymin)]); pA.push([Xp(x), P.NA + Math.max(d, 0)]); }
+  // agotamiento
+  const Ecn = kT * Math.log(Nc(P.m, P.T) / P.ND);
+  const Ei = x => Ecn + (G.Vd - psi(P, G, x)) - P.Eg / 2 + kT / 2 * Math.log(Nv(P.m, P.T) / Nc(P.m, P.T));
+  for (let i = 0; i <= 80; i++) { const x = -G.xp + (G.xn + G.xp) * i / 80; nA.push([Xd(x), n_i * Math.exp((0 - Ei(x)) / kT)]); pA.push([Xd(x), n_i * Math.exp((Ei(x) + Vj) / kT)]); }
+  const dp = x => pn0 * (ex - 1) * Math.exp(-(x - G.xn) / P.Lp);
+  for (let i = 0; i <= 80; i++) { const x = G.xn + Lp4 * i / 80; const d = dp(x); pA.push([Xn(x), Math.max(pn0 + d, ymin)]); nA.push([Xn(x), P.ND + Math.max(d, 0)]); }
+  s.push(`<polyline clip-path="url(#cMin)" points="${pts(nA)}" fill="none" stroke="var(--elec)" stroke-width="2.3"/>`);
+  s.push(`<polyline clip-path="url(#cMin)" points="${pts(pA)}" fill="none" stroke="var(--hole)" stroke-width="2.3"/>`);
+  s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(n_i)}" y2="${Y(n_i)}" stroke="var(--text-faint)" stroke-dasharray="1.5 3"/><text class="lvl" x="${L + f1 * w + 4}" y="${Y(n_i) - 5}" fill="var(--text-faint)">n_i</text>`);
+  // bordes
+  const npe = np0 * ex, pne = pn0 * ex;
+  s.push(`<circle cx="${L + f1 * w}" cy="${Y(npe)}" r="4.5" fill="var(--elec)" stroke="var(--surface)" stroke-width="1.5"/><circle cx="${L + f2 * w}" cy="${Y(pne)}" r="4.5" fill="var(--hole)" stroke="var(--surface)" stroke-width="1.5"/>`);
+  s.push(`<text class="tick" x="${L + f1 * w / 2}" y="${T + h + 14}" text-anchor="middle">lado p: 4L_n = ${fL(Ln4)}</text><text class="tick" x="${L + (f1 + f2) / 2 * w}" y="${T + h + 14}" text-anchor="middle">W = ${fL(G.W)}</text><text class="tick" x="${L + (f2 + 1) / 2 * w}" y="${T + h + 14}" text-anchor="middle">lado n: 4L_p = ${fL(Lp4)}</text>`);
+  s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 6}" text-anchor="middle">posición (cada tramo con su propia escala)</text><text class="axis-label" transform="translate(13 ${T + h / 2}) rotate(-90)" text-anchor="middle">concentración (cm⁻³)</text>`);
+  $('minc').innerHTML = s.join('');
+  $('minNote').textContent = `L_n = ${fL(P.Ln)} · L_p = ${fL(P.Lp)}`;
+  $('minCap').textContent = `Ley de la unión: en los bordes de W los minoritarios valen n_p0·e^(qV/kT) y p_n0·e^(qV/kT) (puntos). Aquí n_p(−x_p) = ${sci(npe, 2)} y p_n(x_n) = ${sci(pne, 2)} cm⁻³. Lejos del borde decaen con su longitud de difusión, y la pendiente en el borde es la corriente: J = qD·dp/dx.`;
+}
+let ivGeom = null;
+function drawIV(P, Va, Vj, Rs) {
+  const isLog = state.scale === 'log', Vs = [];
+  const v0 = isLog ? 0.01 : -1, v1 = 1.0;
+  for (let i = 0; i <= 220; i++) Vs.push(v0 + (v1 - v0) * i / 220);
+  const tot = Vs.map(v => [v, jParts(P, solveVj(P, v, Rs)).I]);
+  const dif = Vs.map(v => [v, AREA * jParts(P, v).Jd]), rec = Vs.map(v => [v, AREA * jParts(P, v).Jr]);
+  let A;
+  if (isLog) {
+    A = axes({ W: 520, H: 400, L: 62, R: 14, T: 14, B: 40, xs: { min: 0, max: 1.0, n: 5 }, ys: { min: 1e-15, max: 1, log: true }, xlabel: 'voltaje aplicado V (V)', ylabel: '|I| (A)', clip: 'cIV' });
+    A.s.push(A.line(dif.map(p => [p[0], Math.abs(p[1])]), 'stroke="var(--elec)" stroke-width="1.5" stroke-dasharray="5 4"'));
+    A.s.push(A.line(rec.map(p => [p[0], Math.abs(p[1])]), 'stroke="var(--copper)" stroke-width="1.5" stroke-dasharray="5 4"'));
+    A.s.push(A.line(tot.map(p => [p[0], Math.abs(p[1])]), 'stroke="var(--accent)" stroke-width="2.6"'));
+  } else {
+    const Imax = Math.max(...tot.map(p => p[1])), ymax = Imax * 1e3 * 1.08;
+    A = axes({ W: 520, H: 400, L: 62, R: 14, T: 14, B: 40, xs: { min: -1, max: 1.0, n: 8 }, ys: { min: -0.08 * ymax, max: ymax, n: 6 }, xlabel: 'voltaje aplicado V (V)', ylabel: 'I (mA)', clip: 'cIV' });
+    A.s.push(A.line(dif.map(p => [p[0], p[1] * 1e3]), 'stroke="var(--elec)" stroke-width="1.5" stroke-dasharray="5 4"'));
+    A.s.push(A.line(tot.map(p => [p[0], p[1] * 1e3]), 'stroke="var(--accent)" stroke-width="2.6"'));
+  }
+  const I = jParts(P, Vj).I;
+  if (Va >= v0 && Va <= v1) { const yv = isLog ? Math.abs(I) : I * 1e3; A.s.push(`<circle cx="${A.X(Va)}" cy="${A.Y(Math.max(yv, isLog ? 1e-15 : -1e9))}" r="6" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`); }
+  $('iv').innerHTML = A.s.join('');
+  ivGeom = { A, isLog, Rs };
+  $('ivNote').textContent = `I₀ = ${fI(P.J0 * AREA)} · R_s = ${Rs} Ω`;
+  $('ivCap').textContent = isLog
+    ? `Escala logarítmica: la difusión ideal sube 1 década cada ${(P.Vt * Math.LN10 * 1e3).toFixed(0)} mV (n = 1) y la recombinación cada ${(2 * P.Vt * Math.LN10 * 1e3).toFixed(0)} mV (n = 2). Arriba, la alta inyección y la caída I·R_s doblan la curva.`
+    : `En inversa la corriente se satura en −I₀ − I_gen; en directa crece exponencialmente hasta que la resistencia en serie la vuelve casi lineal. El "voltaje de encendido" no es una propiedad del diodo, depende de la escala de corriente que miras.`;
+}
+function drawBreakdown(P, Va, Rs) {
+  const Vb = P.br.V, xmin = -1.3 * Vb;
+  const A = axes({ W: 520, H: 380, L: 62, R: 14, T: 14, B: 40, xs: { min: xmin, max: 0.5 * Math.min(1, Vb / 2) + 0.2, n: 6 }, ys: { min: -20, max: 2, n: 6 }, xlabel: 'voltaje aplicado V (V)', ylabel: 'I (mA)', clip: 'cBR' });
+  const pts = []; for (let i = 0; i <= 300; i++) { const v = xmin + (A.inv(A.L + A.w) - xmin) * i / 300; pts.push([v, jParts(P, solveVj(P, v, Rs)).I * 1e3]); }
+  A.s.push(`<line x1="${A.X(-Vb)}" x2="${A.X(-Vb)}" y1="${A.T}" y2="${A.T + A.h}" stroke="var(--copper)" stroke-dasharray="4 3"/><text class="lvl" x="${A.X(-Vb) + 6}" y="${A.T + 16}" fill="var(--copper)">−V_br = −${Vb < 10 ? Vb.toFixed(2) : Vb.toFixed(0)} V</text>`);
+  A.s.push(A.line(pts, 'stroke="var(--accent)" stroke-width="2.6"'));
+  if (Va >= xmin) { const I = jParts(P, solveVj(P, Va, Rs)).I * 1e3; A.s.push(`<circle cx="${A.X(Va)}" cy="${A.Y(clamp(I, -21, 3))}" r="6" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`); }
+  $('br').innerHTML = A.s.join('');
+  $('brNote').textContent = `${P.br.mech} · V_br/E_g = ${(Vb / P.Eg).toFixed(1)}`;
+  $('brCap').textContent = `Ruptura por ${P.br.mech}. Avalancha: un portador acelerado por 𝓔 ionizaría la red a ${P.br.Vav < 1e4 ? P.br.Vav.toFixed(1) : '>10⁴'} V. Tunelamiento: con W angosta los electrones de valencia del lado p atraviesan la barrera hacia la banda de conducción del lado n; ocurriría a ${P.br.Vtun < 1e4 ? P.br.Vtun.toFixed(1) : '>10⁴'} V. Rompe el que llega primero. Más allá de V_br la corriente solo la limita R_s.`;
+}
+let cvGeom = null;
+function unkData() {
+  const P = params({ mat: 'Si', T: 300, NA: UNK.NA, ND: UNK.ND, prof: 'abrupt' });
+  const out = []; let seed = 7;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647 - 0.5; };
+  for (let v = 0; v >= -8.01; v -= 0.5) { const C = P.eps * AREA / geom(P, v).W * (1 + 0.012 * rnd()); out.push([v, C]); }
+  return out;
+}
+function linfit(pts) { const n = pts.length, sx = pts.reduce((a, p) => a + p[0], 0), sy = pts.reduce((a, p) => a + p[1], 0), sxx = pts.reduce((a, p) => a + p[0] * p[0], 0), sxy = pts.reduce((a, p) => a + p[0] * p[1], 0); const m = (n * sxy - sx * sy) / (n * sxx - sx * sx); return { m, b: (sy - m * sx) / n }; }
+function drawCV(P, Vj) {
+  const graded = P.prof === 'graded' && !state.unk, pw = graded ? 3 : 2;
+  const vmin = state.unk ? -8.5 : -Math.min(10, 0.9 * P.br.V), vmax = 0.4;
+  const inv = v => { const C = P.eps * AREA / geom(P, v).W; return 1 / (C * 1e12) ** pw; };
+  const Vs = []; for (let i = 0; i <= 120; i++) Vs.push(vmin + (vmax - vmin) * i / 120);
+  let ys = state.unk ? [] : Vs.map(inv);
+  const data = state.unk ? unkData() : null;
+  if (data) ys = data.map(d => 1 / (d[1] * 1e12) ** 2);
+  const ymax = Math.max(...ys) * 1.12;
+  const A = axes({ W: 520, H: 380, L: 70, R: 14, T: 14, B: 40, xs: { min: vmin, max: vmax, n: 6 }, ys: { min: 0, max: ymax, n: 5, fmt: t => sci(t, 2) }, xlabel: 'voltaje V (V)', ylabel: graded ? '1/C³ (pF⁻³)' : '1/C² (pF⁻²)', clip: 'cCV' });
+  let cap;
+  if (!data) {
+    A.s.push(A.line(Vs.map((v, i) => [v, ys[i]]), 'stroke="var(--accent)" stroke-width="2.6"'));
+    const yv = inv(Vj); if (Vj >= vmin && Vj <= vmax) A.s.push(`<circle cx="${A.X(Vj)}" cy="${A.Y(yv)}" r="6" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`);
+    A.s.push(`<line x1="${A.X(P.Vbi)}" x2="${A.X(P.Vbi)}" y1="${A.T}" y2="${A.T + A.h}" stroke="var(--copper)" stroke-dasharray="3 3"/>`);
+    cap = graded
+      ? `En una unión gradual lineal C ∝ (V_bi − V)^(−1/3): la recta aparece al graficar 1/C³. Su pendiente da el gradiente a.`
+      : `Para una unión abrupta 1/C² = 2(V_bi − V)/(qεA²N), con N = N_A·N_D/(N_A + N_D): es una recta. Su pendiente da el dopaje del lado menos dopado y su intersección con el eje V da V_bi.`;
+    if (state.fit && !graded) {
+      const pts = Vs.filter(v => v < 0).map(v => [v, inv(v) * 1e24]);
+      const f = linfit(pts), N = 2 / (Q * P.eps * AREA * AREA * Math.abs(f.m)), Vx = -f.b / f.m;
+      cap += ` Ajuste: N = ${sci(N, 3)} cm⁻³, V_bi = ${Vx.toFixed(3)} V.`;
+    }
+  } else {
+    data.forEach(d => A.s.push(`<circle cx="${A.X(d[0])}" cy="${A.Y(1 / (d[1] * 1e12) ** 2)}" r="4.5" fill="var(--copper)" stroke="var(--surface)" stroke-width="1.5"/>`));
+    cap = `Muestra desconocida: diodo p⁺n de Si (N_A ≫ N_D), área 10⁻⁴ cm², 300 K. Los puntos tienen ±1 % de ruido. Mide la pendiente de 1/C² y despeja N_D = 2/(qεA²·|pendiente|).`;
+    if (state.fit) {
+      const pts = data.map(d => [d[0], 1 / (d[1] * d[1])]), f = linfit(pts), N = 2 / (Q * P.eps * AREA * AREA * Math.abs(f.m)), Vx = -f.b / f.m;
+      const PS = params({ mat: 'Si', T: 300, NA: UNK.NA, ND: UNK.ND, prof: 'abrupt' });
+      const fN = 2 / (Q * PS.eps * AREA * AREA * Math.abs(f.m));
+      A.s.push(A.line([[vmin, (f.m * vmin + f.b) * 1e-24], [Vx, 0]], 'stroke="var(--accent)" stroke-width="1.8" stroke-dasharray="6 4"'));
+      cap += ` Ajuste: pendiente = ${sci(f.m, 3)} F⁻²/V → N_D = ${sci(fN, 3)} cm⁻³; intersección V_bi = ${Vx.toFixed(3)} V.`;
+    }
+  }
+  $('cv').innerHTML = A.s.join('');
+  cvGeom = { A, inv, data };
+  $('cvNote').textContent = data ? 'muestra desconocida' : `C_j(${Vj.toFixed(2)} V) = ${(P.eps * AREA / geom(P, Vj).W * 1e12).toFixed(2)} pF`;
+  $('cvCap').textContent = cap;
+}
+
+// ---------- ecuaciones y lecturas ----------
+function drawEq(P, Va, Vj) {
+  const G = geom(P, Vj), J = jParts(P, Vj), kT = P.Vt, I = J.I;
+  const L = [], Hh = t => L.push(`<p class="eq-h">${t}</p>`), Qe = t => L.push(`<div class="eq-line">${t}</div>`);
+  Hh('Equilibrio');
+  if (P.prof === 'abrupt') Qe(`V_bi = (kT/q)·ln(N_A·N_D/n_i²) = ${kT.toFixed(4)} × ln(${sci(P.NA, 2)} × ${sci(P.ND, 2)} / (${sci(P.ni, 2)})²) = <span class="hi">${P.Vbi.toFixed(3)} V</span>`);
+  else Qe(`V_bi = (2kT/q)·ln(aW/2n_i) = 2 × ${kT.toFixed(4)} × ln(${sci(P.a, 2)} × ${fL(geom(P, 0).W)} / 2n_i) = <span class="hi">${P.Vbi.toFixed(3)} V</span>  (resuelto junto con W)`);
+  Hh('Región de agotamiento');
+  if (P.prof === 'abrupt') {
+    Qe(`W = √[2ε(V_bi − V)/q · (N_A + N_D)/(N_A·N_D)] = √[2 × ${SEMI[P.m].eps} × 8.85×10⁻¹⁴ × ${G.Vd.toFixed(3)} / (q × ${sci(G.Neff, 3)})] = <span class="hi">${fL(G.W)}</span>`);
+    Qe(`x_n = W·N_A/(N_A + N_D) = ${fL(G.xn)},   x_p = W·N_D/(N_A + N_D) = ${fL(G.xp)}   (N_A·x_p = N_D·x_n: neutralidad)`);
+    Qe(`𝓔_max = qN_D·x_n/ε = <span class="hi">${sci(G.Emax, 3)} V/cm</span>`);
+  } else {
+    Qe(`W = [12ε(V_bi − V)/(qa)]^(1/3) = <span class="hi">${fL(G.W)}</span>,   𝓔_max = qaW²/(8ε) = ${sci(G.Emax, 3)} V/cm`);
+  }
+  Qe(`C_j = εA/W = ${SEMI[P.m].eps} × 8.85×10⁻¹⁴ × 10⁻⁴ / ${sci(G.W, 3)} cm = <span class="hi">${(P.eps * AREA / G.W * 1e12).toFixed(3)} pF</span>`);
+  Hh('Corriente');
+  Qe(`D_n = μ_n·kT/q = ${P.mun.toFixed(0)} × ${kT.toFixed(4)} = ${P.Dn.toFixed(1)} cm²/s,  L_n = √(D_nτ) = ${fL(P.Ln)};   D_p = ${P.Dp.toFixed(1)} cm²/s,  L_p = ${fL(P.Lp)}`);
+  Qe(`J₀ = qn_i²·[D_n/(L_n·N_A) + D_p/(L_p·N_D)] = ${sci(Q * P.ni * P.ni * P.Dn / (P.Ln * P.NA), 2)} + ${sci(Q * P.ni * P.ni * P.Dp / (P.Lp * P.ND), 2)} = <span class="hi">${sci(P.J0, 3)} A/cm²</span>`);
+  Qe(`ley de la unión: p_n(x_n) = p_n0·e^(qV/kT) = ${sci(P.ni * P.ni / P.ND, 2)} × e^(${(Vj / kT).toFixed(2)}) = ${sci(P.ni * P.ni / P.ND * Math.exp(Vj / kT), 3)} cm⁻³`);
+  Qe(`I = A[J₀(e^(qV_j/kT) − 1) + (qn_iW/2τ)(e^(qV_j/2kT) − 1)]·M,   V_j = V_a − I·R_s = ${Va.toFixed(3)} − ${fI(I)} × ${state.Rs} Ω = ${Vj.toFixed(4)} V  →  <span class="hi">I = ${fI(I)}</span>`);
+  const V1 = vAtCurrent(P, 1e-3, state.Rs), P2 = params({ mat: P.m, T: P.T + 1, NA: P.NA, ND: P.ND, a: P.a, prof: P.prof, tau: P.tau }), V2 = vAtCurrent(P2, 1e-3, state.Rs);
+  Qe(`a I = 1 mA: V(${P.T} K) = ${V1.toFixed(4)} V,  V(${P.T + 1} K) = ${V2.toFixed(4)} V  →  dV/dT = <span class="hi">${((V2 - V1) * 1e3).toFixed(2)} mV/K</span>`);
+  Hh('Ruptura');
+  Qe(`avalancha: V_br ≈ ε𝓔_c²/(2qN) − V_bi = ${P.br.Vav < 1e4 ? P.br.Vav.toFixed(1) : '>10⁴'} V;   tunelamiento (𝓔_max ≈ 10⁶ V/cm): ${P.br.Vtun < 1e4 ? P.br.Vtun.toFixed(1) : '>10⁴'} V  →  <span class="hi">V_br = ${P.br.V < 10 ? P.br.V.toFixed(2) : P.br.V.toFixed(0)} V (${P.br.mech})</span>`);
+  $('eqList').innerHTML = L.join('');
+  $('eqNote').textContent = `${SEMI[P.m].label} · ${P.T} K · V_a = ${Va.toFixed(2)} V`;
+  $('r1').textContent = P.Vbi.toFixed(3) + ' V'; $('r1s').textContent = `n_i = ${sci(P.ni, 2)} cm⁻³`;
+  $('r2').textContent = fL(G.W); $('r2s').textContent = `x_p = ${fL(G.xp)} · x_n = ${fL(G.xn)}`;
+  $('r3').textContent = sci(G.Emax, 2) + ' V/cm'; $('r3s').textContent = `en x = 0`;
+  $('r4').textContent = (P.eps * AREA / G.W * 1e12).toFixed(2) + ' pF';
+  $('r5').textContent = fI(I); $('r5s').textContent = Math.abs(Va) < 1e-9 ? 'equilibrio: sin corriente neta' : `V_j = ${fmt(Math.abs(Vj) < 5e-4 ? 0 : Vj, 3)} V en la unión`;
+  $('r6').textContent = (P.br.V < 10 ? P.br.V.toFixed(2) : P.br.V.toFixed(0)) + ' V'; $('r6s').textContent = P.br.mech;
+}
+
+// ---------- render y eventos ----------
+const syncFns = [];
+function syncControls() {
+  syncFns.forEach(f => f());
+  $('NAVal').textContent = sci(10 ** state.logNA, 2) + ' cm⁻³';
+  $('NDVal').textContent = sci(10 ** state.logND, 2) + ' cm⁻³';
+  $('aVal').textContent = sci(10 ** state.logA, 2) + ' cm⁻⁴';
+  $('gradBlock').hidden = state.prof !== 'graded';
+  $('VaVal').textContent = (state.Va >= 0 ? '+' : '−') + Math.abs(state.Va).toFixed(2) + ' V';
+  $('TVal').textContent = state.T + ' K';
+  const tau = 10 ** state.logTau; $('tauVal').textContent = tau >= 1e-6 ? (tau * 1e6).toFixed(2) + ' µs' : (tau * 1e9).toFixed(1) + ' ns';
+  $('RsVal').textContent = state.Rs + ' Ω';
+  [['logNA', 'logNA'], ['logND', 'logND'], ['logA', 'logA'], ['Va', 'Va'], ['T', 'T'], ['logTau', 'logTau'], ['Rs', 'Rs']].forEach(([id, k]) => { if (+$(id).value !== state[k]) $(id).value = state[k]; });
+  $('unkChk').checked = state.unk; $('fitChk').checked = state.fit;
+}
+function renderAll() {
+  syncControls();
+  const P = curP(), Vj = solveVj(P, state.Va, state.Rs);
+  drawBands(P, Vj); drawPoisson(P, Vj); drawMinority(P, Vj); drawIV(P, state.Va, Vj, state.Rs); drawBreakdown(P, state.Va, state.Rs); drawCV(P, Vj); drawEq(P, state.Va, Vj);
+}
+syncFns.push(bindSeg('matSeg', () => state.mat, v => { state.mat = v; renderAll(); }));
+syncFns.push(bindSeg('profSeg', () => state.prof, v => { state.prof = v; renderAll(); }));
+syncFns.push(bindSeg('scaleSeg', () => state.scale, v => { state.scale = v; renderAll(); }));
+[['logNA', 'logNA'], ['logND', 'logND'], ['logA', 'logA'], ['Va', 'Va'], ['T', 'T'], ['logTau', 'logTau'], ['Rs', 'Rs']].forEach(([id, k]) => $(id).addEventListener('input', () => { state[k] = +$(id).value; renderAll(); }));
+$('vChips').addEventListener('click', e => { const b = e.target.closest('[data-va]'); if (!b) return; state.Va = +b.dataset.va; renderAll(); });
+$('unkChk').addEventListener('change', () => { state.unk = $('unkChk').checked; renderAll(); });
+$('fitChk').addEventListener('change', () => { state.fit = $('fitChk').checked; renderAll(); });
+$('resetBtn').addEventListener('click', () => { Object.assign(state, DEF); renderAll(); });
+hoverChart('iv', 'ivTip', px => { if (!ivGeom) return ''; const A = ivGeom.A; if (px < A.L || px > A.L + A.w) return ''; const v = A.inv(px), P = curP(), vj = solveVj(P, v, ivGeom.Rs), j = jParts(P, vj); return `V = ${v.toFixed(3)} V<br>V_j = ${vj.toFixed(3)} V<br>I = ${fI(j.I)}<br>difusión ${fI(AREA * j.Jd)}<br>recombinación ${fI(AREA * j.Jr)}`; });
+hoverChart('cv', 'cvTip', px => { if (!cvGeom) return ''; const A = cvGeom.A; if (px < A.L || px > A.L + A.w) return ''; const v = A.inv(px); if (cvGeom.data) { const d = cvGeom.data.reduce((b, q) => Math.abs(q[0] - v) < Math.abs(b[0] - v) ? q : b); return `V = ${d[0].toFixed(2)} V<br>C = ${(d[1] * 1e12).toFixed(3)} pF<br>1/C² = ${sci(1 / (d[1] * 1e12) ** 2, 3)} pF⁻²`; } const P = curP(), C = P.eps * AREA / geom(P, v).W; return `V = ${v.toFixed(2)} V<br>C = ${(C * 1e12).toFixed(3)} pF<br>W = ${fL(geom(P, v).W)}`; });
+const mq = window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener && mq.addEventListener('change', renderAll);
+renderAll();
+
+})();
+</script>
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.tabs [role="tab"]'));
+  const panels = { lab: document.getElementById('panelLab'), theory: document.getElementById('panelTheory') };
+  function show(name, push) {
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Object.entries(panels).forEach(([k, p]) => { if (p) p.hidden = k !== name; });
+    if (push) { try { history.replaceState(null, '', name === 'theory' ? '#teoria' : location.pathname + location.search); } catch (e) { } }
+    if (name === 'lab') window.dispatchEvent(new Event('resize'));
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); });
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); show(n.dataset.tab, true);
+    });
+  });
+  document.querySelectorAll('.toc a[data-target]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const el = document.getElementById(a.dataset.target); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  document.querySelectorAll('[data-goto-lab]').forEach(b => b.addEventListener('click', () => { show('lab', true); window.scrollTo({ top: 0 }); }));
+  document.querySelectorAll('[data-totop]').forEach(b => b.addEventListener('click', () => { const t = document.querySelector('.toc'); window.scrollTo({ top: 0, behavior: 'smooth' }); if (t) t.querySelector('a') && t.querySelector('a').focus({ preventScroll: true }); }));
+  let start = 'lab'; try { if (/^#teor/i.test(location.hash)) start = 'theory'; } catch (e) { }
+  show(start, false);
+})();
+
+</script>
+</body>
+</html>

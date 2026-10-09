@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Laboratorios interactivos y teoría para Física de Dispositivos Semiconductores, Licenciatura en Tecnología, ENES Juriquilla, UNAM.">
+<meta name="author" content="Elodie Strupiechonski, Andrés de Luna Bugallo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235B4BC4'/%3E%3Cpath d='M12 22h40M12 42h40' stroke='white' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%232874A6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='40' cy='42' r='5' fill='white' stroke='%23C1440E' stroke-width='3'/%3E%3C/svg%3E">
+<title>Física de Dispositivos Semiconductores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Layout: portada del curso. Encabezado con un diagrama de bandas como firma visual,
+     luego las siete unidades en orden (es una secuencia real) con su laboratorio. */
+  :root {
+    --bg: #EEF0F6; --surface: #FFFFFF; --surface-2: #F5F6FB; --border: #D9DCE8;
+    --text: #181A2A; --text-muted: #565A72; --text-faint: #80849A;
+    --accent: #5B4BC4; --accent-ink: #FFFFFF; --accent-soft: #E6E2F8;
+    --elec: #2874A6; --hole: #C1440E; --ok: #1C9474;
+    --shadow: 0 1px 2px rgba(24,26,42,0.06), 0 6px 18px rgba(24,26,42,0.07);
+    --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+      --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+      --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+      --elec: #5AA2D6; --hole: #E06A3A; --ok: #23A07E;
+      --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+    --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+    --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+    --elec: #5AA2D6; --hole: #E06A3A; --ok: #23A07E;
+    --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1100px; margin: 0 auto; padding-block: clamp(24px, 5vw, 56px) 64px; padding-inline: clamp(16px, 4vw, 40px); }
+
+  .hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 48px); align-items: center; margin-bottom: clamp(28px, 5vw, 48px); }
+  @media (max-width: 800px) { .hero { grid-template-columns: minmax(0, 1fr); } }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(40px, 7vw, 72px); line-height: 0.92; margin: 10px 0 14px; text-wrap: balance; }
+  .lead { color: var(--text-muted); font-size: 16px; max-width: 58ch; margin: 0; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .chip { font-family: var(--font-mono); font-size: 11.5px; padding: 4px 10px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
+  .hero svg { width: 100%; height: auto; display: block; }
+  .hero .bd-l { font-family: var(--font-mono); font-size: 12px; }
+
+  h2 { font-family: var(--font-display); font-weight: 700; font-size: 26px; margin: 0 0 4px; }
+  .sect-sub { color: var(--text-muted); font-size: 14px; margin: 0 0 18px; }
+
+  .units { display: flex; flex-direction: column; gap: 10px; }
+  .unit { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 18px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; }
+  .unit.has-lab { box-shadow: var(--shadow); }
+  @media (max-width: 680px) { .unit { grid-template-columns: 44px minmax(0, 1fr); } .unit .act { grid-column: 1 / -1; } }
+  .num { font-family: var(--font-display); font-weight: 800; font-size: 40px; line-height: 1; color: var(--text-faint); }
+  .unit.has-lab .num { color: var(--accent); }
+  .ut { font-weight: 600; font-size: 16px; margin: 0; }
+  .uk { color: var(--text-muted); font-size: 13.5px; margin: 2px 0 0; }
+  .uh { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+  .act { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+  @media (max-width: 680px) { .act { align-items: stretch; } }
+  a.lab { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; background: var(--accent); color: var(--accent-ink); font-weight: 600; font-size: 14px; padding: 10px 16px; border-radius: 10px; }
+  a.lab:hover { filter: brightness(1.08); }
+  a.lab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  a.lab span { font-family: var(--font-mono); font-size: 11px; opacity: 0.85; font-weight: 400; }
+  .act .incl { font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+  .soon { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); border: 1px dashed var(--border); border-radius: 10px; padding: 8px 12px; white-space: nowrap; text-align: center; }
+  .status { font-family: var(--font-mono); font-size: 11px; color: var(--ok); display: inline-flex; align-items: center; gap: 6px; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+
+  .how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 36px; }
+  @media (max-width: 760px) { .how { grid-template-columns: minmax(0, 1fr); } }
+  .how div { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; font-size: 13.5px; color: var(--text-muted); }
+  .how b { display: block; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+  footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--text-faint); }
+  a.th-link { font-family: var(--font-mono); font-size: 12px; color: var(--accent); text-decoration: none; padding: 2px 4px; }
+  a.th-link:hover { text-decoration: underline; }
+  a.th-link span { font-size: 11px; }
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="hero">
+    <div>
+      <span class="eyebrow">Licenciatura en Tecnología · ENES Juriquilla · UNAM</span>
+      <h1>Física de Dispositivos Semiconductores</h1>
+      <p class="lead">Del cristal al dispositivo en siete unidades. Cada unidad tiene un laboratorio interactivo donde cambias material, temperatura, dopaje o iluminación y ves la física responder en vivo, con las ecuaciones evaluadas con tus propios números.</p>
+      <div class="meta"><span class="chip">64 h · 16 semanas</span><span class="chip">Si · GaAs · GaN · materiales 2D</span><span class="chip">300 K de referencia</span></div>
+    </div>
+    <svg viewBox="0 0 420 260" aria-label="Diagrama de bandas de una unión p–n iluminada" role="img">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+      <path d="M20,60 H150 C200,60 220,150 270,150 H400" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+      <path d="M20,150 H150 C200,150 220,240 270,240 H400" fill="none" stroke="var(--text)" stroke-width="2.5"/>
+      <line x1="20" x2="400" y1="130" y2="130" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="7 5"/>
+      <text class="bd-l" x="402" y="126" text-anchor="end" fill="var(--accent)">E_F</text>
+      <text class="bd-l" x="22" y="52" fill="var(--text-muted)">E_c</text>
+      <text class="bd-l" x="22" y="170" fill="var(--text-muted)">E_v</text>
+      <text class="bd-l" x="60" y="200" fill="var(--hole)">tipo p</text>
+      <text class="bd-l" x="320" y="120" fill="var(--elec)">tipo n</text>
+      <path d="M150,18 l8,10 l-8,10 l8,10" fill="none" stroke="#3FA34D" stroke-width="2"/>
+      <line x1="190" x2="190" y1="190" y2="102" stroke="#3FA34D" stroke-width="2.5" marker-end="url(#ar)"/>
+      <circle cx="190" cy="98" r="6" fill="var(--elec)"/>
+      <circle cx="190" cy="194" r="6" fill="var(--surface)" stroke="var(--hole)" stroke-width="2"/>
+      <line x1="200" x2="250" y1="98" y2="138" stroke="var(--elec)" stroke-width="1.6" marker-end="url(#ar)"/>
+      <line x1="180" x2="130" y1="194" y2="156" stroke="var(--hole)" stroke-width="1.6" marker-end="url(#ar)"/>
+      <circle cx="320" cy="140" r="4" fill="var(--elec)"/><circle cx="345" cy="143" r="4" fill="var(--elec)"/><circle cx="370" cy="139" r="4" fill="var(--elec)"/>
+      <circle cx="50" cy="156" r="4" fill="var(--surface)" stroke="var(--hole)" stroke-width="1.6"/><circle cx="80" cy="158" r="4" fill="var(--surface)" stroke="var(--hole)" stroke-width="1.6"/><circle cx="110" cy="155" r="4" fill="var(--surface)" stroke="var(--hole)" stroke-width="1.6"/>
+    </svg>
+  </section>
+
+  <h2>Unidades y laboratorios</h2>
+  <p class="sect-sub">En el orden del curso. Cada laboratorio tiene una pestaña de teoría con las fórmulas principales.</p>
+
+  <div class="units">
+    <article class="unit has-lab">
+      <div class="num">1</div>
+      <div><p class="ut">Cristales y bandas de energía</p><p class="uk">Red de Si, Ge y GaAs, índices de Miller, zona de Brillouin, E(k) por pseudopotencial, gap directo e indirecto, masa efectiva y Kronig–Penney.</p><div class="uh">6 h · <span class="status">disponible</span></div></div>
+      <div class="act"><a class="lab" href="u1-cristales-y-bandas.html">Laboratorio de Cristales y Bandas <span>→</span></a><a class="th-link" href="u1-cristales-y-bandas.html#teoria">Teoría <span>→</span></a></div>
+    </article>
+    <article class="unit has-lab">
+      <div class="num">2</div>
+      <div><p class="ut">Portadores en equilibrio</p><p class="uk">Densidad de estados × Fermi–Dirac, nᵢ(T), dopaje n y p, nivel de Fermi. Incluye pozos, alambres y puntos cuánticos (2D, 1D, 0D).</p><div class="uh">10 h · <span class="status">disponible</span></div></div>
+      <div class="act"><a class="lab" href="u2-portadores.html">Laboratorio de Portadores <span>→</span></a><a class="th-link" href="u2-portadores.html#teoria">Teoría <span>→</span></a></div>
+    </article>
+    <article class="unit has-lab">
+      <div class="num">3</div>
+      <div><p class="ut">Transporte de portadores</p><p class="uk">Deriva entre choques, movilidad contra dopaje y temperatura, saturación de velocidad, difusión y relación de Einstein, efecto Hall.</p><div class="uh">8 h · <span class="status">disponible</span></div></div>
+      <div class="act"><a class="lab" href="u3-transporte.html">Laboratorio de Transporte <span>→</span></a><a class="th-link" href="u3-transporte.html#teoria">Teoría <span>→</span></a></div>
+    </article>
+    <article class="unit has-lab">
+      <div class="num">4</div>
+      <div><p class="ut">Fuera del equilibrio</p><p class="uk">Fotogeneración, recombinación SRH, radiativa, Auger y superficial, cuasiniveles de Fermi, continuidad y longitud de difusión, medidas con fotoluminiscencia y TRPL.</p><div class="uh">8 h · <span class="status">disponible</span></div></div>
+      <div class="act"><a class="lab" href="u4-fotoluminiscencia.html">Laboratorio de Fotoluminiscencia <span>→</span></a><a class="th-link" href="u4-fotoluminiscencia.html#teoria">Teoría <span>→</span></a></div>
+    </article>
+    <article class="unit has-lab">
+      <div class="num">5</div>
+      <div><p class="ut">Unión p–n</p><p class="uk">Diagrama de bandas, V_bi, región de agotamiento (Poisson), ley de la unión, ecuación del diodo, capacitancia C–V, ruptura Zener y avalancha.</p><div class="uh">14 h · <span class="status">disponible</span></div></div>
+      <div class="act"><a class="lab" href="u5-union-pn.html">Laboratorio de la Unión p–n <span>→</span></a><a class="th-link" href="u5-union-pn.html#teoria">Teoría <span>→</span></a></div>
+    </article>
+    <article class="unit">
+      <div class="num">6</div>
+      <div><p class="ut">Metal–semiconductor y MOS</p><p class="uk">Barrera Schottky, contacto óhmico, capacitor MOS y curva C–V, MOSFET.</p><div class="uh">10 h · laboratorios: Schottky · MOS · MOSFET</div></div>
+      <div class="act"><span class="soon">en preparación</span></div>
+    </article>
+    <article class="unit has-lab">
+      <div class="num">7</div>
+      <div><p class="ut">Dispositivos ópticos y de frontera</p><p class="uk">Fotodiodo, celda solar, LED, transistores con materiales 2D. Espectroscopía de PL y Raman en monocapas, bicapas y heteroestructuras de TMDs.</p><div class="uh">8 h · <span class="status">disponible</span> · en preparación: celda solar, transistor 2D</div></div>
+      <div class="act"><a class="lab" href="u7-pl-raman-2d.html">Laboratorio PL y Raman 2D <span>→</span></a><a class="th-link" href="u7-pl-raman-2d.html#teoria">Teoría <span>→</span></a></div>
+    </article>
+  </div>
+
+  <div class="how">
+    <div><b>Mueve un control a la vez</b>Cada laboratorio parte de un caso típico a 300 K. Cambia una variable, observa qué responde y anota por qué.</div>
+    <div><b>Lee las ecuaciones</b>El panel de ecuaciones muestra la sustitución con los valores actuales. Úsalo para comprobar tus cálculos a mano.</div>
+    <div><b>Resuelve los retos</b>Cada laboratorio cierra con preguntas que se contestan usando los controles. Son la base de las tareas.</div>
+  </div>
+
+  <footer>Física de Dispositivos Semiconductores · ENES Juriquilla, UNAM · 2026. Parámetros de materiales a 300 K de Neamen y Sze &amp; Ng, aproximados.<br><span class="credit">© 2026 Elodie Strupiechonski (ENES Juriquilla, UNAM) y Andrés de Luna Bugallo (CFATA, UNAM). Material didáctico bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>.</span></footer>
+</div>
+</body>
+</html>

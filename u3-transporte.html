@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Unidad 3: deriva, movilidad, saturación de velocidad, difusión, relación de Einstein y efecto Hall.">
+<meta name="author" content="Elodie Strupiechonski, Andrés de Luna Bugallo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235B4BC4'/%3E%3Cpath d='M12 22h40M12 42h40' stroke='white' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%232874A6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='40' cy='42' r='5' fill='white' stroke='%23C1440E' stroke-width='3'/%3E%3C/svg%3E">
+<title>Laboratorio de Transporte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  
+  :root {
+    --bg: #EEF0F6; --surface: #FFFFFF; --surface-2: #F5F6FB; --border: #D9DCE8;
+    --text: #181A2A; --text-muted: #565A72; --text-faint: #80849A;
+    --accent: #5B4BC4; --accent-ink: #FFFFFF; --accent-soft: #E6E2F8;
+    --copper: #B8763B;
+    --elec: #2874A6; --elec-soft: rgba(40,116,166,0.14);
+    --hole: #C1440E; --hole-soft: rgba(193,68,14,0.12);
+    --gap: rgba(86,90,114,0.07);
+    --atomA: #6A5BD0; --atomB: #1C9474; --bond: #9AA0B8; --plane: rgba(184,118,59,0.30); --planeEdge: #B8763B;
+    --phonon: #1C9474;
+    --shadow: 0 1px 2px rgba(24,26,42,0.06), 0 6px 18px rgba(24,26,42,0.07);
+    --radius-s: 6px; --radius-m: 10px; --radius-l: 18px;
+    --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+      --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+      --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+      --copper: #C88A4E;
+      --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.18);
+      --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.16); --gap: rgba(162,165,190,0.06);
+      --atomA: #9C92F0; --atomB: #2DB58C; --bond: #5A5F7A; --plane: rgba(200,138,78,0.30); --planeEdge: #C88A4E;
+      --phonon: #2DB58C;
+      --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+    --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+    --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+    --copper: #C88A4E;
+    --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.18);
+    --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.16); --gap: rgba(162,165,190,0.06);
+    --atomA: #9C92F0; --atomB: #2DB58C; --bond: #5A5F7A; --plane: rgba(200,138,78,0.30); --planeEdge: #C88A4E;
+    --phonon: #2DB58C;
+    --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1300px; margin: 0 auto; padding-block: clamp(20px, 4vw, 44px) 64px; padding-inline: clamp(16px, 4vw, 40px); }
+  header.masthead { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(20px, 3vw, 30px); max-width: 820px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5.4vw, 52px); line-height: 0.98; margin: 0; text-wrap: balance; }
+  .subhead { color: var(--text-muted); font-size: 15.5px; max-width: 70ch; margin: 2px 0 0; }
+  .app-shell { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .app-shell { grid-template-columns: minmax(0, 1fr); } }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); }
+  .deck { padding: 20px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; }
+  @media (max-width: 960px) { .deck { position: static; max-height: none; } }
+  .deck-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; }
+  .group-title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin: 4px 0 -4px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .flabel { font-size: 12.5px; color: var(--text-muted); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 3px; gap: 3px; }
+  .seg button { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; padding: 7px 3px; border: none; border-radius: 7px; background: transparent; color: var(--text-muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .seg button:focus-visible, .btn:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .miller { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .miller label { display: flex; flex-direction: column; gap: 3px; font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+  select { font-family: var(--font-mono); font-size: 14px; padding: 6px 8px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn { font-family: var(--font-mono); font-size: 12px; font-weight: 500; padding: 6px 9px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.ghost { background: none; border-style: dashed; color: var(--text-muted); font-family: var(--font-body); }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+  .check input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .slider-block { display: flex; flex-direction: column; gap: 4px; }
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .slider-name { font-size: 12.5px; font-weight: 600; }
+  .slider-name .sym { color: var(--text-faint); font-weight: 500; font-family: var(--font-mono); font-size: 11.5px; }
+  .slider-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; background: var(--border); outline-offset: 4px; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); }
+  .range-caps { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+  .divider { height: 1px; background: var(--border); border: none; margin: 2px 0; }
+
+  .main-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .readout-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  @media (max-width: 1200px) { .readout-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .readout { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rlabel { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .rvalue { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.9vw, 21px); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .readout.hl .rvalue { color: var(--accent); }
+  .rsub { font-size: 11px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  @media (max-width: 1100px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .kpgrid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 14px; }
+  @media (max-width: 800px) { .kpgrid { grid-template-columns: minmax(0, 1fr); } }
+  .card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
+  .card-note { font-size: 11.5px; color: var(--text-faint); font-family: var(--font-mono); }
+  .stage { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); position: relative; touch-action: none; cursor: grab; }
+  .stage:active { cursor: grabbing; }
+  .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; max-width: 100%; }
+  .stage .hint { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); pointer-events: none; }
+  .chart-wrap { position: relative; }
+  .scroll-x { overflow-x: auto; }
+  svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+  svg.wide { min-width: 640px; }
+  .caption { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block; }
+  .dotk { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .axis-label { font-family: var(--font-mono); font-size: 11px; fill: var(--text-faint); }
+  .tick { font-family: var(--font-mono); font-size: 10px; fill: var(--text-faint); }
+  .lvl { font-family: var(--font-mono); font-size: 11px; }
+  .plabel { font-family: var(--font-body); font-size: 11.5px; font-weight: 600; fill: var(--text); }
+  .klabel { font-family: var(--font-body); font-size: 13px; font-weight: 600; fill: var(--text); }
+  .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-family: var(--font-mono); font-size: 11px; padding: 6px 8px; border-radius: 6px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 14px)); opacity: 0; transition: opacity .1s; z-index: 5; }
+  .tip.on { opacity: 1; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  .facts div { background: var(--surface); padding: 8px 10px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 8px; }
+  .facts b { font-family: var(--font-mono); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.st th { text-align: left; font-weight: 500; font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.st td { padding: 7px 8px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st td:first-child { font-family: var(--font-body); font-weight: 600; }
+  table.st tr.active td { background: var(--accent-soft); }
+  .eq-list { display: flex; flex-direction: column; gap: 6px; }
+  .eq-h { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 6px 0 0; }
+  .eq-line { font-family: var(--font-mono); font-size: 12px; line-height: 1.55; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 7px 11px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  table.st .ex { color: var(--text-faint); font-size: 0.92em; }
+  .eq-line .hi { color: var(--accent); font-weight: 600; }
+  .challenge { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1100px) { .challenge { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  @media (max-width: 700px) { .challenge { grid-template-columns: minmax(0, 1fr); } }
+  .q { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; font-size: 13.5px; }
+  .q b { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+  .progress { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); }
+  footer.notes { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 12.5px; max-width: 96ch; }
+  footer.notes p { margin: 0 0 6px; }
+  .stack2 { display: flex; flex-direction: column; gap: 18px; }
+  [hidden] { display: none !important; }
+  .simstage { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  .simstage canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .kpgrid.wide-left { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  @media (max-width: 800px) { .kpgrid.wide-left { grid-template-columns: minmax(0, 1fr); } }
+  .slider-value input[type="number"] { width: 72px; font-family: var(--font-mono); font-size: 13px; color: var(--accent); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 2px 6px; text-align: right; }
+  .chips .btn[hidden] { display: none; }
+  .readout-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 520px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  /* ---- pestañas Laboratorio / Teoría ---- */
+  .tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin: 0 0 18px; box-shadow: var(--shadow); }
+  .tabs button { font-family: var(--font-body); font-weight: 600; font-size: 14px; padding: 8px 20px; border: none; border-radius: 999px; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tabs .tab-ic { font-family: var(--font-mono); font-size: 12px; opacity: 0.8; }
+  .theory { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .theory { grid-template-columns: minmax(0, 1fr); } }
+  .toc { padding: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  @media (max-width: 960px) { .toc { position: static; max-height: none; } }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: t; display: flex; flex-direction: column; gap: 2px; }
+  .toc li { counter-increment: t; }
+  .toc a { display: flex; gap: 10px; padding: 7px 8px; border-radius: var(--radius-s); color: var(--text); text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+  .toc a::before { content: counter(t, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--accent); padding-top: 2px; }
+  .toc a:hover, .toc a:focus-visible { background: var(--accent-soft); outline: none; }
+  .toc-note { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
+  .theory-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .tsec { scroll-margin-top: 16px; gap: 12px; }
+  .tsec h3 { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin: 0; }
+  .tsec h3 .tn { margin-right: 10px; vertical-align: 2px; }
+  .tsec h3 .tn { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.08em; }
+  .tsec p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 78ch; }
+  .tsec p + p { margin-top: 2px; }
+  .feq { font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif; font-size: 20px; line-height: 1.5; text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 16px; overflow-x: auto; white-space: nowrap; color: var(--text); }
+  .feq i { font-style: italic; }
+  .feq .lbl { font-family: var(--font-body); font-size: 12px; color: var(--text-faint); font-style: normal; display: block; margin-top: 2px; white-space: normal; }
+  .feq + .feq { margin-top: -4px; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 3px; line-height: 1.2; }
+  .frac > span { padding: 0 4px; }
+  .frac > span:first-child { border-bottom: 1.2px solid currentColor; padding-bottom: 2px; }
+  .frac > span:last-child { padding-top: 2px; }
+  .rad { display: inline-block; border-top: 1.2px solid currentColor; padding: 2px 3px 0; line-height: 1.25; }
+  .rad .frac { margin-top: 2px; }
+  .feq sub, .feq sup { font-size: 0.68em; }
+  .where { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 13.5px; }
+  .where dt { font-family: 'Cambria Math', 'Times New Roman', serif; font-style: italic; font-size: 15px; color: var(--accent); }
+  .where dd { margin: 0; color: var(--text-muted); }
+  .inlab { border-left: 3px solid var(--copper); background: var(--surface-2); padding: 10px 14px; border-radius: 0 var(--radius-s) var(--radius-s) 0; font-size: 14px !important; color: var(--text-muted); }
+  .inlab b { color: var(--copper); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; display: block; margin-bottom: 2px; }
+  .keyidea { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; font-weight: 500; }
+  .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .tgrid .feq { font-size: 18px; }
+  .ttable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ttable th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .ttable td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  [hidden] { display: none !important; }
+  .th4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--accent); margin: 8px 0 -2px; letter-spacing: 0.01em; }
+  .tfig { margin: 4px 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 14px 12px; }
+  .tfig svg { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; overflow: visible; }
+  .tfig figcaption { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+  .tsec p b { font-weight: 600; }
+  /* ---- regreso al índice del curso ---- */
+  .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 18px; }
+  .topnav .tabs { margin: 0; }
+  a.home-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 9px 16px; box-shadow: var(--shadow); }
+  a.home-link:hover { border-color: var(--accent); color: var(--accent); }
+  a.home-link:focus-visible, a.home-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.home-link .hk { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  a.home-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 40; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 13px; text-decoration: none; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(24,26,42,0.25); }
+  a.home-fab:hover { filter: brightness(1.08); }
+  a.home-fab .hk { font-family: var(--font-mono); font-size: 12px; }
+  @media (max-width: 520px) { a.home-fab .hl { display: none; } a.home-fab { padding: 12px 14px; } }
+  .sec-home { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .sec-home a, .sec-home button { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); text-decoration: none; background: none; border: none; cursor: pointer; padding: 2px 4px; }
+  .sec-home a:hover, .sec-home button:hover { color: var(--accent); }
+
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <span class="eyebrow">Física de Dispositivos Semiconductores · ENESJ · Unidad 3</span>
+    <h1>Laboratorio de Transporte</h1>
+    <p class="subhead">Cómo se mueven los portadores. Un campo eléctrico los arrastra entre choques (deriva), un gradiente de concentración los dispersa (difusión) y un campo magnético los desvía hacia un borde (efecto Hall). Cambia el material, el dopaje y la temperatura y observa la movilidad, la saturación de velocidad y la relación de Einstein con tus números.</p>
+  </header>
+<div class="topnav"><a class="home-link" href="index.html"><span class="hk">←</span>Índice del curso</a><div class="tabs" role="tablist" aria-label="Secciones de la unidad"><button type="button" role="tab" id="tabLab" data-tab="lab" aria-controls="panelLab" aria-selected="true"><span class="tab-ic">◧</span>Laboratorio</button><button type="button" role="tab" id="tabTheory" data-tab="theory" aria-controls="panelTheory" aria-selected="false"><span class="tab-ic">∫</span>Teoría</button></div></div>
+<div id="panelLab" role="tabpanel" aria-labelledby="tabLab">
+
+
+  <div class="app-shell">
+    <aside class="panel deck" aria-label="Controles">
+      <h2 class="deck-title">Controles</h2>
+
+      <p class="group-title">Muestra</p>
+      <div class="seg" role="group" aria-label="Material" id="matSeg">
+        <button type="button" data-v="Si">Si</button>
+        <button type="button" data-v="GaAs">GaAs</button>
+      </div>
+      <div class="seg" role="group" aria-label="Tipo de dopaje" id="typeSeg">
+        <button type="button" data-v="n">tipo n</button>
+        <button type="button" data-v="p">tipo p</button>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Dopaje <span class="sym" id="Nsym">N_D</span></span><span class="slider-value" id="NVal"></span></div>
+        <input type="range" id="logN" min="13" max="19" step="0.05" value="16" aria-label="Logaritmo del dopaje">
+        <div class="range-caps"><span>10¹³ cm⁻³</span><span>10¹⁹ cm⁻³</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Temperatura <span class="sym">T</span></span><span class="slider-value" id="TVal"></span></div>
+        <input type="range" id="T" min="77" max="600" step="1" value="300" aria-label="Temperatura en kelvin">
+        <div class="range-caps"><span>77 K</span><span>600 K</span></div>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Deriva</p>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Campo eléctrico <span class="sym">𝓔</span></span><span class="slider-value" id="EVal"></span></div>
+        <input type="range" id="logE" min="1" max="5.5" step="0.01" value="3" aria-label="Logaritmo del campo eléctrico">
+        <div class="range-caps"><span>10 V/cm</span><span>300 kV/cm</span></div>
+      </div>
+      <div class="field">
+        <span class="flabel" id="lbAnim">Simulación</span>
+        <div class="seg" role="group" aria-labelledby="lbAnim" id="animSeg">
+          <button type="button" data-v="drift">Deriva continua</button>
+          <button type="button" data-v="pulse">Pulso</button>
+        </div>
+      </div>
+      <div class="chips">
+        <button type="button" class="btn" id="playBtn">Pausa</button>
+        <button type="button" class="btn" id="pulseBtn">Soltar otro pulso</button>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Deriva contra difusión</p>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Longitud del gradiente <span class="sym">λ</span></span><span class="slider-value" id="lamVal"></span></div>
+        <input type="range" id="logLam" min="-1" max="1" step="0.01" value="0" aria-label="Logaritmo de la longitud del gradiente en micrómetros">
+        <div class="range-caps"><span>0.1 µm</span><span>10 µm</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Campo en la muestra <span class="sym">𝓔ₓ</span></span><span class="slider-value"><input type="number" id="ExNum" step="1" min="-3000" max="3000" aria-label="Campo en la muestra en V/cm"> V/cm</span></div>
+        <input type="range" id="Ex" min="-3000" max="3000" step="1" value="0" aria-label="Campo en la muestra en V/cm">
+        <div class="range-caps"><span>−3000</span><span>+3000 V/cm</span></div>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Efecto Hall</p>
+      <div class="field">
+        <span class="flabel" id="lbSample">Muestra en el portamuestras</span>
+        <div class="seg" role="group" aria-labelledby="lbSample" id="sampleSeg">
+          <button type="button" data-v="lab">La tuya</button>
+          <button type="button" data-v="A">A</button>
+          <button type="button" data-v="B">B</button>
+          <button type="button" data-v="C">C</button>
+        </div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Campo magnético <span class="sym">B</span></span><span class="slider-value" id="BVal"></span></div>
+        <input type="range" id="B" min="0" max="2" step="0.01" value="0.5" aria-label="Campo magnético en tesla">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Corriente <span class="sym">I</span></span><span class="slider-value" id="IVal"></span></div>
+        <input type="range" id="I" min="0.1" max="10" step="0.1" value="1" aria-label="Corriente en miliampere">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Espesor <span class="sym">t</span></span><span class="slider-value" id="tVal"></span></div>
+        <input type="range" id="t" min="10" max="1000" step="10" value="300" aria-label="Espesor en micrómetros">
+      </div>
+      <button type="button" class="btn ghost" id="resetBtn">Volver al inicio: n-Si 10¹⁶, 300 K</button>
+    </aside>
+
+    <div class="main-col">
+      <div class="readout-strip">
+        <div class="readout hl"><span class="rlabel">Movilidad</span><span class="rvalue" id="r1"></span><span class="rsub" id="r1s"></span></div>
+        <div class="readout"><span class="rlabel">Resistividad</span><span class="rvalue" id="r2"></span><span class="rsub" id="r2s"></span></div>
+        <div class="readout"><span class="rlabel">Difusividad</span><span class="rvalue" id="r3"></span><span class="rsub">D = μ·kT/q</span></div>
+        <div class="readout"><span class="rlabel">Velocidad de deriva</span><span class="rvalue" id="r4"></span><span class="rsub" id="r4s"></span></div>
+        <div class="readout"><span class="rlabel">Coef. de Hall</span><span class="rvalue" id="r5"></span><span class="rsub" id="r5s"></span></div>
+        <div class="readout"><span class="rlabel">Voltaje Hall</span><span class="rvalue" id="r6"></span><span class="rsub" id="r6s"></span></div>
+      </div>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Deriva entre choques</h3><span class="card-note" id="simNote"></span></div>
+          <div class="simstage"><canvas id="sim" width="720" height="450" aria-label="Simulación de portadores que se aceleran con el campo y chocan"></canvas></div>
+          <div class="facts" id="simFacts"></div>
+          <p class="caption" id="simCap"></p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Velocidad contra campo</h3><span class="card-note" id="vENote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="vE" viewBox="0 0 520 400" role="img" aria-label="Velocidad de deriva contra campo eléctrico"></svg><div class="tip" id="vETip"></div></div>
+          <div class="legend">
+            <span><i class="sw" style="border-color:var(--elec)"></i>electrones</span>
+            <span><i class="sw" style="border-color:var(--hole)"></i>huecos</span>
+            <span><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>v = μ𝓔 (sin saturación)</span>
+          </div>
+          <p class="caption" id="vECap"></p>
+        </section>
+      </div>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Movilidad contra dopaje</h3><span class="card-note" id="muNNote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="muN" viewBox="0 0 520 380" role="img" aria-label="Movilidad contra concentración de impurezas"></svg><div class="tip" id="muNTip"></div></div>
+          <p class="caption">Cada impureza ionizada es un centro de carga que desvía al portador (dispersión de Coulomb). Con poco dopaje manda la red; arriba de ~10¹⁷ cm⁻³ mandan las impurezas.</p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Movilidad contra temperatura</h3><span class="card-note" id="muTNote"></span></div>
+          <div class="chart-wrap"><svg class="chart" id="muT" viewBox="0 0 520 380" role="img" aria-label="Movilidad contra temperatura con sus dos contribuciones"></svg><div class="tip" id="muTTip"></div></div>
+          <div class="legend">
+            <span><i class="sw" style="border-color:var(--accent)"></i>total</span>
+            <span><i class="sw" style="border-color:var(--copper);border-top-style:dashed"></i>solo red (fonones)</span>
+            <span><i class="sw" style="border-color:var(--phonon);border-top-style:dashed"></i>solo impurezas</span>
+          </div>
+          <p class="caption">Regla de Matthiessen: 1/μ = 1/μ_red + 1/μ_imp. Los fonones crecen con T y frenan más; las impurezas desvían menos a un portador rápido, así que μ_imp sube con T.</p>
+        </section>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Deriva contra difusión: ¿cuándo J = 0?</h3><span class="card-note" id="ddNote"></span></div>
+        <div class="kpgrid wide-left">
+          <div class="chart-wrap"><svg class="chart" id="dProf" viewBox="0 0 560 440" role="img" aria-label="Perfil de concentración y diagrama de bandas"></svg></div>
+          <div class="chart-wrap"><svg class="chart" id="dBars" viewBox="0 0 400 440" role="img" aria-label="Densidades de corriente de deriva, difusión y total"></svg></div>
+        </div>
+        <p class="caption" id="ddCap"></p>
+      </section>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Efecto Hall</h3><span class="card-note" id="hallNote"></span></div>
+        <div class="kpgrid wide-left">
+          <div class="chart-wrap"><svg class="chart" id="hallBar" viewBox="0 0 560 360" role="img" aria-label="Barra Hall con la desviación de los portadores"></svg></div>
+          <div class="chart-wrap"><svg class="chart" id="hallT" viewBox="0 0 420 360" role="img" aria-label="Concentración aparente de Hall contra temperatura"></svg><div class="tip" id="hallTip"></div></div>
+        </div>
+        <div class="legend">
+          <span><i class="sw" style="border-color:var(--hole)"></i>R_H &gt; 0 (domina p)</span>
+          <span><i class="sw" style="border-color:var(--elec)"></i>R_H &lt; 0 (domina n)</span>
+          <span id="hallTrueLeg"><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>concentración real de mayoritarios</span>
+        </div>
+        <p class="caption" id="hallCap"></p>
+      </section>
+
+      <div class="stack2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Ecuaciones con tus números</h3><span class="card-note" id="eqNote"></span></div>
+          <div class="eq-list" id="eqList"></div>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Retos</h3><span class="card-note">usa los controles para responder</span></div>
+          <div class="challenge">
+            <div class="q"><b>Reto 1 · J = 0</b>Con n-Si 10¹⁶ y λ = 1 µm, mueve 𝓔ₓ hasta que la corriente total se anule. Compara tu valor con kT/(qλ). Repite con una muestra tipo p: ¿por qué cambia el signo del campo?</div>
+            <div class="q"><b>Reto 2 · red contra impurezas</b>En Si a 300 K, ¿con qué dopaje la movilidad limitada por impurezas iguala a la limitada por la red? Usa la gráfica de μ contra T y busca el cruce de las dos curvas punteadas.</div>
+            <div class="q"><b>Reto 3 · temperatura</b>Lleva T de 200 a 400 K con 10¹⁴ y con 10¹⁸ cm⁻³. ¿En qué caso baja más la movilidad? Explica con μ_red ∝ T^(−3/2) y μ_imp ∝ T^(3/2)/N.</div>
+            <div class="q"><b>Reto 4 · saturación</b>¿Con qué campo la velocidad de los electrones en Si llega a la mitad de v_sat? Un transistor con canal de 100 nm y 1 V aplicado, ¿trabaja en régimen lineal o saturado?</div>
+            <div class="q"><b>Reto 5 · el efecto Gunn</b>En GaAs, ubica el intervalo de campo en el que la velocidad de los electrones baja aunque el campo suba (movilidad diferencial negativa). ¿Qué valle de la Unidad 1 lo explica?</div>
+            <div class="q"><b>Reto 6 · muestras desconocidas</b>Mide las muestras A, B y C: ¿son n o p y cuánto dopaje tienen? La muestra C cambia de signo al calentarla: ¿qué tipo de portador domina arriba de esa temperatura y por qué?</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  </div>
+<div id="panelTheory" role="tabpanel" aria-labelledby="tabTheory" hidden>
+<div class="theory">
+<nav class="panel toc" aria-label="Contenido de la teoría"><h2 class="deck-title">Teoría · Unidad 3</h2><ol><li><a href="#t-deriva" data-target="t-deriva">Deriva y movilidad</a></li><li><a href="#t-disp" data-target="t-disp">Mecanismos de dispersión</a></li><li><a href="#t-sat" data-target="t-sat">Saturación de velocidad</a></li><li><a href="#t-dif" data-target="t-dif">Difusión: ley de Fick desde el movimiento térmico</a></li><li><a href="#t-jnjp" data-target="t-jnjp">Corriente total: derivación de Jn y Jp</a></li><li><a href="#t-einstein" data-target="t-einstein">Relación de Einstein y cuasiniveles de Fermi</a></li><li><a href="#t-hall" data-target="t-hall">Efecto Hall</a></li></ol><p class="toc-note">Cada fórmula aparece evaluada con tus valores en la pestaña Laboratorio, en «Ecuaciones con tus números».</p><button type="button" class="btn ghost" data-goto-lab>Ir al laboratorio →</button></nav>
+<div class="theory-col">
+<section class="panel card tsec" id="t-deriva">
+  <h3><span class="tn">01</span>Deriva y movilidad</h3>
+  <p>Sin campo, los portadores se mueven a la velocidad térmica (~10⁷ cm/s) en direcciones al azar y chocan cada τ ≈ 0.1–1 ps; su velocidad promedio es cero. Un campo 𝓔 los acelera entre choques y les da una pequeña velocidad neta, proporcional al campo. La constante de proporcionalidad es la movilidad.</p>
+  <div class="tgrid">
+    <div class="feq"><i>v</i><sub>d</sub> = μ 𝓔<span class="lbl">velocidad de deriva</span></div>
+    <div class="feq">μ = <span class="frac"><span><i>q</i> τ</span><span><i>m</i>*</span></span><span class="lbl">tiempo medio entre choques sobre masa efectiva</span></div>
+  </div>
+  <div class="feq"><i>J</i><sub>der</sub> = <i>q</i>(<i>n</i>μ<sub>n</sub> + <i>p</i>μ<sub>p</sub>) 𝓔 = σ 𝓔, &nbsp;&nbsp; ρ = <span class="frac"><span>1</span><span>σ</span></span><span class="lbl">ley de Ohm microscópica</span></div>
+  <dl class="where"><dt>μ</dt><dd>movilidad en cm²/V·s: 1400 electrones y 450 huecos en Si puro; 8500 electrones en GaAs</dd><dt>σ, ρ</dt><dd>conductividad (S/cm) y resistividad (Ω·cm)</dd></dl>
+  <p>¿De dónde sale μ = qτ/m*? Entre dos choques el portador se acelera con a = q𝓔/m*. Si después de cada choque su velocidad vuelve a apuntar al azar, la velocidad que acumula en promedio en la dirección del campo es a·τ, así que v<sub>d</sub> = (qτ/m*)𝓔.</p>
+  <h4 class="th4">¿Qué es v<sub>th</sub>?</h4>
+  <p>Es la <b>velocidad térmica</b>: la rapidez típica con la que se mueve un portador por estar a temperatura T, aunque no haya campo. Sale del teorema de equipartición: cada uno de los tres grados de libertad de traslación lleva ½kT de energía cinética.</p>
+  <div class="feq"><span class="frac"><span>1</span><span>2</span></span><i>m</i>* <i>v</i><sub>th</sub><sup>2</sup> = <span class="frac"><span>3</span><span>2</span></span><i>kT</i> &nbsp;⇒&nbsp; <i>v</i><sub>th</sub> = √<span class="rad"><span class="frac"><span>3<i>kT</i></span><span><i>m</i>*</span></span></span><span class="lbl">electrones en Si a 300 K (m* = 0.26 m₀): v_th ≈ 2.3×10⁷ cm/s</span></div>
+  <p>Es una velocidad <b>en direcciones al azar</b>: su promedio vectorial es cero y por sí sola no transporta carga. La deriva v<sub>d</sub> es el pequeño sesgo que el campo añade a ese movimiento. El cociente v<sub>d</sub>/v<sub>th</sub> mide qué tan "empujado" está el gas de portadores: si es ≪ 1, los portadores siguen en equilibrio térmico y vale la ley de Ohm (μ constante); cuando v<sub>d</sub> se acerca a v<sub>th</sub>, los portadores se calientan y la velocidad se satura. La distancia que recorre entre choques es el recorrido libre medio ℓ = v<sub>th</sub>·τ ≈ 40 nm en Si puro.</p>
+  <p class="inlab"><b>En el laboratorio</b>La simulación de «Deriva entre choques» mueve cada partícula a v<sub>th</sub> en una dirección al azar y le suma la aceleración del campo; la razón v<sub>d</sub>/v<sub>th</sub> que se ve es la real. Con 1 kV/cm en Si vale ≈ 0.05: la deriva es solo una asimetría pequeña del zigzag.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-disp">
+  <h3><span class="tn">02</span>Mecanismos de dispersión</h3>
+  <p>Los choques vienen de todo lo que rompe la periodicidad perfecta. Las dos fuentes principales tienen dependencias opuestas con la temperatura.</p>
+  <div class="tgrid">
+    <div class="feq">μ<sub>red</sub> ∝ <i>T</i><sup>−3/2</sup><span class="lbl">fonones: más vibración a mayor T</span></div>
+    <div class="feq">μ<sub>imp</sub> ∝ <span class="frac"><span><i>T</i><sup>3/2</sup></span><span><i>N</i><sub>I</sub></span></span><span class="lbl">impurezas ionizadas: un portador rápido se desvía menos</span></div>
+  </div>
+  <div class="feq"><span class="frac"><span>1</span><span>μ</span></span> = <span class="frac"><span>1</span><span>μ<sub>red</sub></span></span> + <span class="frac"><span>1</span><span>μ<sub>imp</sub></span></span><span class="lbl">regla de Matthiessen: las tasas de dispersión se suman</span></div>
+  <p>Por eso en un material poco dopado μ baja al calentar, y en uno muy dopado puede subir. Los modelos empíricos (Caughey–Thomas, Arora) resumen las mediciones con μ = μ<sub>min</sub> + (μ<sub>max</sub> − μ<sub>min</sub>)/[1 + (N/N<sub>ref</sub>)<sup>α</sup>].</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-sat">
+  <h3><span class="tn">03</span>Saturación de velocidad</h3>
+  <p>A campos altos (&gt; 10⁴ V/cm en Si) los portadores ganan energía más rápido de lo que la pierden con fonones acústicos; emiten fonones ópticos y su velocidad deja de crecer. La relación lineal v = μ𝓔 se rompe y la velocidad se acerca a v<sub>sat</sub> ≈ 10⁷ cm/s.</p>
+  <div class="feq"><i>v</i>(𝓔) = <span class="frac"><span>μ𝓔</span><span>[1 + (μ𝓔/<i>v</i><sub>sat</sub>)<sup>β</sup>]<sup>1/β</sup></span></span><span class="lbl">Caughey–Thomas; β ≈ 2 para electrones y ≈ 1 para huecos en Si</span></div>
+  <p>En GaAs los electrones calientes saltan del valle Γ (m* = 0.067) al valle L, 0.3 eV más arriba y mucho más pesado. Su velocidad baja aunque el campo suba: movilidad diferencial negativa, la base del oscilador Gunn.</p>
+  <p class="inlab"><b>En el laboratorio</b>Un canal de 100 nm con 1 V tiene 10⁵ V/cm: los transistores modernos trabajan saturados en velocidad.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+
+<section class="panel card tsec" id="t-dif">
+  <h3><span class="tn">04</span>Difusión: ley de Fick desde el movimiento térmico</h3>
+  <p>Si la concentración no es uniforme, el movimiento térmico al azar produce por sí solo un flujo neto de la zona más poblada a la menos poblada, sin necesidad de campo. Se puede ver con un argumento de recorrido libre en una dimensión.</p>
+  <p>Toma un plano en x = 0. Los portadores que lo cruzan hacia la derecha salieron, en promedio, de x = −ℓ (un recorrido libre antes), y la mitad de ellos se mueve hacia +x con velocidad v<sub>x</sub>. Los que lo cruzan hacia la izquierda salieron de x = +ℓ. El flujo neto de partículas F (partículas por cm² por segundo) es la diferencia:</p>
+  <div class="feq"><i>F</i> = <span class="frac"><span>1</span><span>2</span></span><i>v</i><sub><i>x</i></sub> <i>n</i>(−ℓ) − <span class="frac"><span>1</span><span>2</span></span><i>v</i><sub><i>x</i></sub> <i>n</i>(+ℓ) ≈ <span class="frac"><span>1</span><span>2</span></span><i>v</i><sub><i>x</i></sub> <span style="font-size:1.2em">[</span>−2ℓ <span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span><span style="font-size:1.2em">]</span> = −<i>v</i><sub><i>x</i></sub>ℓ <span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span><span class="lbl">desarrollo de Taylor de n(±ℓ) alrededor de x = 0</span></div>
+  <div class="tgrid">
+    <div class="feq"><i>F</i> = −<i>D</i> <span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span><span class="lbl">ley de Fick: el flujo va contra el gradiente</span></div>
+    <div class="feq"><i>D</i> = <i>v</i><sub><i>x</i></sub>ℓ = <i>v</i><sub><i>x</i></sub><sup>2</sup>τ = <span class="frac"><span><i>kT</i></span><span><i>m</i>*</span></span>τ<span class="lbl">con ℓ = v_x·τ y ½m*v_x² = ½kT (un grado de libertad)</span></div>
+  </div>
+  <dl class="where"><dt>D</dt><dd>coeficiente de difusión, en cm²/s (≈ 35 cm²/s para electrones en Si puro)</dd><dt>F</dt><dd>flujo de partículas; la corriente es la carga de cada partícula por el flujo</dd></dl>
+  <div class="feq">σ<sup>2</sup> = 2<i>Dt</i><span class="lbl">un pulso de portadores se ensancha como una gaussiana (experimento de Haynes–Shockley)</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-jnjp">
+  <h3><span class="tn">05</span>Corriente total: derivación de J<sub>n</sub> y J<sub>p</sub></h3>
+  <p>La densidad de corriente es la carga de cada portador por su flujo: J = (carga) × F. Los electrones tienen carga −q y los huecos +q. Ese signo es lo único que distingue a las dos ecuaciones, así que conviene derivarlas término por término.</p>
+
+  <h4 class="th4">Paso 1 · Deriva</h4>
+  <p>El campo empuja a los huecos a favor de 𝓔 y a los electrones en contra. Sus velocidades de deriva y sus flujos son:</p>
+  <div class="tgrid">
+    <div class="feq"><i>v</i><sub>p</sub> = +μ<sub>p</sub>𝓔 &nbsp;⇒&nbsp; <i>F</i><sub>p</sub> = <i>p</i>μ<sub>p</sub>𝓔<span class="lbl">huecos: se mueven con el campo</span></div>
+    <div class="feq"><i>v</i><sub>n</sub> = −μ<sub>n</sub>𝓔 &nbsp;⇒&nbsp; <i>F</i><sub>n</sub> = −<i>n</i>μ<sub>n</sub>𝓔<span class="lbl">electrones: se mueven contra el campo</span></div>
+  </div>
+  <div class="tgrid">
+    <div class="feq"><i>J</i><sub>p,der</sub> = (+<i>q</i>)(<i>p</i>μ<sub>p</sub>𝓔) = <i>q</i><i>p</i>μ<sub>p</sub>𝓔</div>
+    <div class="feq"><i>J</i><sub>n,der</sub> = (−<i>q</i>)(−<i>n</i>μ<sub>n</sub>𝓔) = <i>q</i><i>n</i>μ<sub>n</sub>𝓔</div>
+  </div>
+  <p>Los dos signos menos se cancelan: <b>las dos corrientes de deriva van en la dirección del campo</b>, aunque las partículas se muevan en sentidos opuestos. Por eso se suman en la conductividad, σ = q(nμ<sub>n</sub> + pμ<sub>p</sub>).</p>
+
+  <h4 class="th4">Paso 2 · Difusión</h4>
+  <p>La ley de Fick vale igual para las dos partículas: ambas se mueven de donde hay más a donde hay menos, F = −D·(gradiente).</p>
+  <div class="tgrid">
+    <div class="feq"><i>J</i><sub>p,dif</sub> = (+<i>q</i>)<span style="font-size:1.1em">(</span>−<i>D</i><sub>p</sub><span class="frac"><span><i>dp</i></span><span><i>dx</i></span></span><span style="font-size:1.1em">)</span> = −<i>q</i><i>D</i><sub>p</sub><span class="frac"><span><i>dp</i></span><span><i>dx</i></span></span></div>
+    <div class="feq"><i>J</i><sub>n,dif</sub> = (−<i>q</i>)<span style="font-size:1.1em">(</span>−<i>D</i><sub>n</sub><span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span><span style="font-size:1.1em">)</span> = +<i>q</i><i>D</i><sub>n</sub><span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span></div>
+  </div>
+  <p>Aquí el signo no se cancela: con el mismo gradiente, <b>las corrientes de difusión de electrones y huecos tienen signos opuestos</b>.</p>
+
+  <h4 class="th4">Paso 3 · Ecuaciones completas</h4>
+  <div class="feq"><i>J</i><sub>n</sub> = <i>q</i><i>n</i>μ<sub>n</sub>𝓔 + <i>q</i><i>D</i><sub>n</sub><span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span><span class="lbl">electrones: deriva + difusión</span></div>
+  <div class="feq"><i>J</i><sub>p</sub> = <i>q</i><i>p</i>μ<sub>p</sub>𝓔 − <i>q</i><i>D</i><sub>p</sub><span class="frac"><span><i>dp</i></span><span><i>dx</i></span></span><span class="lbl">huecos: deriva − difusión</span></div>
+  <div class="feq"><i>J</i> = <i>J</i><sub>n</sub> + <i>J</i><sub>p</sub><span class="lbl">corriente total de conducción (en 3D, d/dx → ∇)</span></div>
+  <table class="ttable"><thead><tr><th>Término</th><th>Causa</th><th>Movimiento de las partículas</th><th>Sentido de la corriente</th></tr></thead><tbody>
+    <tr><td>qnμ<sub>n</sub>𝓔</td><td>campo eléctrico</td><td>electrones contra 𝓔</td><td>a favor de 𝓔</td></tr>
+    <tr><td>qpμ<sub>p</sub>𝓔</td><td>campo eléctrico</td><td>huecos a favor de 𝓔</td><td>a favor de 𝓔</td></tr>
+    <tr><td>+qD<sub>n</sub>·dn/dx</td><td>gradiente de electrones</td><td>de mayor a menor n</td><td>hacia donde n crece</td></tr>
+    <tr><td>−qD<sub>p</sub>·dp/dx</td><td>gradiente de huecos</td><td>de mayor a menor p</td><td>hacia donde p decrece</td></tr>
+  </tbody></table>
+  <p class="inlab"><b>En el laboratorio</b>En «Deriva contra difusión» el perfil decae como e<sup>−x/λ</sup>. Con tipo n, la difusión de electrones hacia +x es una corriente hacia −x (barra negativa); con tipo p, la difusión de huecos hacia +x es una corriente hacia +x. Por eso el campo que la anula cambia de signo.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-einstein">
+  <h3><span class="tn">06</span>Relación de Einstein y cuasiniveles de Fermi</h3>
+  <p>D y μ no son independientes: los dos salen de los mismos choques. Hay dos maneras de verlo.</p>
+  <h4 class="th4">Camino microscópico</h4>
+  <div class="feq"><span class="frac"><span><i>D</i></span><span>μ</span></span> = <span class="frac"><span>(<i>kT</i>/<i>m</i>*)τ</span><span><i>q</i>τ/<i>m</i>*</span></span> = <span class="frac"><span><i>kT</i></span><span><i>q</i></span></span><span class="lbl">usando D = (kT/m*)τ de la sección 04 y μ = qτ/m* de la sección 01: τ y m* se cancelan</span></div>
+  <h4 class="th4">Camino del equilibrio</h4>
+  <p>En equilibrio no hay corriente y el nivel de Fermi es constante. Con estadística de Boltzmann, <span style="white-space:nowrap">n = N<sub>c</sub>e<sup>−(E<sub>c</sub> − E<sub>F</sub>)/kT</sup></span>. Un campo inclina las bandas: como 𝓔 = −dψ/dx y E<sub>c</sub> = const − qψ, se tiene dE<sub>c</sub>/dx = q𝓔. Derivando n:</p>
+  <div class="feq"><span class="frac"><span><i>dn</i></span><span><i>dx</i></span></span> = <span class="frac"><span><i>n</i></span><span><i>kT</i></span></span><span style="font-size:1.2em">(</span><span class="frac"><span><i>dE</i><sub>F</sub></span><span><i>dx</i></span></span> − <span class="frac"><span><i>dE</i><sub>c</sub></span><span><i>dx</i></span></span><span style="font-size:1.2em">)</span> = −<span class="frac"><span><i>q</i>𝓔</span><span><i>kT</i></span></span> <i>n</i><span class="lbl">en equilibrio dE_F/dx = 0</span></div>
+  <div class="feq"><i>J</i><sub>n</sub> = <i>q</i><i>n</i>μ<sub>n</sub>𝓔 + <i>q</i><i>D</i><sub>n</sub><span style="font-size:1.1em">(</span>−<span class="frac"><span><i>q</i>𝓔</span><span><i>kT</i></span></span><i>n</i><span style="font-size:1.1em">)</span> = <i>q</i><i>n</i>𝓔<span style="font-size:1.1em">(</span>μ<sub>n</sub> − <span class="frac"><span><i>q</i><i>D</i><sub>n</sub></span><span><i>kT</i></span></span><span style="font-size:1.1em">)</span> = 0 &nbsp;⇒&nbsp; <span class="frac"><span><i>D</i><sub>n</sub></span><span>μ<sub>n</sub></span></span> = <span class="frac"><span><i>kT</i></span><span><i>q</i></span></span></div>
+  <p>A 300 K, kT/q = 25.9 mV: en Si puro D<sub>n</sub> = 1400 × 0.0259 ≈ 36 cm²/s y D<sub>p</sub> ≈ 12 cm²/s. Lo mismo sale para huecos.</p>
+  <h4 class="th4">Forma compacta con cuasiniveles de Fermi</h4>
+  <p>Fuera del equilibrio se define un cuasinivel E<sub>Fn</sub> con <span style="white-space:nowrap">n = N<sub>c</sub>e<sup>−(E<sub>c</sub> − E<sub>Fn</sub>)/kT</sup></span>. Repitiendo la derivada sin pedir que E<sub>Fn</sub> sea constante y usando Einstein, deriva y difusión se juntan en un solo término:</p>
+  <div class="tgrid">
+    <div class="feq"><i>J</i><sub>n</sub> = μ<sub>n</sub> <i>n</i> <span class="frac"><span><i>dE</i><sub>Fn</sub></span><span><i>dx</i></span></span></div>
+    <div class="feq"><i>J</i><sub>p</sub> = μ<sub>p</sub> <i>p</i> <span class="frac"><span><i>dE</i><sub>Fp</sub></span><span><i>dx</i></span></span></div>
+  </div>
+  <p class="keyidea">Hay corriente si y solo si el cuasinivel de Fermi tiene pendiente. Un nivel de Fermi plano significa J = 0, aunque haya campo y gradiente a la vez.</p>
+  <div class="feq">𝓔<sub>int</sub> = −<span class="frac"><span><i>kT</i></span><span><i>q</i></span></span> <span class="frac"><span>1</span><span><i>N</i><sub>D</sub></span></span> <span class="frac"><span><i>dN</i><sub>D</sub></span><span><i>dx</i></span></span> = <span class="frac"><span><i>kT</i></span><span><i>q</i>λ</span></span><span class="lbl">campo interno de un dopaje no uniforme N_D(x) = N₀e^(−x/λ): sale de J_n = 0 con n ≈ N_D</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-hall">
+  <h3><span class="tn">07</span>Efecto Hall</h3>
+  <p>Se hace pasar una corriente I a lo largo de una barra (eje x) dentro de un campo magnético B perpendicular a ella (eje z). Los portadores sienten la fuerza de Lorentz y se acumulan en un costado. Esa carga crea un campo transversal 𝓔<sub>H</sub> que crece hasta que su fuerza cancela la magnética; a partir de ahí los portadores vuelven a moverse en línea recta y entre los dos costados queda un voltaje V<sub>H</sub>.</p>
+
+  <figure class="tfig">
+    <svg viewBox="0 0 620 330" role="img" aria-label="Barra Hall en perspectiva: corriente a lo largo de x, campo magnético en z, huecos acumulados en la cara frontal y voltímetro entre las dos caras laterales">
+      <defs>
+        <marker id="hA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+        <marker id="hC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--copper)"/></marker>
+        <marker id="hT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--text-muted)"/></marker>
+        <marker id="hH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--hole)"/></marker>
+      </defs>
+      <!-- campo B: flechas verticales que atraviesan la barra -->
+      <g style="stroke:var(--accent)" stroke-width="1.6" opacity="0.55">
+        <line x1="150" y1="255" x2="150" y2="105" marker-end="url(#hA)"/>
+        <line x1="250" y1="255" x2="250" y2="105" marker-end="url(#hA)"/>
+        <line x1="350" y1="255" x2="350" y2="105" marker-end="url(#hA)"/>
+        <line x1="450" y1="255" x2="450" y2="105" marker-end="url(#hA)"/>
+      </g>
+      <text x="458" y="112" class="plabel" style="fill:var(--accent)">B (eje z)</text>
+      <!-- barra: cara superior, frontal y lateral derecha -->
+      <polygon points="80,194 460,194 520.5,147.8 140.5,147.8" style="fill:var(--surface);stroke:var(--text-muted)" stroke-width="1.4" fill-opacity="0.92"/>
+      <polygon points="80,220 460,220 460,194 80,194" style="fill:var(--hole-soft);stroke:var(--text-muted)" stroke-width="1.4"/>
+      <polygon points="460,220 520.5,173.8 520.5,147.8 460,194" style="fill:var(--copper);stroke:var(--text-muted)" stroke-width="1.2" opacity="0.85"/>
+      <!-- contactos de corriente -->
+      <polygon points="80,194 98,194 158.5,147.8 140.5,147.8" style="fill:var(--copper)" opacity="0.85"/>
+      <polygon points="80,220 98,220 98,194 80,194" style="fill:var(--copper)" opacity="0.85"/>
+      <polygon points="442,194 460,194 520.5,147.8 502.5,147.8" style="fill:var(--copper)" opacity="0.85"/>
+      <polygon points="442,220 460,220 460,194 442,194" style="fill:var(--copper)" opacity="0.85"/>
+      <!-- cargas acumuladas -->
+      <g class="plabel" style="fill:var(--hole)" text-anchor="middle">
+        <text x="130" y="212">+</text><text x="170" y="212">+</text><text x="210" y="212">+</text><text x="330" y="212">+</text><text x="370" y="212">+</text><text x="410" y="212">+</text>
+      </g>
+      <g class="plabel" style="fill:var(--text-muted)" text-anchor="middle">
+        <text x="200" y="158">−</text><text x="250" y="158">−</text><text x="300" y="158">−</text><text x="400" y="158">−</text><text x="450" y="158">−</text>
+      </g>
+      <!-- campo de Hall en la cara superior, de la cara frontal (+) a la trasera (−) -->
+      <line x1="292" y1="188" x2="330" y2="160" style="stroke:var(--hole)" stroke-width="2.2" marker-end="url(#hH)"/>
+      <text x="288" y="182" text-anchor="end" class="lvl" style="fill:var(--hole)">𝓔_H</text>
+      <!-- contactos Hall y voltímetro -->
+      <rect x="262" y="199" width="14" height="16" rx="2" style="fill:var(--copper)"/>
+      <circle cx="330.5" cy="150" r="5" style="fill:var(--copper)"/>
+      <path d="M269,215 L269,250 L590,250 L590,82" fill="none" style="stroke:var(--text-muted)" stroke-width="1.3"/>
+      <path d="M330.5,150 L330.5,60 L540,60" fill="none" style="stroke:var(--text-muted)" stroke-width="1.3"/>
+      <rect x="540" y="38" width="66" height="44" rx="6" style="fill:var(--text)"/>
+      <text x="573" y="65" text-anchor="middle" class="plabel" style="fill:var(--bg)">V_H</text>
+      <text x="276" y="266" class="lvl" style="fill:var(--text-muted)">contacto Hall, cara frontal (+)</text>
+      <!-- corriente -->
+      <line x1="40" y1="207" x2="78" y2="207" style="stroke:var(--copper)" stroke-width="3" marker-end="url(#hC)"/>
+      <line x1="522" y1="162" x2="560" y2="162" style="stroke:var(--copper)" stroke-width="3" marker-end="url(#hC)"/>
+      <text x="22" y="198" class="plabel" style="fill:var(--copper)">I</text>
+      <!-- dimensiones -->
+      <text x="270" y="296" class="lvl" text-anchor="middle" style="fill:var(--text-faint)">largo L</text>
+      <line x1="80" y1="284" x2="460" y2="284" style="stroke:var(--text-faint)" stroke-dasharray="3 3"/>
+      <text x="500" y="214" class="lvl" style="fill:var(--text-faint)">w</text>
+      <text x="64" y="185" class="lvl" text-anchor="end" style="fill:var(--text-faint)">t</text>
+      <!-- ejes -->
+      <g style="stroke:var(--text-muted)" stroke-width="1.4">
+        <line x1="40" y1="310" x2="82" y2="310" marker-end="url(#hT)"/>
+        <line x1="40" y1="310" x2="70" y2="287" marker-end="url(#hT)"/>
+        <line x1="40" y1="310" x2="40" y2="270" marker-end="url(#hT)"/>
+      </g>
+      <text x="88" y="314" class="lvl" style="fill:var(--text-muted)">x</text><text x="74" y="284" class="lvl" style="fill:var(--text-muted)">y</text><text x="35" y="265" class="lvl" style="fill:var(--text-muted)">z</text>
+    </svg>
+    <figcaption>Ilustración 1 · Arreglo de medición para una muestra tipo p. La corriente entra por los contactos de los extremos (cobre) y B atraviesa la barra a lo largo de z. Los huecos se acumulan en la cara frontal (y = 0) y dejan carga negativa en la trasera; el voltímetro conectado entre las dos caras lee V_H. El espesor t es la dimensión paralela a B.</figcaption>
+  </figure>
+
+  <figure class="tfig">
+    <svg viewBox="0 0 620 270" role="img" aria-label="Vista superior de dos barras Hall: en la tipo p los huecos van a la derecha y se acumulan abajo con carga positiva; en la tipo n los electrones van a la izquierda y se acumulan abajo con carga negativa">
+      <defs>
+        <marker id="gH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--hole)"/></marker>
+        <marker id="gE" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--elec)"/></marker>
+        <marker id="gC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--copper)"/></marker>
+        <marker id="gK" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--text-muted)"/></marker>
+        <pattern id="bdot" width="34" height="30" patternUnits="userSpaceOnUse"><circle cx="17" cy="15" r="6" fill="none" style="stroke:var(--text-faint)" stroke-width="1" opacity="0.6"/><circle cx="17" cy="15" r="1.6" style="fill:var(--text-faint)" opacity="0.6"/></pattern>
+      </defs>
+      <!-- panel p -->
+      <text x="160" y="24" text-anchor="middle" class="plabel">Tipo p · conducen huecos</text>
+      <rect x="30" y="44" width="260" height="120" rx="4" fill="url(#bdot)" style="stroke:var(--text-muted)" stroke-width="1.4"/>
+      <g class="plabel" style="fill:var(--hole)" text-anchor="middle"><text x="60" y="158">+</text><text x="100" y="158">+</text><text x="140" y="158">+</text><text x="180" y="158">+</text><text x="220" y="158">+</text><text x="260" y="158">+</text></g>
+      <g class="plabel" style="fill:var(--text-faint)" text-anchor="middle"><text x="60" y="60">−</text><text x="100" y="60">−</text><text x="140" y="60">−</text><text x="180" y="60">−</text><text x="220" y="60">−</text><text x="260" y="60">−</text></g>
+      <circle cx="160" cy="98" r="11" style="fill:var(--hole)"/><text x="160" y="103" text-anchor="middle" class="plabel" style="fill:var(--surface)">+</text>
+      <line x1="174" y1="98" x2="226" y2="98" style="stroke:var(--hole)" stroke-width="2.2" marker-end="url(#gH)"/><text x="230" y="102" class="lvl" style="fill:var(--hole)">v</text>
+      <line x1="160" y1="111" x2="160" y2="140" style="stroke:var(--copper)" stroke-width="2.2" marker-end="url(#gC)"/><text x="170" y="132" class="lvl" style="fill:var(--copper)">F = qv×B</text>
+      <line x1="60" y1="140" x2="60" y2="74" style="stroke:var(--text-muted)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#gK)"/><text x="66" y="84" class="lvl" style="fill:var(--text-muted)">𝓔_H</text>
+      <line x1="40" y1="186" x2="280" y2="186" style="stroke:var(--copper)" stroke-width="2.6" marker-end="url(#gC)"/><text x="160" y="204" text-anchor="middle" class="lvl" style="fill:var(--copper)">I →</text>
+      <text x="160" y="232" text-anchor="middle" class="plabel" style="fill:var(--hole)">V_H = V_abajo − V_arriba &gt; 0</text>
+      <text x="160" y="252" text-anchor="middle" class="lvl" style="fill:var(--text-muted)">R_H = +1/(qp)</text>
+      <!-- panel n -->
+      <text x="460" y="24" text-anchor="middle" class="plabel">Tipo n · conducen electrones</text>
+      <rect x="330" y="44" width="260" height="120" rx="4" fill="url(#bdot)" style="stroke:var(--text-muted)" stroke-width="1.4"/>
+      <g class="plabel" style="fill:var(--elec)" text-anchor="middle"><text x="360" y="158">−</text><text x="400" y="158">−</text><text x="440" y="158">−</text><text x="480" y="158">−</text><text x="520" y="158">−</text><text x="560" y="158">−</text></g>
+      <g class="plabel" style="fill:var(--text-faint)" text-anchor="middle"><text x="360" y="60">+</text><text x="400" y="60">+</text><text x="440" y="60">+</text><text x="480" y="60">+</text><text x="520" y="60">+</text><text x="560" y="60">+</text></g>
+      <circle cx="460" cy="98" r="11" style="fill:var(--elec)"/><text x="460" y="103" text-anchor="middle" class="plabel" style="fill:var(--surface)">−</text>
+      <line x1="446" y1="98" x2="394" y2="98" style="stroke:var(--elec)" stroke-width="2.2" marker-end="url(#gE)"/><text x="388" y="102" text-anchor="end" class="lvl" style="fill:var(--elec)">v</text>
+      <line x1="460" y1="111" x2="460" y2="140" style="stroke:var(--copper)" stroke-width="2.2" marker-end="url(#gC)"/><text x="470" y="132" class="lvl" style="fill:var(--copper)">F = (−q)v×B</text>
+      <line x1="560" y1="74" x2="560" y2="140" style="stroke:var(--text-muted)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#gK)"/><text x="554" y="84" text-anchor="end" class="lvl" style="fill:var(--text-muted)">𝓔_H</text>
+      <line x1="340" y1="186" x2="580" y2="186" style="stroke:var(--copper)" stroke-width="2.6" marker-end="url(#gC)"/><text x="460" y="204" text-anchor="middle" class="lvl" style="fill:var(--copper)">I →</text>
+      <text x="460" y="232" text-anchor="middle" class="plabel" style="fill:var(--elec)">V_H = V_abajo − V_arriba &lt; 0</text>
+      <text x="460" y="252" text-anchor="middle" class="lvl" style="fill:var(--text-muted)">R_H = −1/(qn)</text>
+    </svg>
+    <figcaption>Ilustración 2 · Vista desde arriba, con B saliendo de la página (⊙) y la misma corriente I hacia la derecha. Los huecos viajan con la corriente y los electrones en contra, pero en ambos casos qv×B apunta hacia abajo: los dos se acumulan en el mismo borde. Lo que cambia es el signo de esa carga, y con él el signo de V_H. Así se distingue una muestra n de una p.</figcaption>
+  </figure>
+
+  <h4 class="th4">Derivación</h4>
+  <p>Para huecos con v = v<sub>x</sub>x̂ y B = Bẑ, la fuerza transversal se anula en estado estacionario:</p>
+  <div class="feq"><i>F</i><sub><i>y</i></sub> = <i>q</i>(𝓔<sub><i>y</i></sub> − <i>v</i><sub><i>x</i></sub><i>B</i>) = 0 &nbsp;⇒&nbsp; 𝓔<sub>H</sub> = <i>v</i><sub><i>x</i></sub><i>B</i>, &nbsp;&nbsp; <i>v</i><sub><i>x</i></sub> = <span class="frac"><span><i>J</i><sub><i>x</i></sub></span><span><i>qp</i></span></span> = <span class="frac"><span><i>I</i></span><span><i>qp</i> <i>w</i> <i>t</i></span></span></div>
+  <div class="feq"><i>V</i><sub>H</sub> = 𝓔<sub>H</sub> <i>w</i> = <span class="frac"><span><i>I</i><i>B</i></span><span><i>q</i><i>p</i><i>t</i></span></span> = <span class="frac"><span><i>R</i><sub>H</sub> <i>I</i> <i>B</i></span><span><i>t</i></span></span><span class="lbl">el ancho w se cancela: solo importa el espesor t</span></div>
+  <div class="tgrid">
+    <div class="feq"><i>R</i><sub>H</sub> = <span class="frac"><span>1</span><span><i>qp</i></span></span> &nbsp; o &nbsp; −<span class="frac"><span>1</span><span><i>qn</i></span></span><span class="lbl">coeficiente de Hall: su signo da el tipo y su magnitud la concentración</span></div>
+    <div class="feq">μ<sub>H</sub> = |<i>R</i><sub>H</sub>| σ<span class="lbl">movilidad de Hall, con σ medida en la misma barra</span></div>
+  </div>
+  <div class="feq"><i>R</i><sub>H</sub> = <span class="frac"><span><i>p</i>μ<sub>p</sub><sup>2</sup> − <i>n</i>μ<sub>n</sub><sup>2</sup></span><span><i>q</i>(<i>p</i>μ<sub>p</sub> + <i>n</i>μ<sub>n</sub>)<sup>2</sup></span></span><span class="lbl">dos tipos de portadores: una muestra tipo p puede volverse "n" al calentarla porque μ_n &gt; μ_p</span></div>
+  <p class="inlab"><b>En el laboratorio</b>Las muestras A, B y C del panel de Hall siguen la convención de la ilustración 2: V<sub>H</sub> = V<sub>abajo</sub> − V<sub>arriba</sub>, positivo para huecos.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+</div>
+</div>
+</div>
+  <a class="home-fab" href="index.html" aria-label="Ir al índice del curso de Física de Dispositivos Semiconductores"><span class="hk">⌂</span><span class="hl">Índice del curso</span></a>
+<footer class="notes">
+    <p><b>Modelos.</b> Movilidad de Si: Arora, Hauser y Roulston, IEEE Trans. Electron Devices (1982). Movilidad de GaAs: Caughey–Thomas con los parámetros de Sotoodeh, Khalid y Rezazadeh, J. Appl. Phys. (2000). Velocidad contra campo: Caughey–Thomas para Si (β = 2 electrones, β = 1 huecos) y la forma empírica con transferencia al valle L para electrones de GaAs. Ionización completa, factor de Hall r_H = 1.</p>
+    <p><b>Simulación.</b> Velocidad térmica √(3kT/m*) con masa de conductividad. La razón v_d/v_th es la real del modelo; el tiempo entre choques está alargado para que los saltos se vean. Las muestras A, B y C tienen dopajes fijos que no se muestran.</p>
+    <p class="credit">© 2026 Elodie Strupiechonski (ENES Juriquilla, UNAM) y Andrés de Luna Bugallo (CFATA, UNAM). Material didáctico bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+// ---------- utilidades compartidas ----------
+const $ = id => document.getElementById(id);
+const SUP = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '-': '⁻', '+': '' };
+const sup = s => String(s).split('').map(c => SUP[c] ?? c).join('');
+function sci(x, d = 2) {
+  if (!isFinite(x)) return '—';
+  if (x === 0) return '0';
+  const s = x < 0 ? '−' : ''; x = Math.abs(x);
+  let e = Math.floor(Math.log10(x)), m = x / 10 ** e;
+  if (+m.toFixed(d - 1) >= 10) { m /= 10; e += 1; }
+  if (e >= -2 && e <= 3) return s + String(+x.toPrecision(d + 1));
+  return `${s}${m.toFixed(d - 1)}×10${sup(e)}`;
+}
+const fmt = (x, d = 2) => (x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+const KB = 8.617333e-5, Q = 1.602177e-19, EPS0 = 8.8541878e-14; // eV/K, C, F/cm
+function bindSeg(id, get, set) {
+  const el = $(id);
+  el.addEventListener('click', e => { const b = e.target.closest('button[data-v]'); if (!b) return; set(b.dataset.v); });
+  return () => el.querySelectorAll('button[data-v]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === String(get()))));
+}
+// Ejes genéricos para SVG. xs/ys: {min,max,log}
+function axes(o) {
+  const { W, H, L, R, T, B, xs, ys } = o, w = W - L - R, h = H - T - B;
+  const tx = v => xs.log ? Math.log10(v) : v, ty = v => ys.log ? Math.log10(v) : v;
+  const x0 = tx(xs.min), x1 = tx(xs.max), y0 = ty(ys.min), y1 = ty(ys.max);
+  const X = v => L + (tx(v) - x0) / (x1 - x0) * w, Y = v => T + h - (ty(v) - y0) / (y1 - y0) * h;
+  const s = [];
+  const ticks = (sc, a, b) => {
+    if (sc.log) { const out = []; for (let e = Math.ceil(a - 1e-9); e <= b + 1e-9; e++) out.push(10 ** e); return out; }
+    const span = b - a, raw = span / (sc.n || 6), p = 10 ** Math.floor(Math.log10(raw)), m = raw / p, st = (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p;
+    const out = []; for (let v = Math.ceil(a / st - 1e-9) * st; v <= b + 1e-9 * st; v += st) out.push(Math.abs(v) < st * 1e-9 ? 0 : v); return out;
+  };
+  const lab = (v, sc) => sc.fmt ? sc.fmt(v) : sc.log ? `10${sup(Math.round(Math.log10(v)))}` : String(+v.toPrecision(4)).replace('-', '−');
+  const xt = ticks(xs, x0, x1), yt = ticks(ys, y0, y1);
+  const step = xs.log && xt.length > 9 ? 2 : 1, ystep = ys.log && yt.length > 9 ? 2 : 1;
+  yt.forEach((v, i) => { s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--border)" stroke-dasharray="${v === 0 && !ys.log ? '' : '2 4'}"/>`); if (i % ystep === 0) s.push(`<text class="tick" x="${L - 6}" y="${Y(v) + 3}" text-anchor="end">${lab(v, ys)}</text>`); });
+  xt.forEach((v, i) => { s.push(`<line x1="${X(v)}" x2="${X(v)}" y1="${T}" y2="${T + h}" stroke="var(--border)" stroke-dasharray="${v === 0 && !xs.log ? '' : '2 4'}"/>`); if (i % step === 0) s.push(`<text class="tick" x="${X(v)}" y="${T + h + 14}" text-anchor="middle">${lab(v, xs)}</text>`); });
+  s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="none" stroke="var(--text-faint)" stroke-width="1"/>`);
+  if (o.xlabel) s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 4}" text-anchor="middle">${o.xlabel}</text>`);
+  if (o.ylabel) s.push(`<text class="axis-label" transform="translate(13 ${T + h / 2}) rotate(-90)" text-anchor="middle">${o.ylabel}</text>`);
+  const clip = o.clip || ('c' + Math.random().toString(36).slice(2, 7));
+  s.push(`<clipPath id="${clip}"><rect x="${L}" y="${T}" width="${w}" height="${h}"/></clipPath>`);
+  const line = (pts, attrs) => `<polyline clip-path="url(#${clip})" points="${pts.filter(p => isFinite(p[0]) && isFinite(p[1])).map(p => X(p[0]).toFixed(1) + ',' + clamp(Y(p[1]), -9999, 9999).toFixed(1)).join(' ')}" fill="none" ${attrs}/>`;
+  return { X, Y, s, w, h, L, T, line, clip, inv: px => { const t = x0 + (px - L) / w * (x1 - x0); return xs.log ? 10 ** t : t; } };
+}
+function hoverChart(svgId, tipId, fn) {
+  const svg = $(svgId), tip = $(tipId);
+  const move = e => {
+    const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, px = (e.clientX - r.left) / r.width * vb.width, py = (e.clientY - r.top) / r.height * vb.height;
+    const html = fn(px, py);
+    if (!html) { tip.classList.remove('on'); return; }
+    tip.innerHTML = html; tip.style.left = (e.clientX - r.left) + 'px'; tip.style.top = (e.clientY - r.top) + 'px'; tip.classList.add('on');
+  };
+  svg.addEventListener('pointermove', move); svg.addEventListener('pointerleave', () => tip.classList.remove('on'));
+}
+// ---------- física de materiales compartida ----------
+// Eg(T) de Varshni; Nc, Nv ∝ T^(3/2); movilidad: Arora (Si) y Caughey–Thomas de Sotoodeh (GaAs).
+const SEMI = {
+  Si: { label: 'Si', eps: 11.7, Eg0: 1.17, va: 4.73e-4, vb: 636, Nc: 2.86e19, Nv: 3.10e19, mce: 0.26, mch: 0.36 },
+  GaAs: { label: 'GaAs', eps: 12.9, Eg0: 1.519, va: 5.405e-4, vb: 204, Nc: 4.7e17, Nv: 9.0e18, mce: 0.067, mch: 0.34 }
+};
+const Eg = (m, T) => SEMI[m].Eg0 - SEMI[m].va * T * T / (T + SEMI[m].vb);
+const Nc = (m, T) => SEMI[m].Nc * (T / 300) ** 1.5, Nv = (m, T) => SEMI[m].Nv * (T / 300) ** 1.5;
+const ni = (m, T) => Math.sqrt(Nc(m, T) * Nv(m, T)) * Math.exp(-Eg(m, T) / (2 * KB * T));
+// movilidad (cm²/V·s) de electrones ('n') o huecos ('p') con N impurezas ionizadas totales
+function mobility(m, car, N, T) {
+  const Tn = T / 300; N = Math.max(N, 1);
+  if (m === 'Si') {
+    const al = 0.88 * Tn ** -0.146;
+    if (car === 'n') return 88 * Tn ** -0.57 + 7.4e8 * T ** -2.33 / (1 + (N / (1.26e17 * Tn ** 2.4)) ** al);
+    return 54.3 * Tn ** -0.57 + 1.36e8 * T ** -2.23 / (1 + (N / (2.35e17 * Tn ** 2.4)) ** al);
+  }
+  const P = car === 'n' ? { mx: 9400, mn: 500, Nr: 6e16, al: 0.394, t1: 2.1, t2: 3.0 } : { mx: 491.5, mn: 20, Nr: 1.48e17, al: 0.38, t1: 2.2, t2: 3.0 };
+  return P.mn + (P.mx * (1 / Tn) ** P.t1 - P.mn) / (1 + (N / (P.Nr * Tn ** P.t2)) ** P.al);
+}
+// portadores con ionización completa (tipo 'n' o 'p', dopaje N)
+function carriers(m, type, N, T) {
+  const n_i = ni(m, T), maj = N / 2 + Math.sqrt((N / 2) ** 2 + n_i * n_i), min = n_i * n_i / maj;
+  return type === 'n' ? { n: maj, p: min, ni: n_i } : { n: min, p: maj, ni: n_i };
+}
+// ---------- Laboratorio de Transporte ----------
+const DEF = { mat: 'Si', type: 'n', logN: 16, T: 300, logE: 3, anim: 'drift', play: true, logLam: 0, Ex: 0, sample: 'lab', B: 0.5, I: 1, t: 300 };
+const state = { ...DEF };
+const SAMPLES = { A: { mat: 'Si', type: 'p', N: 2.5e16 }, B: { mat: 'Si', type: 'n', N: 8e14 }, C: { mat: 'Si', type: 'p', N: 1e14 } };
+const M0 = 9.109e-31, KBJ = 1.380649e-23;
+
+const Nd = () => 10 ** state.logN, Efield = () => 10 ** state.logE;
+const maj = () => state.type, minc = () => (state.type === 'n' ? 'p' : 'n');
+const mstar = (m, car) => car === 'n' ? SEMI[m].mce : SEMI[m].mch;
+const vth = (m, car, T) => Math.sqrt(3 * KBJ * T / (mstar(m, car) * M0)) * 100; // cm/s
+function vsat(m, car, T) {
+  if (m === 'Si') { const ve = 2.4e7 / (1 + 0.8 * Math.exp(T / 600)); return car === 'n' ? ve : 0.81 * ve; }
+  return car === 'n' ? Math.max(1.13e7 - 1.2e4 * T, 4e6) : 9e6;
+}
+function vel(m, car, E, T, N) {
+  const mu = mobility(m, car, N, T), vs = vsat(m, car, T);
+  if (m === 'GaAs' && car === 'n') { const r = (E / 4000) ** 4; return (mu * E + vs * r) / (1 + r); }
+  const be = m === 'Si' && car === 'n' ? 2 : 1;
+  return mu * E / (1 + (mu * E / vs) ** be) ** (1 / be);
+}
+function sampleOf(key) {
+  if (key === 'lab') return { mat: state.mat, type: state.type, N: Nd() };
+  return SAMPLES[key];
+}
+function hall(sm, T) {
+  const c = carriers(sm.mat, sm.type, sm.N, T), mn = mobility(sm.mat, 'n', sm.N, T), mp = mobility(sm.mat, 'p', sm.N, T);
+  const sig = Q * (c.n * mn + c.p * mp), RH = (c.p * mp * mp - c.n * mn * mn) / (Q * (c.n * mn + c.p * mp) ** 2);
+  const VH = RH * 1e-6 * state.I * 1e-3 * state.B / (state.t * 1e-6);
+  return { ...c, mn, mp, sig, rho: 1 / sig, RH, VH, muH: Math.abs(RH) * sig };
+}
+const carLabel = c => c === 'n' ? 'electrones' : 'huecos';
+const carCol = c => c === 'n' ? 'var(--elec)' : 'var(--hole)';
+function vUnit(v) { return sci(v, 2) + ' cm/s'; }
+
+// ---------- simulación de partículas ----------
+const cv = $('sim'), ctx = cv.getContext('2d');
+const SW = cv.width, SH = cv.height, NP = 150, VPX = 2.4;
+let parts = [], trail = [], frame = 0, pulseT0 = 0, imps = [], simAcc = { sum: 0, n: 0 };
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function simParams() {
+  const m = state.mat, car = maj(), T = state.T, N = Nd();
+  const mu = mobility(m, car, N, T), E = Efield(), vt = vth(m, car, T), vd = vel(m, car, E, T, N);
+  const tauReal = mu * 1e-4 * mstar(m, car) * M0 / Q;
+  const tauF = clamp(40 * tauReal / 1e-12, 1.5, 30);
+  const sgn = car === 'n' ? -1 : 1; // el campo apunta a +x
+  return { mu, vt, vd, ratio: vd / vt, tauReal, tauF, acc: sgn * (vd / vt) * VPX / (tauF - 1), sgn };
+  // con choques por cuadro de probabilidad 1/τ, la edad media de la velocidad es τ − 1 cuadros
+}
+function rndDir() { const a = Math.random() * 2 * Math.PI; return [VPX * Math.cos(a), VPX * Math.sin(a)]; }
+function resetParticles() {
+  parts = [];
+  for (let i = 0; i < NP; i++) {
+    const [vx, vy] = rndDir();
+    const x = state.anim === 'pulse' ? SW / 2 + (Math.random() - 0.5) * 6 : Math.random() * SW;
+    parts.push({ x, y: 20 + Math.random() * (SH - 40), vx, vy, x0: x });
+  }
+  trail = []; frame = 0; pulseT0 = 0; simAcc = { sum: 0, n: 0 };
+}
+function resetImps() {
+  const k = Math.round(3 * (state.logN - 12) ** 2);
+  imps = []; for (let i = 0; i < k; i++) imps.push([Math.random() * SW, Math.random() * SH]);
+}
+function stepSim(P) {
+  const pScat = 1 / P.tauF;
+  let sv = 0;
+  for (const p of parts) {
+    p.vx += P.acc;
+    if (Math.random() < pScat) { const [vx, vy] = rndDir(); p.vx = vx; p.vy = vy; }
+    p.x += p.vx; p.y += p.vy;
+    if (p.y < 8) { p.y = 16 - p.y; p.vy = -p.vy; } if (p.y > SH - 8) { p.y = 2 * (SH - 8) - p.y; p.vy = -p.vy; }
+    if (state.anim === 'drift') { if (p.x < 0) { p.x += SW; p.x0 += SW; } if (p.x > SW) { p.x -= SW; p.x0 -= SW; } }
+    sv += p.vx;
+  }
+  simAcc.sum += sv / parts.length; simAcc.n++;
+  const t0 = parts[0]; trail.push([t0.x, t0.y]); if (trail.length > 160) trail.shift();
+  frame++;
+}
+function drawSim(P) {
+  const bg = css('--surface-2'), faint = css('--text-faint'), col = css(maj() === 'n' ? '--elec' : '--hole'), acc = css('--accent'), border = css('--border');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, SW, SH);
+  // impurezas ionizadas
+  ctx.font = '600 13px IBM Plex Mono, monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = faint;
+  const isym = state.type === 'n' ? '+' : '−';
+  imps.forEach(([x, y]) => ctx.fillText(isym, x, y));
+  // flecha de campo
+  ctx.strokeStyle = acc; ctx.fillStyle = acc; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(24, 22); ctx.lineTo(120, 22); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(120, 22); ctx.lineTo(110, 16); ctx.lineTo(110, 28); ctx.fill();
+  ctx.textAlign = 'left'; ctx.font = '500 12px IBM Plex Mono, monospace'; ctx.fillText('𝓔', 128, 23);
+  // histograma en modo pulso
+  if (state.anim === 'pulse') {
+    const bins = 60, h = new Array(bins).fill(0);
+    parts.forEach(p => { const b = Math.floor(p.x / SW * bins); if (b >= 0 && b < bins) h[b]++; });
+    const scale = 7;
+    ctx.fillStyle = css('--accent-soft');
+    h.forEach((c, i) => { const bh = c * scale; ctx.fillRect(i * SW / bins + 1, SH - bh, SW / bins - 2, bh); });
+    // teoría: gaussiana con D = v²τ/2 (2D) y centro x0 + v_d t
+    const t = frame - pulseT0, D = VPX * VPX / 2 * (P.tauF - 0.5), s2 = Math.max(2 * D * t, 4), xc = SW / 2 + P.acc * (P.tauF - 1) * t;
+    ctx.strokeStyle = acc; ctx.lineWidth = 2; ctx.beginPath();
+    for (let i = 0; i <= 200; i++) { const x = i / 200 * SW, g = NP * (SW / bins) / Math.sqrt(2 * Math.PI * s2) * Math.exp(-((x - xc) ** 2) / (2 * s2)); const y = SH - g * scale; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    ctx.stroke();
+  }
+  // trayectoria de una partícula
+  ctx.strokeStyle = col; ctx.globalAlpha = 0.55; ctx.lineWidth = 1.3; ctx.beginPath();
+  trail.forEach(([x, y], i) => { if (i && Math.abs(x - trail[i - 1][0]) > SW / 2) ctx.moveTo(x, y); else i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+  ctx.stroke(); ctx.globalAlpha = 1;
+  ctx.fillStyle = col;
+  parts.forEach((p, i) => { ctx.beginPath(); ctx.arc(p.x, p.y, i === 0 ? 5 : 3.2, 0, 2 * Math.PI); ctx.fill(); });
+  ctx.strokeStyle = border; ctx.lineWidth = 1; ctx.strokeRect(0.5, 0.5, SW - 1, SH - 1);
+}
+let lastFacts = 0;
+function loop() {
+  const P = simParams();
+  if (state.play) {
+    for (let k = 0; k < 1; k++) stepSim(P);
+    if (state.anim === 'pulse') { const cx = parts.reduce((a, p) => a + p.x, 0) / parts.length; if (frame > 900 || cx < SW * 0.08 || cx > SW * 0.92) { resetParticles(); } }
+  }
+  drawSim(P);
+  if (performance.now() - lastFacts > 400) { lastFacts = performance.now(); drawSimFacts(P); }
+  requestAnimationFrame(loop);
+}
+function drawSimFacts(P) {
+  const meas = simAcc.n ? simAcc.sum / simAcc.n / VPX * P.vt * P.sgn : 0;
+  if (simAcc.n > 600) simAcc = { sum: simAcc.sum / simAcc.n * 200, n: 200 };
+  const lmfp = P.vt * P.tauReal * 1e7; // nm
+  $('simFacts').innerHTML = `<div>v_d en la simulación <b>${vUnit(Math.abs(meas))}</b></div><div>v_d del modelo <b>${vUnit(P.vd)}</b></div>`
+    + `<div>tiempo entre choques τ = μm*/q <b>${(P.tauReal * 1e15).toFixed(0)} fs</b></div><div>recorrido libre ℓ = v_th·τ <b>${lmfp.toFixed(0)} nm</b></div>`;
+  $('simNote').textContent = `${carLabel(maj())} · v_d/v_th = ${P.ratio < 0.01 ? P.ratio.toExponential(1) : P.ratio.toFixed(3)}`;
+  $('simCap').textContent = state.anim === 'drift'
+    ? `Cada punto es un ${maj() === 'n' ? 'electrón' : 'hueco'} que se mueve a la velocidad térmica (${sci(P.vt, 2)} cm/s) en direcciones al azar. Entre choques el campo lo acelera; ${maj() === 'n' ? 'los electrones derivan contra el campo' : 'los huecos derivan a favor del campo'}. La deriva neta es mucho más lenta que el movimiento térmico: es la pequeña asimetría de un zigzag.`
+    : `Un pulso de ${maj() === 'n' ? 'electrones' : 'huecos'} se suelta en el centro. Se ensancha por difusión (σ² = 2Dt) y su centro se mueve con v_d: es el experimento de Haynes–Shockley. La curva violeta es la predicción con D = v²τ/2 de la propia simulación.`;
+}
+
+// ---------- gráficas ----------
+function drawVE() {
+  const m = state.mat, T = state.T, N = Nd(), E = Efield();
+  const A = axes({ W: 520, H: 400, L: 62, R: 14, T: 14, B: 40, xs: { min: 10, max: 3e5, log: true }, ys: { min: 1e4, max: 1e8, log: true }, xlabel: 'campo 𝓔 (V/cm)', ylabel: 'velocidad de deriva (cm/s)', clip: 'cVE' });
+  const s = A.s, Es = []; for (let i = 0; i <= 200; i++) Es.push(10 ** (1 + i / 200 * Math.log10(3e4)));
+  ['n', 'p'].forEach(c => {
+    const mu = mobility(m, c, N, T);
+    s.push(A.line(Es.map(e => [e, mu * e]), `stroke="${carCol(c)}" stroke-width="1.2" stroke-dasharray="4 4" opacity="0.6"`));
+    s.push(A.line(Es.map(e => [e, vel(m, c, e, T, N)]), `stroke="${carCol(c)}" stroke-width="${c === maj() ? 2.6 : 1.8}"`));
+  });
+  const vs = vsat(m, maj(), T);
+  s.push(`<line x1="${A.L}" x2="${A.L + A.w}" y1="${A.Y(vs)}" y2="${A.Y(vs)}" stroke="var(--copper)" stroke-dasharray="2 3"/><text class="lvl" x="${A.L + 6}" y="${A.Y(vs) - 5}" fill="var(--copper)">v_sat = ${sci(vs, 2)} cm/s</text>`);
+  const vt = vth(m, maj(), T);
+  s.push(`<line x1="${A.L}" x2="${A.L + A.w}" y1="${A.Y(vt)}" y2="${A.Y(vt)}" stroke="var(--text-faint)" stroke-dasharray="1 3"/><text class="lvl" x="${A.L + 6}" y="${A.Y(vt) - 5}" fill="var(--text-faint)">v_th = ${sci(vt, 2)} cm/s</text>`);
+  const v = vel(m, maj(), E, T, N);
+  s.push(`<line x1="${A.X(E)}" x2="${A.X(E)}" y1="${A.T}" y2="${A.T + A.h}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3"/><circle cx="${A.X(E)}" cy="${A.Y(v)}" r="6" fill="${carCol(maj())}" stroke="var(--surface)" stroke-width="2"/>`);
+  $('vE').innerHTML = s.join('');
+  $('vENote').textContent = `${SEMI[m].label} · ${T} K · N = ${sci(N, 2)} cm⁻³`;
+  let cap = `Con campo bajo la velocidad crece en línea recta, v = μ𝓔. Cuando la energía que gana el portador entre choques ya no se pierde con fonones acústicos, emite fonones ópticos y la velocidad se satura cerca de ${sci(vs, 2)} cm/s.`;
+  if (m === 'GaAs') cap += ' En GaAs, arriba de ~3.5 kV/cm los electrones saltan al valle L, más pesado: la velocidad baja aunque el campo suba (movilidad diferencial negativa, base del diodo Gunn).';
+  $('vECap').textContent = cap;
+  vEGeom = A;
+}
+let vEGeom = null;
+function drawMuN() {
+  const m = state.mat, T = state.T, N = Nd();
+  const ys = m === 'Si' ? { min: 20, max: 3000, log: true } : { min: 10, max: 3e4, log: true };
+  const A = axes({ W: 520, H: 380, L: 62, R: 14, T: 14, B: 40, xs: { min: 1e13, max: 1e20, log: true }, ys, xlabel: 'impurezas ionizadas N (cm⁻³)', ylabel: 'movilidad (cm²/V·s)', clip: 'cMuN' });
+  const s = A.s, Ns = []; for (let i = 0; i <= 140; i++) Ns.push(10 ** (13 + 7 * i / 140));
+  ['n', 'p'].forEach(c => {
+    s.push(A.line(Ns.map(n => [n, mobility(m, c, n, 300)]), `stroke="${carCol(c)}" stroke-width="1" stroke-dasharray="3 3" opacity="0.5"`));
+    s.push(A.line(Ns.map(n => [n, mobility(m, c, n, T)]), `stroke="${carCol(c)}" stroke-width="2.4"`));
+    const mu = mobility(m, c, N, T);
+    s.push(`<circle cx="${A.X(N)}" cy="${A.Y(mu)}" r="5.5" fill="${carCol(c)}" stroke="var(--surface)" stroke-width="2"/>`);
+    s.push(`<text class="lvl" x="${A.X(N) + 9}" y="${A.Y(mu) - 7}" fill="${carCol(c)}">μ_${c} = ${mu.toFixed(0)}</text>`);
+  });
+  s.push(`<text class="lvl" x="${A.L + A.w - 6}" y="${A.T + 14}" text-anchor="end" fill="var(--text-faint)">línea fina: 300 K</text>`);
+  $('muN').innerHTML = s.join('');
+  $('muNNote').textContent = `${SEMI[m].label} · ${T} K`;
+  muNGeom = A;
+}
+let muNGeom = null, muTGeom = null;
+function muParts(m, c, N, T) { const mu = mobility(m, c, N, T), mL = mobility(m, c, 1, T); const inv = 1 / mu - 1 / mL; return { mu, mL, mI: inv > 1e-9 ? 1 / inv : Infinity }; }
+function drawMuT() {
+  const m = state.mat, c = maj(), N = Nd(), T = state.T;
+  const A = axes({ W: 520, H: 380, L: 62, R: 14, T: 14, B: 40, xs: { min: 70, max: 700, log: true, fmt: v => String(Math.round(v)) }, ys: { min: 10, max: 1e6, log: true }, xlabel: 'temperatura (K)', ylabel: `movilidad de ${carLabel(c)} (cm²/V·s)`, clip: 'cMuT' });
+  // ticks propios en x
+  const s = A.s, Ts = []; for (let i = 0; i <= 120; i++) Ts.push(77 * (600 / 77) ** (i / 120));
+  [100, 200, 300, 500].forEach(v => s.push(`<text class="tick" x="${A.X(v)}" y="${A.T + A.h + 14}" text-anchor="middle">${v}</text>`));
+  const P = Ts.map(t => [t, muParts(m, c, N, t)]);
+  s.push(A.line(P.map(([t, o]) => [t, o.mL]), `stroke="var(--copper)" stroke-width="1.6" stroke-dasharray="5 4"`));
+  s.push(A.line(P.map(([t, o]) => [t, o.mI]), `stroke="var(--phonon)" stroke-width="1.6" stroke-dasharray="5 4"`));
+  s.push(A.line(P.map(([t, o]) => [t, o.mu]), `stroke="var(--accent)" stroke-width="2.6"`));
+  const o = muParts(m, c, N, T);
+  s.push(`<line x1="${A.X(T)}" x2="${A.X(T)}" y1="${A.T}" y2="${A.T + A.h}" stroke="var(--accent)" stroke-dasharray="3 3"/><circle cx="${A.X(T)}" cy="${A.Y(o.mu)}" r="5.5" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`);
+  $('muT').innerHTML = s.join('').replace(/<text class="tick" x="[^"]+" y="[^"]+" text-anchor="middle">10[⁰¹²³]<\/text>/g, '');
+  $('muTNote').textContent = `N = ${sci(N, 2)} cm⁻³`;
+  muTGeom = A;
+}
+function drawDD() {
+  const m = state.mat, c = maj(), T = state.T, N0 = Nd(), lam = 10 ** state.logLam * 1e-4, Ex = state.Ex, kT = KB * T;
+  const mu = mobility(m, c, N0, T), D = mu * kT;
+  const Jdiff = c === 'n' ? -Q * D * N0 / lam : Q * D * N0 / lam, Jdrift = Q * N0 * mu * Ex, Jt = Jdiff + Jdrift;
+  // perfil y bandas
+  const xmax = 4 * lam, xs = { min: 0, max: xmax * 1e4, n: 4 };
+  const top = axes({ W: 560, H: 200, L: 66, R: 14, T: 12, B: 30, xs, ys: { min: N0 * 1e-2, max: N0 * 2, log: true }, ylabel: c === 'n' ? 'n(x) (cm⁻³)' : 'p(x) (cm⁻³)', clip: 'cDt' });
+  const xsArr = []; for (let i = 0; i <= 100; i++) xsArr.push(i / 100 * xmax);
+  top.s.push(top.line(xsArr.map(x => [x * 1e4, N0 * Math.exp(-x / lam)]), `stroke="${carCol(c)}" stroke-width="2.4"`));
+  top.s.push(`<text class="lvl" x="${top.L + top.w - 8}" y="${top.T + 16}" text-anchor="end" fill="var(--text-muted)">${c === 'n' ? 'n' : 'p'}(x) = ${sci(N0, 2)}·e^(−x/λ)</text>`);
+  const Ec = x => Ex * x, EgT = Eg(m, T);
+  const EF = c === 'n' ? (x => Ec(x) - kT * Math.log(Nc(m, T) / (N0 * Math.exp(-x / lam)))) : (x => Ec(x) - EgT + kT * Math.log(Nv(m, T) / (N0 * Math.exp(-x / lam))));
+  const ys = []; xsArr.forEach(x => { ys.push(Ec(x), Ec(x) - EgT, EF(x)); });
+  let lo = Math.min(...ys), hi = Math.max(...ys); const pad = 0.12 * (hi - lo);
+  const bot = axes({ W: 560, H: 240, L: 66, R: 14, T: 4, B: 40, xs, ys: { min: lo - pad, max: hi + pad, n: 5 }, xlabel: 'posición x (µm)', ylabel: 'energía (eV)', clip: 'cDb' });
+  bot.s.push(bot.line(xsArr.map(x => [x * 1e4, Ec(x)]), `stroke="var(--text)" stroke-width="2"`));
+  bot.s.push(bot.line(xsArr.map(x => [x * 1e4, Ec(x) - EgT]), `stroke="var(--text)" stroke-width="2"`));
+  bot.s.push(bot.line(xsArr.map(x => [x * 1e4, EF(x)]), `stroke="var(--accent)" stroke-width="2.2" stroke-dasharray="6 4"`));
+  const xl = xmax * 0.97e4;
+  bot.s.push(`<text class="lvl" x="${bot.X(xl)}" y="${bot.Y(Ec(xmax * 0.97)) - 6}" text-anchor="end">E_c</text><text class="lvl" x="${bot.X(xl)}" y="${bot.Y(Ec(xmax * 0.97) - EgT) - 6}" text-anchor="end">E_v</text><text class="lvl" x="${bot.X(xl)}" y="${bot.Y(EF(xmax * 0.97)) - 6}" text-anchor="end" fill="var(--accent)">E_F${c === 'n' ? 'n' : 'p'}</text>`);
+  $('dProf').innerHTML = `<g>${top.s.join('')}</g><g transform="translate(0 200)">${bot.s.join('')}</g>`;
+  // barras
+  const W = 400, H = 440, cx = 200, half = 160, mx = Math.max(Math.abs(Jdiff), Math.abs(Jdrift), 1e-30) * 1.1;
+  const bar = (y, J, col, label) => {
+    const w = J / mx * half;
+    return `<text class="plabel" x="${cx}" y="${y - 10}" text-anchor="middle">${label}</text><rect x="${Math.min(cx, cx + w)}" y="${y}" width="${Math.abs(w)}" height="34" rx="4" fill="${col}"/><text class="lvl" x="${cx + (w >= 0 ? Math.max(w, 0) + 6 : Math.min(w, 0) - 6)}" y="${y + 21}" text-anchor="${w >= 0 ? 'start' : 'end'}" fill="var(--text)">${sci(J, 2)}</text>`;
+  };
+  const eq = Math.abs(Jt) < 0.01 * Math.abs(Jdiff);
+  const sB = [`<line x1="${cx}" x2="${cx}" y1="30" y2="${H - 60}" stroke="var(--text-faint)"/>`,
+    `<text class="tick" x="${cx - half}" y="22" text-anchor="start">← −x</text><text class="tick" x="${cx + half}" y="22" text-anchor="end">+x →</text>`,
+    bar(70, Jdiff, carCol(c), 'J difusión (A/cm²)'), bar(170, Jdrift, 'var(--copper)', 'J deriva (A/cm²)'), bar(270, Jt, 'var(--accent)', 'J total (A/cm²)'),
+    `<text class="plabel" x="${cx}" y="${H - 34}" text-anchor="middle" fill="${eq ? 'var(--phonon)' : 'var(--text-muted)'}">${eq ? '¡Equilibrio! J = 0 y E_F es plano' : `|J_total| / |J_dif| = ${(Math.abs(Jt) / Math.abs(Jdiff) * 100).toFixed(1)} %`}</text>`,
+    `<text class="tick" x="${cx}" y="${H - 14}" text-anchor="middle">valores en x = 0</text>`];
+  $('dBars').innerHTML = sB.join('');
+  $('ddNote').textContent = `λ = ${(lam * 1e4).toFixed(2)} µm · D = ${D.toFixed(1)} cm²/s`;
+  $('ddCap').textContent = `La concentración baja con x, así que los ${carLabel(c)} se difunden hacia +x. ${c === 'n' ? 'Como su carga es negativa, esa difusión es una corriente hacia −x.' : 'Como su carga es positiva, esa difusión es una corriente hacia +x.'} Un campo ${c === 'n' ? 'positivo' : 'negativo'} puede empujarlos de regreso. Cuando ambas corrientes se cancelan, el nivel de Fermi queda plano: J = μ·n·dE_F/dx, y sin corriente no hay pendiente.`;
+  return { Jdiff, Jdrift, Jt, D, mu, lam };
+}
+function drawHall() {
+  const sm = sampleOf(state.sample), H = hall(sm, state.T), hidden = state.sample !== 'lab';
+  const sgn = H.RH > 0 ? 1 : -1, col = sgn > 0 ? 'var(--hole)' : 'var(--elec)';
+  const s = [], x0 = 100, x1 = 460, y0 = 120, y1 = 250;
+  // B fuera de la página
+  if (state.B > 0) for (let i = 0; i < 6; i++) for (let j = 0; j < 3; j++) { const x = x0 + 30 + i * 60, y = y0 + 22 + j * 43; s.push(`<circle cx="${x}" cy="${y}" r="7" fill="none" stroke="var(--text-faint)" opacity="${clamp(0.25 + state.B / 2, 0, 1)}"/><circle cx="${x}" cy="${y}" r="1.8" fill="var(--text-faint)"/>`); }
+  s.push(`<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="4" fill="var(--surface-2)" stroke="var(--text-muted)" stroke-width="1.5" fill-opacity="0.6"/>`);
+  s.push(`<rect x="${x0 - 22}" y="${y0 - 6}" width="22" height="${y1 - y0 + 12}" rx="3" fill="var(--copper)"/><rect x="${x1}" y="${y0 - 6}" width="22" height="${y1 - y0 + 12}" rx="3" fill="var(--copper)"/>`);
+  s.push(`<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`);
+  s.push(`<line x1="${x0 + 10}" x2="${x1 - 10}" y1="${y1 + 34}" y2="${y1 + 34}" stroke="var(--accent)" stroke-width="2.4" marker-end="url(#ah)"/><text class="plabel" x="${(x0 + x1) / 2}" y="${y1 + 54}" text-anchor="middle" fill="var(--accent)">I = ${state.I.toFixed(1)} mA</text>`);
+  s.push(`<text class="plabel" x="${x1 + 30}" y="${y0 - 14}" fill="var(--text-muted)">B ⊙ ${state.B.toFixed(2)} T</text>`);
+  // cargas acumuladas
+  const k = state.B > 0 ? clamp(Math.round(5 + 2.2 * Math.log10(Math.abs(H.VH) / 1e-6 + 1e-9)), 0, 16) : 0;
+  const bottomSym = sgn > 0 ? '+' : '−', topSym = sgn > 0 ? '−' : '+';
+  for (let i = 0; i < k; i++) { const x = x0 + 18 + i * (x1 - x0 - 36) / Math.max(k - 1, 1); s.push(`<text class="plabel" x="${x}" y="${y1 - 6}" text-anchor="middle" fill="${sgn > 0 ? 'var(--hole)' : 'var(--elec)'}">${bottomSym}</text><text class="plabel" x="${x}" y="${y0 + 16}" text-anchor="middle" fill="var(--text-faint)">${topSym}</text>`); }
+  // portador con fuerzas
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  s.push(`<circle cx="${cx}" cy="${cy}" r="11" fill="${col}"/><text x="${cx}" y="${cy + 4.5}" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" font-weight="700" fill="var(--surface)">${sgn > 0 ? '+' : '−'}</text>`);
+  s.push(`<line x1="${cx + (sgn > 0 ? 14 : -14)}" x2="${cx + (sgn > 0 ? 70 : -70)}" y1="${cy}" y2="${cy}" stroke="${col}" stroke-width="2" marker-end="url(#ah)"/><text class="lvl" x="${cx + (sgn > 0 ? 74 : -74)}" y="${cy + 4}" text-anchor="${sgn > 0 ? 'start' : 'end'}" fill="${col}">v</text>`);
+  if (state.B > 0) {
+    s.push(`<line x1="${cx}" x2="${cx}" y1="${cy + 13}" y2="${cy + 48}" stroke="var(--copper)" stroke-width="2" marker-end="url(#ah)"/><text class="lvl" x="${cx + 6}" y="${cy + 46}" fill="var(--copper)">F_B = qv×B</text>`);
+    s.push(`<line x1="${cx - 40}" x2="${cx - 40}" y1="${cy + 40}" y2="${cy - 40}" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ah)" transform="${sgn > 0 ? '' : `rotate(180 ${cx - 40} ${cy})`}"/><text class="lvl" x="${cx - 46}" y="${cy - 30}" text-anchor="end" fill="var(--text-muted)">𝓔_H</text>`);
+  }
+  // voltímetro
+  s.push(`<line x1="${cx + 120}" x2="${cx + 120}" y1="${y0}" y2="${y0 - 40}" stroke="var(--text-muted)"/><line x1="${cx + 120}" x2="${cx + 120}" y1="${y1}" y2="${y1 + 14}" stroke="var(--text-muted)"/><path d="M${cx + 120},${y1 + 14} L${cx + 175},${y1 + 14} L${cx + 175},${y0 - 40}" fill="none" stroke="var(--text-muted)"/><line x1="${cx + 120}" x2="${cx + 175}" y1="${y0 - 40}" y2="${y0 - 40}" stroke="var(--text-muted)"/>`);
+  s.push(`<rect x="${cx + 50}" y="${y0 - 98}" width="150" height="46" rx="6" fill="var(--text)"/><text x="${cx + 125}" y="${y0 - 69}" text-anchor="middle" font-family="IBM Plex Mono" font-size="16" fill="var(--bg)">${vHall(H.VH)}</text><text class="tick" x="${cx + 125}" y="${y0 - 104}" text-anchor="middle">V_H = V_abajo − V_arriba</text>`);
+  s.push(`<text class="tick" x="${x0}" y="${y1 + 82}">muestra ${state.sample === 'lab' ? 'tuya' : state.sample}: ${hidden ? 'Si, tipo y dopaje desconocidos' : `${SEMI[sm.mat].label} tipo ${sm.type}, ${sci(sm.N, 2)} cm⁻³`} · espesor t = ${state.t} µm · ancho 1 mm · largo 5 mm</text>`);
+  $('hallBar').innerHTML = s.join('');
+  // concentración aparente contra T
+  const A = axes({ W: 420, H: 360, L: 60, R: 12, T: 12, B: 40, xs: { min: 77, max: 600 }, ys: { min: 1e9, max: 1e20, log: true }, xlabel: 'temperatura (K)', ylabel: '1/(q|R_H|) (cm⁻³)', clip: 'cHT' });
+  const Ts = []; for (let T = 77; T <= 600; T += 3) Ts.push(T);
+  const pts = Ts.map(T => { const h = hall(sm, T); return [T, 1 / (Q * Math.abs(h.RH)), h.RH > 0]; });
+  let seg = [], cur = null; pts.forEach(p => { if (cur === null || p[2] !== cur) { if (seg.length) A.s.push(A.line(seg, `stroke="${cur ? 'var(--hole)' : 'var(--elec)'}" stroke-width="2.4"`)); seg = seg.length ? [seg[seg.length - 1]] : []; cur = p[2]; } seg.push(p); });
+  if (seg.length) A.s.push(A.line(seg, `stroke="${cur ? 'var(--hole)' : 'var(--elec)'}" stroke-width="2.4"`));
+  if (!hidden) A.s.push(A.line(Ts.map(T => { const c = carriers(sm.mat, sm.type, sm.N, T); return [T, sm.type === 'n' ? c.n : c.p]; }), `stroke="var(--text-faint)" stroke-width="1.4" stroke-dasharray="5 4"`));
+  const hv = 1 / (Q * Math.abs(H.RH));
+  A.s.push(`<line x1="${A.X(state.T)}" x2="${A.X(state.T)}" y1="${A.T}" y2="${A.T + A.h}" stroke="var(--accent)" stroke-dasharray="3 3"/><circle cx="${A.X(state.T)}" cy="${A.Y(hv)}" r="5.5" fill="${col}" stroke="var(--surface)" stroke-width="2"/>`);
+  $('hallT').innerHTML = A.s.join('');
+  hallGeom = { A, sm };
+  $('hallTrueLeg').hidden = hidden;
+  $('hallNote').textContent = hidden ? `muestra ${state.sample} · ${state.T} K` : `${SEMI[sm.mat].label} tipo ${sm.type} · ${state.T} K`;
+  $('hallCap').innerHTML = `La fuerza de Lorentz empuja a los portadores hacia el borde inferior, sin importar su signo. Lo que cambia es la carga que se acumula ahí: con huecos V_H &gt; 0, con electrones V_H &lt; 0. En el equilibrio el campo de Hall 𝓔_H cancela la fuerza magnética. Resistividad medida en la barra: ρ = ${sci(H.rho, 3)} Ω·cm. Si conducen electrones y huecos a la vez, R_H = (pμ_p² − nμ_n²)/[q(pμ_p + nμ_n)²] y puede cambiar de signo.`;
+  return H;
+}
+let hallGeom = null;
+function vHall(v) { const a = Math.abs(v); const sg = v < 0 ? '−' : '+'; if (a >= 1) return sg + a.toFixed(3) + ' V'; if (a >= 1e-3) return sg + (a * 1e3).toFixed(2) + ' mV'; return sg + (a * 1e6).toFixed(2) + ' µV'; }
+
+// ---------- ecuaciones y lecturas ----------
+function drawEq(dd, H) {
+  const m = state.mat, c = maj(), T = state.T, N = Nd(), E = Efield(), kT = KB * T;
+  const cr = carriers(m, state.type, N, T), mn = mobility(m, 'n', N, T), mp = mobility(m, 'p', N, T);
+  const sig = Q * (cr.n * mn + cr.p * mp), mu = c === 'n' ? mn : mp, vt = vth(m, c, T), vd = vel(m, c, E, T, N), P = simParams(), o = muParts(m, c, N, T);
+  const L = [], Hh = t => L.push(`<p class="eq-h">${t}</p>`), Qe = t => L.push(`<div class="eq-line">${t}</div>`);
+  Hh('Portadores y conductividad');
+  Qe(`n = ${sci(cr.n, 3)} cm⁻³,  p = ${sci(cr.p, 3)} cm⁻³   (n_i = ${sci(cr.ni, 2)} cm⁻³ a ${T} K)`);
+  Qe(`σ = q(nμ_n + pμ_p) = 1.602×10⁻¹⁹ × (${sci(cr.n, 2)}×${mn.toFixed(0)} + ${sci(cr.p, 2)}×${mp.toFixed(0)}) = <span class="hi">${sci(sig, 3)} S/cm</span>   →  ρ = ${sci(1 / sig, 3)} Ω·cm`);
+  Hh('Deriva');
+  Qe(`v_d = μ𝓔 = ${mu.toFixed(0)} × ${sci(E, 2)} = ${sci(mu * E, 3)} cm/s   con saturación: <span class="hi">${sci(vd, 3)} cm/s</span>`);
+  Qe(`τ = μm*/q = ${mu.toFixed(0)}×10⁻⁴ m²/V·s × ${mstar(m, c)}m₀ / q = ${(P.tauReal * 1e15).toFixed(0)} fs;   v_th = √(3kT/m*) = ${sci(vt, 2)} cm/s;   ℓ = v_th·τ = ${(vt * P.tauReal * 1e7).toFixed(0)} nm`);
+  Qe(`Matthiessen: 1/μ = 1/μ_red + 1/μ_imp = 1/${o.mL.toFixed(0)} + 1/${isFinite(o.mI) ? o.mI.toFixed(0) : '∞'}  →  μ = ${o.mu.toFixed(0)} cm²/V·s`);
+  Hh('Difusión y relación de Einstein');
+  Qe(`D = μ·kT/q = ${mu.toFixed(0)} × ${kT.toFixed(4)} V = <span class="hi">${dd.D.toFixed(2)} cm²/s</span>`);
+  Qe(`J_dif = ${c === 'n' ? 'qD_n·dn/dx' : '−qD_p·dp/dx'} = ${sci(dd.Jdiff, 3)} A/cm²;   J_der = q${c}μ𝓔ₓ = ${sci(dd.Jdrift, 3)} A/cm²;   J = <span class="hi">${sci(dd.Jt, 3)} A/cm²</span>`);
+  Qe(`J = 0  ⇔  𝓔ₓ = ${c === 'n' ? '+' : '−'}D/(μλ) = ${c === 'n' ? '+' : '−'}kT/(qλ) = ${c === 'n' ? '+' : '−'}${(kT / dd.lam).toFixed(0)} V/cm`);
+  Hh('Efecto Hall');
+  const hid = state.sample !== 'lab';
+  Qe(`R_H = (pμ_p² − nμ_n²) / [q(pμ_p + nμ_n)²] = <span class="hi">${sci(H.RH, 3)} cm³/C</span>${hid ? '' : `   (≈ ${state.type === 'n' ? '−1/(qn)' : '+1/(qp)'})`}`);
+  Qe(`V_H = R_H·I·B/t = ${sci(H.RH * 1e-6, 3)} m³/C × ${sci(state.I * 1e-3, 2)} A × ${state.B.toFixed(2)} T / ${sci(state.t * 1e-6, 2)} m = <span class="hi">${vHall(H.VH)}</span>`);
+  Qe(`concentración de Hall = 1/(q|R_H|) = ${sci(1 / (Q * Math.abs(H.RH)), 3)} cm⁻³;   μ_H = |R_H|·σ = ${H.muH.toFixed(0)} cm²/V·s`);
+  $('eqList').innerHTML = L.join('');
+  $('eqNote').textContent = `${SEMI[m].label} tipo ${state.type} · ${T} K`;
+  // lecturas
+  $('r1').textContent = `${mu.toFixed(0)} cm²/V·s`; $('r1s').textContent = `μ_${c} (mayoritarios); μ_${minc()} = ${(c === 'n' ? mp : mn).toFixed(0)}`;
+  $('r2').textContent = `${sci(1 / sig, 3)} Ω·cm`; $('r2s').textContent = `σ = ${sci(sig, 2)} S/cm`;
+  $('r3').textContent = `${dd.D.toFixed(1)} cm²/s`;
+  $('r4').textContent = `${sci(vd, 2)} cm/s`; $('r4s').textContent = `a 𝓔 = ${sci(E, 2)} V/cm`;
+  $('r5').textContent = `${sci(H.RH, 2)} cm³/C`; $('r5s').textContent = `muestra ${state.sample === 'lab' ? 'tuya' : state.sample} → ${H.RH > 0 ? 'p' : 'n'} ≈ ${sci(1 / (Q * Math.abs(H.RH)), 2)} cm⁻³`;
+  $('r6').textContent = vHall(H.VH); $('r6s').textContent = `μ_H = ${H.muH.toFixed(0)} cm²/V·s`;
+}
+
+// ---------- render y eventos ----------
+const syncFns = [];
+function syncControls() {
+  syncFns.forEach(f => f());
+  $('Nsym').textContent = state.type === 'n' ? 'N_D' : 'N_A';
+  $('NVal').textContent = sci(Nd(), 2) + ' cm⁻³';
+  $('TVal').textContent = state.T + ' K';
+  $('EVal').textContent = sci(Efield(), 2) + ' V/cm';
+  $('lamVal').textContent = (10 ** state.logLam).toFixed(2) + ' µm';
+  $('BVal').textContent = state.B.toFixed(2) + ' T';
+  $('IVal').textContent = state.I.toFixed(1) + ' mA';
+  $('tVal').textContent = state.t + ' µm';
+  [['logN', 'logN'], ['T', 'T'], ['logE', 'logE'], ['logLam', 'logLam'], ['Ex', 'Ex'], ['B', 'B'], ['I', 'I'], ['t', 't']].forEach(([id, k]) => { if (+$(id).value !== state[k]) $(id).value = state[k]; });
+  if (document.activeElement !== $('ExNum')) $('ExNum').value = state.Ex;
+  $('playBtn').textContent = state.play ? 'Pausa' : 'Continuar';
+  $('pulseBtn').hidden = state.anim !== 'pulse';
+}
+function renderAll() {
+  syncControls();
+  drawVE(); drawMuN(); drawMuT();
+  const dd = drawDD(), H = drawHall();
+  drawEq(dd, H);
+}
+syncFns.push(bindSeg('matSeg', () => state.mat, v => { state.mat = v; resetParticles(); renderAll(); }));
+syncFns.push(bindSeg('typeSeg', () => state.type, v => { if (v !== state.type) state.Ex = -state.Ex; state.type = v; resetImps(); resetParticles(); renderAll(); }));
+syncFns.push(bindSeg('animSeg', () => state.anim, v => { state.anim = v; resetParticles(); renderAll(); }));
+syncFns.push(bindSeg('sampleSeg', () => state.sample, v => { state.sample = v; renderAll(); }));
+[['logN', 'logN'], ['T', 'T'], ['logE', 'logE'], ['logLam', 'logLam'], ['Ex', 'Ex'], ['B', 'B'], ['I', 'I'], ['t', 't']].forEach(([id, k]) => {
+  $(id).addEventListener('input', () => { state[k] = +$(id).value; if (k === 'logN') resetImps(); if (k === 'logE' || k === 'T' || k === 'logN') simAcc = { sum: 0, n: 0 }; renderAll(); });
+});
+$('ExNum').addEventListener('input', () => { const v = +$('ExNum').value; if (isFinite(v)) { state.Ex = clamp(Math.round(v), -3000, 3000); renderAll(); } });
+$('playBtn').addEventListener('click', () => { state.play = !state.play; syncControls(); });
+$('pulseBtn').addEventListener('click', () => { resetParticles(); });
+$('resetBtn').addEventListener('click', () => { Object.assign(state, DEF); resetImps(); resetParticles(); renderAll(); });
+hoverChart('vE', 'vETip', px => { if (!vEGeom) return ''; const A = vEGeom; if (px < A.L || px > A.L + A.w) return ''; const E = A.inv(px); return `𝓔 = ${sci(E, 2)} V/cm<br>v_n = ${sci(vel(state.mat, 'n', E, state.T, Nd()), 2)} cm/s<br>v_p = ${sci(vel(state.mat, 'p', E, state.T, Nd()), 2)} cm/s`; });
+hoverChart('muN', 'muNTip', px => { if (!muNGeom) return ''; const A = muNGeom; if (px < A.L || px > A.L + A.w) return ''; const N = A.inv(px); return `N = ${sci(N, 2)} cm⁻³<br>μ_n = ${mobility(state.mat, 'n', N, state.T).toFixed(0)}<br>μ_p = ${mobility(state.mat, 'p', N, state.T).toFixed(0)} cm²/V·s`; });
+hoverChart('muT', 'muTTip', px => { if (!muTGeom) return ''; const A = muTGeom; if (px < A.L || px > A.L + A.w) return ''; const T = A.inv(px), o = muParts(state.mat, maj(), Nd(), T); return `T = ${T.toFixed(0)} K<br>μ = ${o.mu.toFixed(0)}<br>μ_red = ${o.mL.toFixed(0)}<br>μ_imp = ${isFinite(o.mI) ? o.mI.toFixed(0) : '∞'}`; });
+hoverChart('hallT', 'hallTip', px => { if (!hallGeom) return ''; const A = hallGeom.A; if (px < A.L || px > A.L + A.w) return ''; const T = A.inv(px), h = hall(hallGeom.sm, T); return `T = ${T.toFixed(0)} K<br>R_H = ${sci(h.RH, 2)} cm³/C<br>1/(q|R_H|) = ${sci(1 / (Q * Math.abs(h.RH)), 2)} cm⁻³<br>ρ = ${sci(h.rho, 2)} Ω·cm`; });
+const mq = window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener && mq.addEventListener('change', renderAll);
+resetImps(); resetParticles(); renderAll(); requestAnimationFrame(loop);
+
+})();
+</script>
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.tabs [role="tab"]'));
+  const panels = { lab: document.getElementById('panelLab'), theory: document.getElementById('panelTheory') };
+  function show(name, push) {
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Object.entries(panels).forEach(([k, p]) => { if (p) p.hidden = k !== name; });
+    if (push) { try { history.replaceState(null, '', name === 'theory' ? '#teoria' : location.pathname + location.search); } catch (e) { } }
+    if (name === 'lab') window.dispatchEvent(new Event('resize'));
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); });
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); show(n.dataset.tab, true);
+    });
+  });
+  document.querySelectorAll('.toc a[data-target]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const el = document.getElementById(a.dataset.target); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  document.querySelectorAll('[data-goto-lab]').forEach(b => b.addEventListener('click', () => { show('lab', true); window.scrollTo({ top: 0 }); }));
+  document.querySelectorAll('[data-totop]').forEach(b => b.addEventListener('click', () => { const t = document.querySelector('.toc'); window.scrollTo({ top: 0, behavior: 'smooth' }); if (t) t.querySelector('a') && t.querySelector('a').focus({ preventScroll: true }); }));
+  let start = 'lab'; try { if (/^#teor/i.test(location.hash)) start = 'theory'; } catch (e) { }
+  show(start, false);
+})();
+
+</script>
+</body>
+</html>

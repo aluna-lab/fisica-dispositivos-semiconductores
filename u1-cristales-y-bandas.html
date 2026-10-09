@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Unidad 1: redes de Si, Ge y GaAs, índices de Miller, zona de Brillouin, estructura de bandas por pseudopotencial empírico y modelo de Kronig–Penney.">
+<meta name="author" content="Elodie Strupiechonski, Andrés de Luna Bugallo">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235B4BC4'/%3E%3Cpath d='M12 22h40M12 42h40' stroke='white' stroke-width='5'/%3E%3Ccircle cx='24' cy='22' r='5' fill='%232874A6' stroke='white' stroke-width='2'/%3E%3Ccircle cx='40' cy='42' r='5' fill='white' stroke='%23C1440E' stroke-width='3'/%3E%3C/svg%3E">
+<title>Laboratorio de Cristales y Bandas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: familia de laboratorios del curso. Controles a la izquierda; a la derecha
+     el cristal en el espacio real junto a su zona de Brillouin (giran juntos), la estructura
+     de bandas calculada a todo lo ancho, y debajo el modelo de Kronig–Penney que explica
+     de dónde salen las bandas. Acento violeta silicio; electrones azules, huecos rojos. */
+  :root {
+    --bg: #EEF0F6; --surface: #FFFFFF; --surface-2: #F5F6FB; --border: #D9DCE8;
+    --text: #181A2A; --text-muted: #565A72; --text-faint: #80849A;
+    --accent: #5B4BC4; --accent-ink: #FFFFFF; --accent-soft: #E6E2F8;
+    --copper: #B8763B;
+    --elec: #2874A6; --elec-soft: rgba(40,116,166,0.14);
+    --hole: #C1440E; --hole-soft: rgba(193,68,14,0.12);
+    --gap: rgba(86,90,114,0.07);
+    --atomA: #6A5BD0; --atomB: #1C9474; --bond: #9AA0B8; --plane: rgba(184,118,59,0.30); --planeEdge: #B8763B;
+    --phonon: #1C9474;
+    --shadow: 0 1px 2px rgba(24,26,42,0.06), 0 6px 18px rgba(24,26,42,0.07);
+    --radius-s: 6px; --radius-m: 10px; --radius-l: 18px;
+    --font-display: 'Big Shoulders Display', 'Arial Narrow', sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+      --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+      --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+      --copper: #C88A4E;
+      --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.18);
+      --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.16); --gap: rgba(162,165,190,0.06);
+      --atomA: #9C92F0; --atomB: #2DB58C; --bond: #5A5F7A; --plane: rgba(200,138,78,0.30); --planeEdge: #C88A4E;
+      --phonon: #2DB58C;
+      --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #111220; --surface: #191B2C; --surface-2: #1E2034; --border: #2D3049;
+    --text: #E8E9F3; --text-muted: #A2A5BE; --text-faint: #767A94;
+    --accent: #8F82F0; --accent-ink: #0E0C22; --accent-soft: #272448;
+    --copper: #C88A4E;
+    --elec: #5AA2D6; --elec-soft: rgba(90,162,214,0.18);
+    --hole: #E06A3A; --hole-soft: rgba(224,106,58,0.16); --gap: rgba(162,165,190,0.06);
+    --atomA: #9C92F0; --atomB: #2DB58C; --bond: #5A5F7A; --plane: rgba(200,138,78,0.30); --planeEdge: #C88A4E;
+    --phonon: #2DB58C;
+    --shadow: 0 1px 2px rgba(0,0,0,0.45), 0 8px 22px rgba(0,0,0,0.4);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .page { max-width: 1300px; margin: 0 auto; padding-block: clamp(20px, 4vw, 44px) 64px; padding-inline: clamp(16px, 4vw, 40px); }
+  header.masthead { display: flex; flex-direction: column; gap: 10px; margin-bottom: clamp(20px, 3vw, 30px); max-width: 820px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(34px, 5.4vw, 52px); line-height: 0.98; margin: 0; text-wrap: balance; }
+  .subhead { color: var(--text-muted); font-size: 15.5px; max-width: 70ch; margin: 2px 0 0; }
+  .app-shell { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .app-shell { grid-template-columns: minmax(0, 1fr); } }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-l); box-shadow: var(--shadow); }
+  .deck { padding: 20px; display: flex; flex-direction: column; gap: 14px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; }
+  @media (max-width: 960px) { .deck { position: static; max-height: none; } }
+  .deck-title { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin: 0; }
+  .group-title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); margin: 4px 0 -4px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .flabel { font-size: 12.5px; color: var(--text-muted); }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 3px; gap: 3px; }
+  .seg button { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; padding: 7px 3px; border: none; border-radius: 7px; background: transparent; color: var(--text-muted); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .seg button:focus-visible, .btn:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .miller { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .miller label { display: flex; flex-direction: column; gap: 3px; font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+  select { font-family: var(--font-mono); font-size: 14px; padding: 6px 8px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .btn { font-family: var(--font-mono); font-size: 12px; font-weight: 500; padding: 6px 9px; border-radius: var(--radius-s); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); cursor: pointer; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn.ghost { background: none; border-style: dashed; color: var(--text-muted); font-family: var(--font-body); }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+  .check input { accent-color: var(--accent); width: 15px; height: 15px; }
+  .slider-block { display: flex; flex-direction: column; gap: 4px; }
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .slider-name { font-size: 12.5px; font-weight: 600; }
+  .slider-name .sym { color: var(--text-faint); font-weight: 500; font-family: var(--font-mono); font-size: 11.5px; }
+  .slider-value { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; color: var(--accent); font-weight: 500; white-space: nowrap; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 3px; background: var(--border); outline-offset: 4px; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--copper); border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--copper); cursor: pointer; }
+  input[type="range"]:focus-visible { outline: 2px solid var(--accent); }
+  .range-caps { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); }
+  .divider { height: 1px; background: var(--border); border: none; margin: 2px 0; }
+
+  .main-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .readout-strip { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  @media (max-width: 1200px) { .readout-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .readout-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .readout { background: var(--surface); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .rlabel { font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+  .rvalue { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(16px, 1.9vw, 21px); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .readout.hl .rvalue { color: var(--accent); }
+  .rsub { font-size: 11px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+  @media (max-width: 1100px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+  .kpgrid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 14px; }
+  @media (max-width: 800px) { .kpgrid { grid-template-columns: minmax(0, 1fr); } }
+  .card { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 0; }
+  .card-note { font-size: 11.5px; color: var(--text-faint); font-family: var(--font-mono); }
+  .stage { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); position: relative; touch-action: none; cursor: grab; }
+  .stage:active { cursor: grabbing; }
+  .stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; max-width: 100%; }
+  .stage .hint { position: absolute; left: 10px; bottom: 8px; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); pointer-events: none; }
+  .chart-wrap { position: relative; }
+  .scroll-x { overflow-x: auto; }
+  svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+  svg.wide { min-width: 640px; }
+  .caption { font-size: 12.5px; color: var(--text-muted); margin: 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--text-muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 18px; height: 0; border-top: 2.5px solid; display: inline-block; }
+  .dotk { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .axis-label { font-family: var(--font-mono); font-size: 11px; fill: var(--text-faint); }
+  .tick { font-family: var(--font-mono); font-size: 10px; fill: var(--text-faint); }
+  .lvl { font-family: var(--font-mono); font-size: 11px; }
+  .plabel { font-family: var(--font-body); font-size: 11.5px; font-weight: 600; fill: var(--text); }
+  .klabel { font-family: var(--font-body); font-size: 13px; font-weight: 600; fill: var(--text); }
+  .tip { position: absolute; pointer-events: none; background: var(--text); color: var(--bg); font-family: var(--font-mono); font-size: 11px; padding: 6px 8px; border-radius: 6px; line-height: 1.45; white-space: nowrap; transform: translate(-50%, calc(-100% - 14px)); opacity: 0; transition: opacity .1s; z-index: 5; }
+  .tip.on { opacity: 1; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-m); overflow: hidden; }
+  .facts div { background: var(--surface); padding: 8px 10px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; gap: 8px; }
+  .facts b { font-family: var(--font-mono); font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.st th { text-align: left; font-weight: 500; font-size: 10.5px; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.st td { padding: 7px 8px; border-bottom: 1px solid var(--border); font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  table.st td:first-child { font-family: var(--font-body); font-weight: 600; }
+  table.st tr.active td { background: var(--accent-soft); }
+  .eq-list { display: flex; flex-direction: column; gap: 6px; }
+  .eq-h { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); margin: 6px 0 0; }
+  .eq-line { font-family: var(--font-mono); font-size: 12px; line-height: 1.55; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-s); padding: 7px 11px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  table.st .ex { color: var(--text-faint); font-size: 0.92em; }
+  .eq-line .hi { color: var(--accent); font-weight: 600; }
+  .challenge { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 1100px) { .challenge { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  @media (max-width: 700px) { .challenge { grid-template-columns: minmax(0, 1fr); } }
+  .q { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 12px 14px; font-size: 13.5px; }
+  .q b { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500; }
+  .progress { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); }
+  footer.notes { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 12.5px; max-width: 96ch; }
+  footer.notes p { margin: 0 0 6px; }
+  .stack2 { display: flex; flex-direction: column; gap: 18px; }
+  [hidden] { display: none !important; }
+
+  /* ---- pestañas Laboratorio / Teoría ---- */
+  .tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 4px; margin: 0 0 18px; box-shadow: var(--shadow); }
+  .tabs button { font-family: var(--font-body); font-weight: 600; font-size: 14px; padding: 8px 20px; border: none; border-radius: 999px; background: transparent; color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); }
+  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tabs .tab-ic { font-family: var(--font-mono); font-size: 12px; opacity: 0.8; }
+  .theory { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 960px) { .theory { grid-template-columns: minmax(0, 1fr); } }
+  .toc { padding: 20px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); max-height: calc(100vh - 32px); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+  @media (max-width: 960px) { .toc { position: static; max-height: none; } }
+  .toc ol { margin: 0; padding: 0; list-style: none; counter-reset: t; display: flex; flex-direction: column; gap: 2px; }
+  .toc li { counter-increment: t; }
+  .toc a { display: flex; gap: 10px; padding: 7px 8px; border-radius: var(--radius-s); color: var(--text); text-decoration: none; font-size: 13.5px; line-height: 1.35; }
+  .toc a::before { content: counter(t, decimal-leading-zero); font-family: var(--font-mono); font-size: 11px; color: var(--accent); padding-top: 2px; }
+  .toc a:hover, .toc a:focus-visible { background: var(--accent-soft); outline: none; }
+  .toc-note { font-size: 12px; color: var(--text-faint); margin: 4px 0 0; }
+  .theory-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .tsec { scroll-margin-top: 16px; gap: 12px; }
+  .tsec h3 { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin: 0; }
+  .tsec h3 .tn { margin-right: 10px; vertical-align: 2px; }
+  .tsec h3 .tn { font-family: var(--font-mono); font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.08em; }
+  .tsec p { margin: 0; font-size: 15px; line-height: 1.6; max-width: 78ch; }
+  .tsec p + p { margin-top: 2px; }
+  .feq { font-family: 'Cambria Math', 'STIX Two Math', 'Latin Modern Math', 'Times New Roman', serif; font-size: 20px; line-height: 1.5; text-align: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 16px; overflow-x: auto; white-space: nowrap; color: var(--text); }
+  .feq i { font-style: italic; }
+  .feq .lbl { font-family: var(--font-body); font-size: 12px; color: var(--text-faint); font-style: normal; display: block; margin-top: 2px; white-space: normal; }
+  .feq + .feq { margin-top: -4px; }
+  .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 3px; line-height: 1.2; }
+  .frac > span { padding: 0 4px; }
+  .frac > span:first-child { border-bottom: 1.2px solid currentColor; padding-bottom: 2px; }
+  .frac > span:last-child { padding-top: 2px; }
+  .rad { display: inline-block; border-top: 1.2px solid currentColor; padding: 2px 3px 0; line-height: 1.25; }
+  .rad .frac { margin-top: 2px; }
+  .feq sub, .feq sup { font-size: 0.68em; }
+  .where { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 14px; margin: 0; font-size: 13.5px; }
+  .where dt { font-family: 'Cambria Math', 'Times New Roman', serif; font-style: italic; font-size: 15px; color: var(--accent); }
+  .where dd { margin: 0; color: var(--text-muted); }
+  .inlab { border-left: 3px solid var(--copper); background: var(--surface-2); padding: 10px 14px; border-radius: 0 var(--radius-s) var(--radius-s) 0; font-size: 14px !important; color: var(--text-muted); }
+  .inlab b { color: var(--copper); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; display: block; margin-bottom: 2px; }
+  .keyidea { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; font-weight: 500; }
+  .tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+  .tgrid .feq { font-size: 18px; }
+  .ttable { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .ttable th { text-align: left; font-weight: 500; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+  .ttable td { padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  [hidden] { display: none !important; }
+  .th4 { font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--accent); margin: 8px 0 -2px; letter-spacing: 0.01em; }
+  .tfig { margin: 4px 0; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-m); padding: 14px 14px 12px; }
+  .tfig svg { display: block; width: 100%; height: auto; max-width: 720px; margin: 0 auto; overflow: visible; }
+  .tfig figcaption { font-size: 13px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+  .tsec p b { font-weight: 600; }
+  /* ---- regreso al índice del curso ---- */
+  .topnav { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 0 0 18px; }
+  .topnav .tabs { margin: 0; }
+  a.home-link { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 14px; color: var(--text); text-decoration: none; background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 9px 16px; box-shadow: var(--shadow); }
+  a.home-link:hover { border-color: var(--accent); color: var(--accent); }
+  a.home-link:focus-visible, a.home-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a.home-link .hk { font-family: var(--font-mono); font-size: 12px; color: var(--accent); }
+  a.home-fab { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 40; display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-body); font-weight: 600; font-size: 13px; text-decoration: none; background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(24,26,42,0.25); }
+  a.home-fab:hover { filter: brightness(1.08); }
+  a.home-fab .hk { font-family: var(--font-mono); font-size: 12px; }
+  @media (max-width: 520px) { a.home-fab .hl { display: none; } a.home-fab { padding: 12px 14px; } }
+  .sec-home { display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px; }
+  .sec-home a, .sec-home button { font-family: var(--font-mono); font-size: 11.5px; color: var(--text-faint); text-decoration: none; background: none; border: none; cursor: pointer; padding: 2px 4px; }
+  .sec-home a:hover, .sec-home button:hover { color: var(--accent); }
+
+
+  .credit { margin-top: 10px !important; color: var(--text-faint); font-size: 12px; }
+  .credit a { color: inherit; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <span class="eyebrow">Física de Dispositivos Semiconductores · ENESJ · Unidad 1</span>
+    <h1>Laboratorio de Cristales y Bandas</h1>
+    <p class="subhead">Del arreglo de átomos a la estructura de bandas. Gira la celda de Si, Ge o GaAs junto con su zona de Brillouin, corta planos cristalinos con índices de Miller y calcula las bandas reales con un pseudopotencial empírico. El modelo de Kronig–Penney muestra en una dimensión por qué un potencial periódico abre brechas y cambia la masa del electrón.</p>
+  </header>
+<div class="topnav"><a class="home-link" href="index.html"><span class="hk">←</span>Índice del curso</a><div class="tabs" role="tablist" aria-label="Secciones de la unidad"><button type="button" role="tab" id="tabLab" data-tab="lab" aria-controls="panelLab" aria-selected="true"><span class="tab-ic">◧</span>Laboratorio</button><button type="button" role="tab" id="tabTheory" data-tab="theory" aria-controls="panelTheory" aria-selected="false"><span class="tab-ic">∫</span>Teoría</button></div></div>
+<div id="panelLab" role="tabpanel" aria-labelledby="tabLab">
+
+
+  <div class="app-shell">
+    <aside class="panel deck" aria-label="Controles">
+      <h2 class="deck-title">Controles</h2>
+
+      <p class="group-title">Material</p>
+      <div class="seg" role="group" aria-label="Material" id="matSeg">
+        <button type="button" data-v="Si">Si</button>
+        <button type="button" data-v="Ge">Ge</button>
+        <button type="button" data-v="GaAs">GaAs</button>
+      </div>
+
+      <hr class="divider">
+      <p class="group-title">Planos de Miller</p>
+      <div class="miller">
+        <label>h<select id="h"></select></label>
+        <label>k<select id="k"></select></label>
+        <label>l<select id="l"></select></label>
+      </div>
+      <div class="chips" id="hklChips">
+        <button type="button" class="btn" data-hkl="1,0,0">(100)</button>
+        <button type="button" class="btn" data-hkl="1,1,0">(110)</button>
+        <button type="button" class="btn" data-hkl="1,1,1">(111)</button>
+        <button type="button" class="btn" data-hkl="2,1,1">(211)</button>
+      </div>
+      <label class="check"><input type="checkbox" id="bondsChk" checked> Enlaces tetraédricos</label>
+      <label class="check"><input type="checkbox" id="planeChk" checked> Mostrar el plano</label>
+
+      <hr class="divider">
+      <p class="group-title">Estructura de bandas</p>
+      <label class="check"><input type="checkbox" id="transChk" checked> Transición óptica de menor energía</label>
+      <label class="check"><input type="checkbox" id="freeChk"> Electrón libre (sin potencial)</label>
+
+      <hr class="divider">
+      <p class="group-title">Kronig–Penney (1D)</p>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Altura de la barrera <span class="sym">V₀</span></span><span class="slider-value" id="V0Val"></span></div>
+        <input type="range" id="V0" min="0" max="20" step="0.1" value="6" aria-label="Altura de la barrera en eV">
+        <div class="range-caps"><span>0 eV (libre)</span><span>20 eV</span></div>
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Ancho del pozo <span class="sym">w</span></span><span class="slider-value" id="wVal"></span></div>
+        <input type="range" id="w" min="0.1" max="1" step="0.01" value="0.4" aria-label="Ancho del pozo en nm">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span class="slider-name">Ancho de la barrera <span class="sym">b</span></span><span class="slider-value" id="bVal"></span></div>
+        <input type="range" id="b" min="0.02" max="0.5" step="0.01" value="0.1" aria-label="Ancho de la barrera en nm">
+        <div class="range-caps"><span>0.02 nm (pozos acoplados)</span><span>0.5 nm</span></div>
+      </div>
+      <div class="field">
+        <span class="flabel" id="lbZone">Zona</span>
+        <div class="seg" role="group" aria-labelledby="lbZone" id="zoneSeg">
+          <button type="button" data-v="red">Reducida</button>
+          <button type="button" data-v="ext">Extendida</button>
+        </div>
+      </div>
+      <button type="button" class="btn ghost" id="resetBtn">Volver al inicio: Si, (111), V₀ = 6 eV</button>
+    </aside>
+
+    <div class="main-col">
+      <div class="readout-strip">
+        <div class="readout hl"><span class="rlabel">Brecha (cálculo)</span><span class="rvalue" id="r1"></span><span class="rsub" id="r1s"></span></div>
+        <div class="readout"><span class="rlabel">Tipo de brecha</span><span class="rvalue" id="r2"></span><span class="rsub" id="r2s"></span></div>
+        <div class="readout"><span class="rlabel">Masa del electrón</span><span class="rvalue" id="r3"></span><span class="rsub" id="r3s"></span></div>
+        <div class="readout"><span class="rlabel">Constante de red</span><span class="rvalue" id="r4"></span><span class="rsub" id="r4s"></span></div>
+        <div class="readout"><span class="rlabel">Distancia d_hkl</span><span class="rvalue" id="r5"></span><span class="rsub" id="r5s"></span></div>
+        <div class="readout"><span class="rlabel">Densidad atómica</span><span class="rvalue" id="r6"></span><span class="rsub">8 átomos por celda / a³</span></div>
+      </div>
+
+      <div class="grid2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Celda en el espacio real</h3><span class="card-note" id="cellNote"></span></div>
+          <div class="stage" id="cellStage"><canvas id="cell" width="640" height="640" aria-label="Celda cúbica convencional con átomos, enlaces y plano de Miller"></canvas><span class="hint">arrastra para girar</span></div>
+          <div class="legend" id="cellLegend"></div>
+          <div class="facts" id="cellFacts"></div>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Zona de Brillouin (red recíproca)</h3><span class="card-note">fcc → octaedro truncado</span></div>
+          <div class="stage" id="bzStage"><canvas id="bz" width="640" height="640" aria-label="Primera zona de Brillouin fcc con puntos de alta simetría"></canvas><span class="hint">gira junto con la celda</span></div>
+          <p class="caption">La red recíproca de una fcc es bcc, y su primera zona de Brillouin es un octaedro truncado. La línea violeta es el camino L → Γ → X → U|K → Γ que recorre la estructura de bandas. Cada punto k es un estado de Bloch ψ = e^(ik·r)u_k(r); Γ es el centro (k = 0) y X está a 2π/a en la dirección [100].</p>
+        </section>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Estructura de bandas calculada</h3><span class="card-note" id="bandNote"></span></div>
+        <div class="chart-wrap scroll-x" id="bandWrap">
+          <svg class="chart wide" id="band" viewBox="0 0 960 470" role="img" aria-label="Estructura de bandas a lo largo de L, Γ, X, U|K, Γ"></svg>
+          <div class="tip" id="bandTip"></div>
+        </div>
+        <div class="legend">
+          <span><i class="sw" style="border-color:var(--hole)"></i>bandas de valencia (ocupadas)</span>
+          <span><i class="sw" style="border-color:var(--elec)"></i>bandas de conducción</span>
+          <span><i class="dotk" style="background:var(--hole)"></i>máximo de valencia</span>
+          <span><i class="dotk" style="background:var(--elec)"></i>mínimo de conducción</span>
+          <span id="freeLeg" hidden><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>electrón libre plegado</span>
+        </div>
+        <p class="caption" id="bandCap"></p>
+      </section>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">¿De dónde salen las bandas? Kronig–Penney</h3><span class="card-note" id="kpNote"></span></div>
+        <div class="kpgrid">
+          <div class="chart-wrap"><svg class="chart" id="kpF" viewBox="0 0 400 440" role="img" aria-label="Función f(E) del modelo de Kronig–Penney con regiones permitidas"></svg></div>
+          <div class="chart-wrap" id="kpWrap"><svg class="chart" id="kpE" viewBox="0 0 560 440" role="img" aria-label="Relación E(k) del modelo de Kronig–Penney"></svg><div class="tip" id="kpTip"></div></div>
+        </div>
+        <div class="legend">
+          <span><i class="sw" style="border-color:var(--accent)"></i>bandas con el potencial periódico</span>
+          <span><i class="sw" style="border-color:var(--text-faint);border-top-style:dashed"></i>electrón libre, E = ħ²k²/2m₀</span>
+          <span><i class="sw" style="border-color:var(--copper)"></i>parábola con la masa efectiva</span>
+        </div>
+        <p class="caption" id="kpCap"></p>
+      </section>
+
+      <div class="stack2">
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Cálculo contra experimento</h3><span class="card-note">arriba cálculo · abajo experimento (300 K)</span></div>
+          <div class="scroll-x"><table class="st" id="cmpTable"></table></div>
+          <p class="caption">El pseudopotencial empírico local reproduce el tipo de brecha y la posición de los valles, pero no los valores exactos: no incluye el acoplamiento espín–órbita, que sube el máximo de valencia Δ_so/3, ni la no localidad del potencial. Para el Si la brecha calculada sale ≈ 0.3 eV baja.</p>
+        </section>
+        <section class="panel card">
+          <div class="card-head"><h3 class="card-title">Ecuaciones con tus números</h3><span class="card-note" id="eqNote"></span></div>
+          <div class="eq-list" id="eqList"></div>
+        </section>
+      </div>
+
+      <section class="panel card">
+        <div class="card-head"><h3 class="card-title">Retos</h3><span class="card-note">usa los controles para responder</span></div>
+        <div class="challenge">
+          <div class="q"><b>Reto 1 · el plano más denso</b>Para Si, calcula la densidad atómica de los planos (100), (110) y (111). ¿Cuál es mayor? ¿Por qué las obleas de Si se clivan en (111) y los transistores se fabrican sobre (100)?</div>
+          <div class="q"><b>Reto 2 · ¿por qué el Si no sirve para un LED?</b>Compara el momento de un fotón de 1.1 eV (k = E/ħc) con la distancia Γ–X. ¿Cuántos órdenes de magnitud las separan? ¿Qué partícula debe aportar el momento que falta?</div>
+          <div class="q"><b>Reto 3 · masa efectiva</b>En Kronig–Penney, sube V₀ de 0 a 20 eV. ¿Qué pasa con el ancho de la primera banda y con m*? Relaciónalo con el traslape de orbitales entre átomos vecinos.</div>
+          <div class="q"><b>Reto 4 · tres materiales, tres valles</b>Ubica el mínimo de conducción de Si, Ge y GaAs. Para el Si, ¿cuántos valles equivalentes hay y qué masas m_l y m_t tienen? ¿Por qué la masa de densidad de estados combina las dos?</div>
+          <div class="q"><b>Reto 5 · el efecto Gunn</b>En GaAs, lee la energía de los valles L y X respecto al mínimo en Γ. ¿Qué pasa con la velocidad de un electrón que gana ≈ 0.3 eV en un campo eléctrico intenso y salta al valle L?</div>
+          <div class="q"><b>Reto 6 · brechas en la frontera</b>Con V₀ pequeño, ¿en qué valores de k se abren las brechas? Relaciónalo con la condición de Bragg 2d·sen θ = nλ para una onda que se refleja en la red.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  </div>
+<div id="panelTheory" role="tabpanel" aria-labelledby="tabTheory" hidden>
+<div class="theory">
+<nav class="panel toc" aria-label="Contenido de la teoría"><h2 class="deck-title">Teoría · Unidad 1</h2><ol><li><a href="#t-red" data-target="t-red">Redes de diamante y zincblenda</a></li><li><a href="#t-miller" data-target="t-miller">Índices de Miller y planos cristalinos</a></li><li><a href="#t-reciproca" data-target="t-reciproca">Red recíproca y zona de Brillouin</a></li><li><a href="#t-bloch" data-target="t-bloch">Teorema de Bloch y bandas de energía</a></li><li><a href="#t-kp" data-target="t-kp">Modelo de Kronig–Penney</a></li><li><a href="#t-masa" data-target="t-masa">Masa efectiva</a></li><li><a href="#t-gap" data-target="t-gap">Brecha directa e indirecta</a></li><li><a href="#t-epm" data-target="t-epm">Cómo se calcula la estructura de bandas</a></li></ol><p class="toc-note">Cada fórmula aparece evaluada con tus valores en la pestaña Laboratorio, en «Ecuaciones con tus números».</p><button type="button" class="btn ghost" data-goto-lab>Ir al laboratorio →</button></nav>
+<div class="theory-col">
+<section class="panel card tsec" id="t-red">
+  <h3><span class="tn">01</span>Redes de diamante y zincblenda</h3>
+  <p>Un cristal es una red de Bravais más una base de átomos que se repite en cada punto de la red. El Si y el Ge tienen estructura de diamante y el GaAs de zincblenda: en ambos casos la red es cúbica centrada en las caras (fcc) y la base tiene dos átomos, uno en (0,0,0) y otro desplazado un cuarto de la diagonal, (¼,¼,¼)a. En el diamante los dos átomos son iguales; en la zincblenda uno es Ga y el otro As.</p>
+  <p>Cada átomo queda rodeado por cuatro vecinos en un tetraedro, con ángulos de 109.47°: es la geometría de los orbitales híbridos sp³ que forman los enlaces covalentes.</p>
+  <div class="tgrid">
+    <div class="feq"><i>n</i> = <span class="frac"><span>8</span><span><i>a</i><sup>3</sup></span></span><span class="lbl">átomos por unidad de volumen (4 puntos fcc × 2 átomos)</span></div>
+    <div class="feq"><i>d</i><sub>nn</sub> = <span class="frac"><span>√3</span><span>4</span></span><i>a</i><span class="lbl">distancia al vecino más cercano</span></div>
+  </div>
+  <dl class="where"><dt>a</dt><dd>constante de red de la celda cúbica convencional (5.43 Å en Si, 5.65 Å en GaAs)</dd></dl>
+  <p class="inlab"><b>En el laboratorio</b>Gira la celda y cuenta: 8 vértices × ⅛ + 6 caras × ½ = 4 puntos fcc, más 4 átomos internos de la base. Activa los enlaces para ver los tetraedros.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-miller">
+  <h3><span class="tn">02</span>Índices de Miller y planos cristalinos</h3>
+  <p>Un plano (hkl) corta los ejes en a/h, a/k y a/l. Los índices se obtienen tomando los recíprocos de las intersecciones y reduciéndolos a enteros. La familia de planos paralelos está separada por una distancia d<sub>hkl</sub>; el vector [hkl] es perpendicular al plano en un cristal cúbico.</p>
+  <div class="feq"><i>d</i><sub><i>hkl</i></sub> = <span class="frac"><span><i>a</i></span><span>√<span class="rad"><i>h</i><sup>2</sup> + <i>k</i><sup>2</sup> + <i>l</i><sup>2</sup></span></span></span><span class="lbl">distancia entre planos sucesivos de la familia (hkl), red cúbica</span></div>
+  <p>La densidad atómica superficial (átomos por cm²) cambia con la orientación. Importa para el clivado de obleas, la velocidad de oxidación, la densidad de estados de interfaz y la movilidad en el canal de un MOSFET: por eso la industria usa obleas (100).</p>
+  <p class="inlab"><b>En el laboratorio</b>Elige (100), (110) y (111) y compara d<sub>hkl</sub> y la densidad del plano en la tabla de la celda.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-reciproca">
+  <h3><span class="tn">03</span>Red recíproca y zona de Brillouin</h3>
+  <p>Las ondas que viven en un cristal se describen con su vector de onda k. Dos vectores k que difieren en un vector G de la red recíproca describen el mismo estado, así que basta estudiar k dentro de una celda: la primera zona de Brillouin. La red recíproca de una fcc es una bcc, y su zona de Brillouin es un octaedro truncado.</p>
+  <div class="feq"><b>a</b><sub><i>i</i></sub> · <b>b</b><sub><i>j</i></sub> = 2π δ<sub><i>ij</i></sub> &nbsp;&nbsp;&nbsp; <b>b</b><sub>1</sub> = 2π <span class="frac"><span><b>a</b><sub>2</sub> × <b>a</b><sub>3</sub></span><span><b>a</b><sub>1</sub> · (<b>a</b><sub>2</sub> × <b>a</b><sub>3</sub>)</span></span><span class="lbl">vectores primitivos de la red recíproca</span></div>
+  <table class="ttable"><thead><tr><th>Punto</th><th>Coordenadas (2π/a)</th><th>Dirección</th></tr></thead><tbody>
+    <tr><td>Γ</td><td>(0, 0, 0)</td><td>centro de la zona, k = 0</td></tr>
+    <tr><td>X</td><td>(1, 0, 0)</td><td>centro de las caras cuadradas, dirección [100]</td></tr>
+    <tr><td>L</td><td>(½, ½, ½)</td><td>centro de las caras hexagonales, dirección [111]</td></tr>
+    <tr><td>K</td><td>(¾, ¾, 0)</td><td>arista entre dos hexágonos, dirección [110]</td></tr>
+  </tbody></table>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-bloch">
+  <h3><span class="tn">04</span>Teorema de Bloch y bandas de energía</h3>
+  <p>En un potencial periódico, V(r + R) = V(r), las soluciones de la ecuación de Schrödinger son ondas planas moduladas por una función con la periodicidad de la red. Para cada k hay una serie de energías E<sub>n</sub>(k); al recorrer k aparecen las bandas, y entre ellas quedan intervalos de energía sin estados: las brechas.</p>
+  <div class="feq">ψ<sub><i>n</i><b>k</b></sub>(<b>r</b>) = <i>e</i><sup><i>i</i><b>k</b>·<b>r</b></sup> <i>u</i><sub><i>n</i><b>k</b></sub>(<b>r</b>), &nbsp;&nbsp; <i>u</i><sub><i>n</i><b>k</b></sub>(<b>r</b> + <b>R</b>) = <i>u</i><sub><i>n</i><b>k</b></sub>(<b>r</b>)<span class="lbl">función de Bloch</span></div>
+  <p class="keyidea">Las brechas se abren donde la onda cumple la condición de Bragg: en la frontera de la zona la onda que avanza y la reflejada forman dos ondas estacionarias, una con densidad sobre los iones (energía más baja) y otra entre ellos (energía más alta).</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-kp">
+  <h3><span class="tn">05</span>Modelo de Kronig–Penney</h3>
+  <p>Es el modelo más simple de un cristal en una dimensión: pozos de ancho w separados por barreras de altura V₀ y ancho b, con periodo L = w + b. Exigir que ψ y su derivada sean continuas y que se cumpla el teorema de Bloch lleva a una ecuación trascendental.</p>
+  <div class="feq">cos(<i>kL</i>) = cos(α<i>w</i>) cosh(β<i>b</i>) + <span class="frac"><span>β<sup>2</sup> − α<sup>2</sup></span><span>2αβ</span></span> sen(α<i>w</i>) senh(β<i>b</i>)</div>
+  <div class="feq">α = <span class="frac"><span>√<span class="rad">2<i>m</i><i>E</i></span></span><span>ħ</span></span>, &nbsp;&nbsp; β = <span class="frac"><span>√<span class="rad">2<i>m</i>(<i>V</i><sub>0</sub> − <i>E</i>)</span></span><span>ħ</span></span><span class="lbl">para E &lt; V₀; arriba de la barrera β se vuelve imaginaria y senh, cosh pasan a sen, cos</span></div>
+  <p>El lado izquierdo está entre −1 y 1. Solo las energías en las que el lado derecho también cae en ese intervalo tienen un k real: son las bandas permitidas. Las demás energías forman las brechas.</p>
+  <p class="inlab"><b>En el laboratorio</b>Con V₀ = 0 recuperas la parábola del electrón libre. Al subir V₀ o b, los pozos se aíslan, las bandas se angostan hacia niveles discretos y la masa efectiva crece.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-masa">
+  <h3><span class="tn">06</span>Masa efectiva</h3>
+  <p>Cerca del mínimo de una banda, E(k) es aproximadamente una parábola. Si la escribimos como la de una partícula libre, la masa que aparece no es m₀ sino una masa efectiva que contiene todo el efecto del potencial periódico. Una banda muy curvada da una masa pequeña; una banda plana, una masa grande.</p>
+  <div class="tgrid">
+    <div class="feq"><span class="frac"><span>1</span><span><i>m</i>*</span></span> = <span class="frac"><span>1</span><span>ħ<sup>2</sup></span></span> <span class="frac"><span><i>d</i><sup>2</sup><i>E</i></span><span><i>dk</i><sup>2</sup></span></span><span class="lbl">definición por la curvatura</span></div>
+    <div class="feq"><i>E</i>(<i>k</i>) ≈ <i>E</i><sub>c</sub> + <span class="frac"><span>ħ<sup>2</sup><i>k</i><sup>2</sup></span><span>2<i>m</i>*</span></span><span class="lbl">aproximación parabólica</span></div>
+  </div>
+  <p>En el techo de una banda la curvatura es negativa y la masa también: un electrón ahí se comporta como una carga positiva con masa positiva, el hueco. En el Si los seis valles de conducción son elipsoides, con una masa longitudinal m<sub>l</sub> y dos transversales m<sub>t</sub>; para contar estados se usa una masa de densidad de estados.</p>
+  <div class="feq"><i>m</i><sub>dos</sub> = (<i>M</i><sub>c</sub><sup>2</sup> <i>m</i><sub>l</sub> <i>m</i><sub>t</sub><sup>2</sup>)<sup>1/3</sup><span class="lbl">M_c = número de valles equivalentes (6 en Si, 4 en Ge)</span></div>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-gap">
+  <h3><span class="tn">07</span>Brecha directa e indirecta</h3>
+  <p>En una transición óptica se conservan la energía y el momento. El fotón aporta mucha energía pero casi nada de momento: su vector de onda es miles de veces menor que el tamaño de la zona de Brillouin.</p>
+  <div class="tgrid">
+    <div class="feq"><i>k</i><sub>fotón</sub> = <span class="frac"><span><i>E</i></span><span>ħ<i>c</i></span></span> ≈ 6×10<sup>−3</sup> nm<sup>−1</sup><span class="lbl">para E ≈ 1.1 eV</span></div>
+    <div class="feq"><span class="frac"><span>2π</span><span><i>a</i></span></span> ≈ 11.6 nm<sup>−1</sup><span class="lbl">tamaño de la zona en Si</span></div>
+  </div>
+  <p>En GaAs el mínimo de conducción y el máximo de valencia están en Γ: la transición es vertical y el electrón se recombina emitiendo un fotón en nanosegundos. En Si el mínimo está cerca de X; el electrón necesita además un fonón que aporte el momento. Es un proceso de segundo orden, miles de veces más lento, y pierde contra la recombinación por defectos. Por eso el Si no sirve para hacer un LED, pero sí para un fotodetector.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+<section class="panel card tsec" id="t-epm">
+  <h3><span class="tn">08</span>Cómo se calcula la estructura de bandas</h3>
+  <p>El laboratorio usa el método del pseudopotencial empírico. Se expande la función de onda en ondas planas e<sup>i(k+G)·r</sup> y se sustituye el potencial real de cada ion y sus electrones internos por un potencial suave con pocos coeficientes (factores de forma) ajustados a experimentos.</p>
+  <div class="feq"><i>H</i><sub><b>G</b><b>G</b>′</sub> = <span class="frac"><span>ħ<sup>2</sup></span><span>2<i>m</i><sub>0</sub></span></span>|<b>k</b> + <b>G</b>|<sup>2</sup> δ<sub><b>G</b><b>G</b>′</sub> + <i>V</i><sub>S</sub>(|Δ<b>G</b>|) cos(Δ<b>G</b>·τ) + <i>i</i> <i>V</i><sub>A</sub>(|Δ<b>G</b>|) sen(Δ<b>G</b>·τ)<span class="lbl">ΔG = G − G′, τ = (a/8)(1,1,1); V_A = 0 en el diamante</span></div>
+  <p>Diagonalizar esta matriz de 89 × 89 en cada punto k da las bandas. El modelo reproduce bien la forma de las bandas y la posición de los valles, pero no incluye el espín–órbita y subestima la brecha del Si.</p>
+  <div class="sec-home"><button type="button" data-totop>↑ índice de la teoría</button><a href="index.html">⌂ índice del curso</a></div>
+</section>
+
+</div>
+</div>
+</div>
+  <a class="home-fab" href="index.html" aria-label="Ir al índice del curso de Física de Dispositivos Semiconductores"><span class="hk">⌂</span><span class="hl">Índice del curso</span></a>
+<footer class="notes">
+    <p><b>Estructura de bandas.</b> Pseudopotencial empírico local con los factores de forma de Cohen y Bergstresser, Phys. Rev. 141, 789 (1966): base de 89 ondas planas (|G|² ≤ 19 en unidades de (2π/a)²), sin espín–órbita. Las masas efectivas se obtienen de la curvatura numérica en los extremos de banda.</p>
+    <p><b>Valores experimentales</b> a 300 K tomados de tablas de referencia (Sze & Ng; Ioffe NSM Archive), aproximados. Kronig–Penney con masa m₀: cos(kL) = cos(αw)cosh(βb) + (β² − α²)/(2αβ)·sen(αw)senh(βb), con L = w + b.</p>
+    <p class="credit">© 2026 Elodie Strupiechonski (ENES Juriquilla, UNAM) y Andrés de Luna Bugallo (CFATA, UNAM). Material didáctico bajo licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" rel="license">CC BY 4.0</a>.</p>
+  </footer>
+</div>
+
+<script>
+
+(function () {
+const $ = id => document.getElementById(id);
+const RY = 13.6057, BOHR = 0.529177, HB2 = 3.80998, HBC_EVNM = 197.327, HB2NM = 0.0380998;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// ---------- datos ----------
+const MATS = {
+  Si:   { label: 'Si',   a: 5.43, struct: 'diamante', VS: { 3: -0.21, 8: 0.04, 11: 0.08 }, VA: {}, atoms: ['Si', 'Si'],
+          exp: { Eg: 1.12, where: 'cerca de X (Δ)', type: 'indirecta', EG: 3.4, me: 'm_l 0.98 · m_t 0.19', mhh: 0.49, mlh: 0.16, so: 0.044, a: 5.431 } },
+  Ge:   { label: 'Ge',   a: 5.66, struct: 'diamante', VS: { 3: -0.23, 8: 0.01, 11: 0.06 }, VA: {}, atoms: ['Ge', 'Ge'],
+          exp: { Eg: 0.66, where: 'L', type: 'indirecta', EG: 0.80, me: 'm_l 1.64 · m_t 0.082', mhh: 0.28, mlh: 0.044, so: 0.29, a: 5.658 } },
+  GaAs: { label: 'GaAs', a: 5.64, struct: 'zincblenda', VS: { 3: -0.23, 8: 0.01, 11: 0.06 }, VA: { 3: 0.07, 4: 0.05, 11: 0.01 }, atoms: ['Ga', 'As'],
+          exp: { Eg: 1.42, where: 'Γ', type: 'directa', EG: 1.42, me: '0.067', mhh: 0.51, mlh: 0.082, so: 0.34, a: 5.653 } }
+};
+const DEF = () => ({ mat: 'Si', hkl: [1, 1, 1], bonds: true, plane: true, trans: true, free: false, V0: 6, w: 0.4, b: 0.1, zone: 'red' });
+const state = DEF();
+const rot = { yaw: 0.62, pitch: -0.42 };
+
+// ---------- formato ----------
+const SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+const sup = s => String(s).split('').map(c => SUP[c] || c).join('');
+function sci(x, d) { d = d == null ? 2 : d; if (!isFinite(x) || x <= 0) return '—'; let e = Math.floor(Math.log10(x)), m = x / 10 ** e; if (+m.toFixed(d) >= 10) { m /= 10; e++; } if (e >= -2 && e <= 3) return String(+x.toPrecision(3)); return m.toFixed(d) + '×10' + sup(e); }
+const hklStr = h => '(' + h.map(v => v < 0 ? '1̄'.replace('1', String(-v)) : String(v)).join('') + ')';
+function niceStep(span, target) { const raw = span / target, p = 10 ** Math.floor(Math.log10(raw)), m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+
+// ---------- cristal ----------
+const FCC = [[0, 0, 0], [0, .5, .5], [.5, 0, .5], [.5, .5, 0]];
+function cellAtoms() {
+  const out = [];
+  for (let i = -1; i <= 1; i++) for (let j = -1; j <= 1; j++) for (let k = -1; k <= 1; k++)
+    FCC.forEach(f => [0, 1].forEach(s => {
+      const p = [f[0] + i + s * .25, f[1] + j + s * .25, f[2] + k + s * .25];
+      if (p.every(v => v >= -1e-9 && v <= 1 + 1e-9)) out.push({ p, s });
+    }));
+  return out;
+}
+const ATOMS = cellAtoms();
+const BONDS = [];
+ATOMS.forEach((A, i) => ATOMS.forEach((B, j) => { if (j <= i || A.s === B.s) return; const d = Math.hypot(A.p[0] - B.p[0], A.p[1] - B.p[1], A.p[2] - B.p[2]); if (Math.abs(d - Math.sqrt(3) / 4) < 1e-6) BONDS.push([i, j]); }));
+
+function planePolygon(h) {
+  // familia h·r = c; c entero dentro del rango sobre el cubo, el más cercano al centro
+  const corners = []; for (const x of [0, 1]) for (const y of [0, 1]) for (const z of [0, 1]) corners.push([x, y, z]);
+  const vals = corners.map(c => h[0] * c[0] + h[1] * c[1] + h[2] * c[2]);
+  const lo = Math.min(...vals), hi = Math.max(...vals);
+  let c = Math.round((lo + hi) / 2); if (c === lo && hi > lo) c = lo + 1 <= hi ? Math.ceil((lo + hi) / 2) : c;
+  if ((h[0] + h[1] + h[2]) !== 0 && c === 0 && hi >= 1) c = 1;
+  const edges = [];
+  for (let i = 0; i < 8; i++) for (let j = i + 1; j < 8; j++) { const d = corners[i].reduce((a, v, k) => a + Math.abs(v - corners[j][k]), 0); if (d === 1) edges.push([i, j]); }
+  const pts = [];
+  edges.forEach(([i, j]) => { const a = vals[i] - c, b = vals[j] - c; if (a === 0) pts.push(corners[i]); if (a * b < 0) { const t = a / (a - b); pts.push(corners[i].map((v, k) => v + t * (corners[j][k] - v))); } });
+  const uniq = []; pts.forEach(p => { if (!uniq.some(q => Math.hypot(q[0] - p[0], q[1] - p[1], q[2] - p[2]) < 1e-9)) uniq.push(p); });
+  if (uniq.length < 3) return { c, poly: [] };
+  const cen = uniq.reduce((a, p) => a.map((v, k) => v + p[k] / uniq.length), [0, 0, 0]);
+  const n = h.map(v => v / Math.hypot(...h));
+  let u = [1, 0, 0]; if (Math.abs(n[0]) > 0.9) u = [0, 1, 0];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  let e1 = cross(n, u); const l1 = Math.hypot(...e1); e1 = e1.map(v => v / l1); const e2 = cross(n, e1);
+  uniq.sort((p, q) => { const dp = p.map((v, k) => v - cen[k]), dq = q.map((v, k) => v - cen[k]); return Math.atan2(dot(dp, e2), dot(dp, e1)) - Math.atan2(dot(dq, e2), dot(dq, e1)); });
+  return { c, poly: uniq };
+}
+function planarDensity(h) {
+  // átomos por a² en el plano h·r = 0 (pasa por un átomo), contando en un círculo grande
+  const nn = Math.hypot(...h), R = 6; let cnt = 0;
+  for (let i = -9; i <= 9; i++) for (let j = -9; j <= 9; j++) for (let k = -9; k <= 9; k++)
+    for (const f of FCC) for (const s of [0, 1]) {
+      const p = [f[0] + i + s * .25, f[1] + j + s * .25, f[2] + k + s * .25];
+      const dd = (h[0] * p[0] + h[1] * p[1] + h[2] * p[2]) / nn;
+      if (Math.abs(dd) < 1e-9 && Math.hypot(...p) <= R) cnt++;
+    }
+  return cnt / (Math.PI * R * R);
+}
+
+// proyección
+function project(p, W, scale) {
+  const cy = Math.cos(rot.yaw), sy = Math.sin(rot.yaw), cp = Math.cos(rot.pitch), sp = Math.sin(rot.pitch);
+  const x1 = cy * p[0] + sy * p[2], z1 = -sy * p[0] + cy * p[2];
+  const y2 = cp * p[1] - sp * z1, z2 = sp * p[1] + cp * z1;
+  const persp = 1 / (1 + z2 * 0.12);
+  return { x: W / 2 + x1 * scale * persp, y: W / 2 - y2 * scale * persp, z: z2, s: persp };
+}
+function drawCell() {
+  const cv = $('cell'), ctx = cv.getContext('2d'), W = cv.width;
+  ctx.clearRect(0, 0, W, W);
+  const sc = W * 0.42, P = p => project([p[0] - .5, p[1] - .5, p[2] - .5], W, sc);
+  const colA = css('--atomA'), colB = css('--atomB'), colBond = css('--bond'), colTxt = css('--text-faint'), colPlane = css('--plane'), colPE = css('--planeEdge');
+  const items = [];
+  // aristas del cubo
+  const cub = []; for (const x of [0, 1]) for (const y of [0, 1]) for (const z of [0, 1]) cub.push([x, y, z]);
+  for (let i = 0; i < 8; i++) for (let j = i + 1; j < 8; j++) { const d = cub[i].reduce((a, v, k) => a + Math.abs(v - cub[j][k]), 0); if (d === 1) { const A = P(cub[i]), B = P(cub[j]); items.push({ z: (A.z + B.z) / 2 + 0.5, draw: () => { ctx.strokeStyle = colTxt; ctx.lineWidth = 1.2; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); ctx.setLineDash([]); } }); } }
+  // plano
+  const pl = planePolygon(state.hkl);
+  const onPlane = p => Math.abs(state.hkl[0] * p[0] + state.hkl[1] * p[1] + state.hkl[2] * p[2] - pl.c) < 1e-9;
+  if (state.plane && pl.poly.length >= 3) {
+    const pp = pl.poly.map(P);
+    items.push({ z: pp.reduce((a, q) => a + q.z, 0) / pp.length + 0.05, draw: () => { ctx.fillStyle = colPlane; ctx.strokeStyle = colPE; ctx.lineWidth = 2; ctx.beginPath(); pp.forEach((q, i) => i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y)); ctx.closePath(); ctx.fill(); ctx.stroke(); } });
+  }
+  if (state.bonds) BONDS.forEach(([i, j]) => { const A = P(ATOMS[i].p), B = P(ATOMS[j].p); items.push({ z: (A.z + B.z) / 2 + 0.02, draw: () => { ctx.strokeStyle = colBond; ctx.lineWidth = 3.2; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); } }); });
+  ATOMS.forEach(a => { const q = P(a.p); const on = state.plane && onPlane(a.p); items.push({ z: q.z, draw: () => {
+    const r = (a.s ? 15 : 17) * q.s * (W / 640);
+    ctx.fillStyle = a.s ? colB : colA; ctx.beginPath(); ctx.arc(q.x, q.y, r, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.beginPath(); ctx.arc(q.x - r * 0.3, q.y - r * 0.3, r * 0.35, 0, 2 * Math.PI); ctx.fill();
+    if (on) { ctx.strokeStyle = colPE; ctx.lineWidth = 3.5; ctx.beginPath(); ctx.arc(q.x, q.y, r + 3, 0, 2 * Math.PI); ctx.stroke(); }
+  } }); });
+  items.sort((a, b) => b.z - a.z).forEach(it => it.draw());
+  // ejes
+  const O = P([0, 0, 0]);
+  [[1.18, 0, 0, 'x [100]'], [0, 1.18, 0, 'y [010]'], [0, 0, 1.18, 'z [001]']].forEach(v => { const Q = P(v); ctx.strokeStyle = colTxt; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(O.x, O.y); ctx.lineTo(Q.x, Q.y); ctx.stroke(); ctx.fillStyle = colTxt; ctx.font = `${13 * W / 640}px IBM Plex Mono, monospace`; ctx.fillText(v[3], Q.x + 4, Q.y - 4); });
+  return pl;
+}
+
+// zona de Brillouin
+const BZV = []; (function () { const vals = [0, .5, 1]; const perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  perms.forEach(pm => [-1, 1].forEach(s1 => [-1, 1].forEach(s2 => { const v = [0, 0, 0]; v[pm[0]] = 0; v[pm[1]] = s1 * .5; v[pm[2]] = s2 * 1; if (!BZV.some(q => q[0] === v[0] && q[1] === v[1] && q[2] === v[2])) BZV.push(v); }))); })();
+const BZE = []; BZV.forEach((a, i) => BZV.forEach((b, j) => { if (j > i && Math.abs(Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]) - Math.SQRT1_2) < 1e-6) BZE.push([i, j]); }));
+const KP = { 'Γ': [0, 0, 0], 'X': [1, 0, 0], 'L': [.5, .5, .5], 'K': [.75, .75, 0], 'U': [1, .25, .25], 'W': [1, .5, 0] };
+function drawBZ() {
+  const cv = $('bz'), ctx = cv.getContext('2d'), W = cv.width; ctx.clearRect(0, 0, W, W);
+  const sc = W * 0.30, P = p => project(p, W, sc);
+  const colE = css('--text-faint'), colA = css('--accent'), colT = css('--text');
+  BZE.forEach(([i, j]) => { const A = P(BZV[i]), B = P(BZV[j]); const back = (A.z + B.z) / 2 > 0; ctx.strokeStyle = colE; ctx.lineWidth = back ? 1 : 1.8; ctx.setLineDash(back ? [4, 4] : []); ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); });
+  ctx.setLineDash([]);
+  // ejes kx, ky, kz
+  const O = P([0, 0, 0]);
+  [[1.45, 0, 0, 'kx'], [0, 1.45, 0, 'ky'], [0, 0, 1.45, 'kz']].forEach(v => { const Q = P(v); ctx.strokeStyle = colE; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(O.x, O.y); ctx.lineTo(Q.x, Q.y); ctx.stroke(); ctx.fillStyle = colE; ctx.font = `${12 * W / 640}px IBM Plex Mono, monospace`; ctx.fillText(v[3], Q.x + 3, Q.y - 3); });
+  // camino
+  const path = [KP.L, KP['Γ'], KP.X, KP.U]; const path2 = [KP.K, KP['Γ']];
+  ctx.strokeStyle = colA; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+  [path, path2].forEach(pt => { ctx.beginPath(); pt.forEach((p, i) => { const q = P(p); i ? ctx.lineTo(q.x, q.y) : ctx.moveTo(q.x, q.y); }); ctx.stroke(); });
+  Object.entries(KP).forEach(([n, p]) => { const q = P(p); ctx.fillStyle = n === 'W' ? colE : colA; ctx.beginPath(); ctx.arc(q.x, q.y, 6 * W / 640, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = colT; ctx.font = `600 ${18 * W / 640}px IBM Plex Sans, sans-serif`; ctx.fillText(n, q.x + 8, q.y - 8); });
+}
+// arrastre compartido
+function attachDrag(stage) {
+  let drag = null;
+  stage.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; stage.setPointerCapture(e.pointerId); });
+  stage.addEventListener('pointermove', e => { if (!drag) return; rot.yaw += (e.clientX - drag.x) * 0.01; rot.pitch = Math.max(-1.4, Math.min(1.4, rot.pitch + (e.clientY - drag.y) * 0.01)); drag = { x: e.clientX, y: e.clientY }; drawCell(); drawBZ(); });
+  ['pointerup', 'pointercancel'].forEach(t => stage.addEventListener(t, () => drag = null));
+  stage.tabIndex = 0;
+  stage.addEventListener('keydown', e => { const d = { ArrowLeft: [-0.1, 0], ArrowRight: [0.1, 0], ArrowUp: [0, -0.1], ArrowDown: [0, 0.1] }[e.key]; if (!d) return; e.preventDefault(); rot.yaw += d[0]; rot.pitch = Math.max(-1.4, Math.min(1.4, rot.pitch + d[1])); drawCell(); drawBZ(); });
+}
+
+// ---------- pseudopotencial empírico ----------
+function gvecs(G2max) { const g = []; for (let i = -5; i <= 5; i++) for (let j = -5; j <= 5; j++) for (let k = -5; k <= 5; k++) { const allE = i % 2 === 0 && j % 2 === 0 && k % 2 === 0, allO = Math.abs(i) % 2 === 1 && Math.abs(j) % 2 === 1 && Math.abs(k) % 2 === 1; if (!allE && !allO) continue; const s = i * i + j * j + k * k; if (s <= G2max) g.push([i, j, k]); } return g; }
+function eigvals(a, n) {
+  const d = new Float64Array(n), e = new Float64Array(n);
+  for (let i = n - 1; i > 0; i--) { const l = i - 1; let h = 0, scale = 0; if (l > 0) { for (let k = 0; k <= l; k++) scale += Math.abs(a[i * n + k]); if (scale === 0) e[i] = a[i * n + l]; else { for (let k = 0; k <= l; k++) { a[i * n + k] /= scale; h += a[i * n + k] * a[i * n + k]; } let f = a[i * n + l]; let g = f >= 0 ? -Math.sqrt(h) : Math.sqrt(h); e[i] = scale * g; h -= f * g; a[i * n + l] = f - g; f = 0; for (let j = 0; j <= l; j++) { g = 0; for (let k = 0; k <= j; k++) g += a[j * n + k] * a[i * n + k]; for (let k = j + 1; k <= l; k++) g += a[k * n + j] * a[i * n + k]; e[j] = g / h; f += e[j] * a[i * n + j]; } const hh = f / (h + h); for (let j = 0; j <= l; j++) { f = a[i * n + j]; e[j] = g = e[j] - hh * f; for (let k = 0; k <= j; k++) a[j * n + k] -= (f * e[k] + g * a[i * n + k]); } } } else e[i] = a[i * n + l]; d[i] = h; }
+  for (let i = 0; i < n; i++) d[i] = a[i * n + i];
+  for (let i = 1; i < n; i++) e[i - 1] = e[i]; e[n - 1] = 0;
+  for (let l = 0; l < n; l++) { let iter = 0, m; do { for (m = l; m < n - 1; m++) { const dd = Math.abs(d[m]) + Math.abs(d[m + 1]); if (Math.abs(e[m]) <= 1e-15 * dd) break; } if (m !== l) { if (iter++ > 60) break; let g = (d[l + 1] - d[l]) / (2 * e[l]); let r = Math.hypot(g, 1); g = d[m] - d[l] + e[l] / (g + (g >= 0 ? r : -r)); let s = 1, c = 1, p = 0, i; for (i = m - 1; i >= l; i--) { const f = s * e[i], b = c * e[i]; e[i + 1] = (r = Math.hypot(f, g)); if (r === 0) { d[i + 1] -= p; e[m] = 0; break; } s = f / r; c = g / r; g = d[i + 1] - p; r = (d[i] - g) * s + 2 * c * b; d[i + 1] = g + (p = s * r); g = c * r - b; } if (r === 0 && i >= l) continue; d[l] -= p; e[l] = g; e[m] = 0; } } while (m !== l); }
+  return Array.from(d).sort((x, y) => x - y);
+}
+const G19 = gvecs(19);
+function prepEPM(mat) {
+  const p = MATS[mat], ab = p.a / BOHR, f = (2 * Math.PI / ab) ** 2, G = G19, n = G.length;
+  const VR = new Float64Array(n * n), VI = new Float64Array(n * n);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const d = [G[i][0] - G[j][0], G[i][1] - G[j][1], G[i][2] - G[j][2]]; const s = d[0] * d[0] + d[1] * d[1] + d[2] * d[2]; const ph = Math.PI / 4 * (d[0] + d[1] + d[2]); VR[i * n + j] = (p.VS[s] || 0) * Math.cos(ph); VI[i * n + j] = (p.VA[s] || 0) * Math.sin(ph); }
+  return { G, n, f, VR, VI };
+}
+function bandsAt(P, k, nb) {
+  const { G, n, f, VR, VI } = P, N = 2 * n, A = new Float64Array(N * N);
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { let hr = VR[i * n + j]; const hi = VI[i * n + j]; if (i === j) { const q0 = k[0] + G[i][0], q1 = k[1] + G[i][1], q2 = k[2] + G[i][2]; hr += f * (q0 * q0 + q1 * q1 + q2 * q2); } A[i * N + j] = hr; A[(i + n) * N + j + n] = hr; A[(i + n) * N + j] = hi; A[i * N + j + n] = -hi; }
+  const ev = eigvals(A, N), out = []; for (let b = 0; b < nb; b++) out.push(ev[2 * b] * RY); return out;
+}
+// camino
+function buildPath() {
+  const segs = [['L', 'Γ'], ['Γ', 'X'], ['X', 'U'], ['K', 'Γ']], pts = [], ticks = []; let x = 0;
+  segs.forEach(([A, B], si) => {
+    const a = KP[A], b = KP[B], len = Math.hypot(b[0] - a[0], b[1] - a[1], b[2] - a[2]), N = Math.max(6, Math.round(len * 34));
+    if (si === 3) ticks.push({ x, label: 'U|K' }); else ticks.push({ x, label: A });
+    for (let i = 0; i < N; i++) { const t = i / N; pts.push({ k: a.map((v, j) => v + (b[j] - v) * t), x: x + len * t }); }
+    x += len; if (si === 1) { /* X */ }
+    if (si === 3) { pts.push({ k: b.slice(), x }); ticks.push({ x, label: 'Γ' }); }
+  });
+  return { pts, ticks, xmax: x };
+}
+const PATH = buildPath();
+const BANDS = {};   // mat → {E: [], done, prep, masses}
+let computeJob = null;
+function ensureBands(mat) {
+  if (BANDS[mat] && BANDS[mat].done) return;
+  if (!BANDS[mat]) BANDS[mat] = { E: [], done: false, prep: prepEPM(mat) };
+  if (computeJob && computeJob.mat === mat) return;
+  if (computeJob) clearTimeout(computeJob.t);
+  computeJob = { mat };
+  const B = BANDS[mat];
+  const step = () => {
+    const t0 = performance.now();
+    while (B.E.length < PATH.pts.length && performance.now() - t0 < 30) B.E.push(bandsAt(B.prep, PATH.pts[B.E.length].k, 8));
+    if (B.E.length < PATH.pts.length) { if (state.mat === mat) drawBands(); computeJob.t = setTimeout(step, 0); }
+    else { B.done = true; B.masses = masses(mat, B); computeJob = null; if (state.mat === mat) renderAll(); else drawTable(); setTimeout(nextBg, 150); }
+  };
+  computeJob.t = setTimeout(step, 0);
+}
+function masses(mat, B) {
+  const P = B.prep, u = 2 * Math.PI / MATS[mat].a, dk = 0.02;
+  const vbm = Math.max(...B.E.map(e => e[3]));
+  const cb = B.E.map(e => e[4]); let ic = 0; cb.forEach((v, i) => { if (v < cb[ic]) ic = i; });
+  // refina el mínimo a lo largo del segmento correspondiente
+  const k0 = PATH.pts[ic].k;
+  const m = (E0, E1) => HB2 * (dk * u) ** 2 / (E1 - E0);
+  const out = { vbm, cbm: cb[ic], ic, k0 };
+  const g = bandsAt(P, [0, 0, 0], 8), gx = bandsAt(P, [dk, 0, 0], 8), gl = bandsAt(P, [dk / Math.sqrt(3), dk / Math.sqrt(3), dk / Math.sqrt(3)], 8);
+  out.mhh100 = -m(g[3], gx[3]); out.mlh100 = -m(g[1], gx[1]); out.mhh111 = -m(g[3], gl[3]); out.mlh111 = -m(g[1], gl[1]);
+  if (mat === 'GaAs') { out.me = m(g[4], gx[4]); out.meText = `${out.me.toFixed(3)}`; out.meShort = `${out.me.toFixed(3)} m₀`; out.meSub = 'valle Γ, isotrópica'; }
+  else {
+    // dirección longitudinal: hacia Γ; transversal: perpendicular
+    const len = Math.hypot(...k0), nL = k0.map(v => v / len);
+    let tv = Math.abs(nL[0]) > 0.9 ? [0, 1, 0] : [nL[1], -nL[0], 0]; const tl = Math.hypot(...tv); tv = tv.map(v => v / tl);
+    const e0 = bandsAt(P, k0, 8)[4], ep = bandsAt(P, k0.map((v, i) => v + dk * nL[i]), 8)[4], em = bandsAt(P, k0.map((v, i) => v - dk * nL[i]), 8)[4], et = bandsAt(P, k0.map((v, i) => v + dk * tv[i]), 8)[4];
+    const curvL = (ep + em) / 2 - e0;
+    out.ml = HB2 * (dk * u) ** 2 / Math.max(curvL, 1e-6); out.mt = m(e0, et);
+    out.meText = `m_l ${out.ml.toFixed(2)} · m_t ${out.mt.toFixed(2)}`; out.meShort = `${out.ml.toFixed(2)} m₀`; out.meSub = `m_l (longitudinal); m_t = ${out.mt.toFixed(3)} m₀, valle ` + (mat === 'Si' ? 'Δ' : 'L');
+  }
+  return out;
+}
+
+// ---------- gráfica de bandas ----------
+let bandGeom = null;
+function drawBands() {
+  const W = 960, H = 470, L = 56, R = 20, T = 18, Bm = 40, w = W - L - R, h = H - T - Bm;
+  const B = BANDS[state.mat], s = [];
+  const n = B ? B.E.length : 0;
+  const vbm = B && B.done ? B.masses.vbm : (n ? Math.max(...B.E.map(e => e[3])) : 0);
+  const ylo = -13, yhi = 7;
+  const X = x => L + x / PATH.xmax * w, Y = E => T + (yhi - E) / (yhi - ylo) * h;
+  for (let E = -12; E <= 6; E += 2) { s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(E)}" y2="${Y(E)}" stroke="var(--border)" stroke-dasharray="${E ? '2 4' : ''}"/>`); s.push(`<text class="tick" x="${L - 6}" y="${Y(E) + 3}" text-anchor="end">${E}</text>`); }
+  s.push(`<text class="axis-label" transform="translate(14 ${T + h / 2}) rotate(-90)" text-anchor="middle">E − E_v (eV)</text>`);
+  PATH.ticks.forEach(t => { s.push(`<line x1="${X(t.x)}" x2="${X(t.x)}" y1="${T}" y2="${T + h}" stroke="var(--text-faint)" stroke-width="1"/>`); s.push(`<text class="klabel" x="${X(t.x)}" y="${T + h + 20}" text-anchor="middle">${t.label}</text>`); });
+  s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="none" stroke="var(--text-faint)"/>`);
+  if (B && B.done) {
+    const M = B.masses, cbm = M.cbm - vbm;
+    s.push(`<rect x="${L}" y="${Y(cbm)}" width="${w}" height="${Y(0) - Y(cbm)}" fill="var(--gap)"/>`);
+  }
+  // electrón libre plegado
+  if (state.free) {
+    const f = HB2 * (2 * Math.PI / MATS[state.mat].a) ** 2;
+    const Gs = gvecs(12), off = -12.5;
+    const paths = Gs.map(g => PATH.pts.map((p, i) => { const q = [p.k[0] + g[0], p.k[1] + g[1], p.k[2] + g[2]]; return [X(p.x), Y(f * (q[0] ** 2 + q[1] ** 2 + q[2] ** 2) + off)]; }));
+    s.push(`<clipPath id="bc"><rect x="${L}" y="${T}" width="${w}" height="${h}"/></clipPath>`);
+    paths.forEach(pp => s.push(`<polyline clip-path="url(#bc)" points="${pp.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ')}" fill="none" stroke="var(--text-faint)" stroke-width="1" stroke-dasharray="4 3" opacity="0.7"/>`));
+  }
+  if (n) for (let bnd = 0; bnd < 8; bnd++) {
+    const col = bnd < 4 ? 'var(--hole)' : 'var(--elec)';
+    s.push(`<polyline points="${B.E.map((e, i) => X(PATH.pts[i].x).toFixed(1) + ',' + Y(e[bnd] - vbm).toFixed(1)).join(' ')}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round"/>`);
+  }
+  let cap = '';
+  if (B && B.done) {
+    const M = B.masses, cbm = M.cbm - vbm, xc = X(PATH.pts[M.ic].x), xg = X(PATH.ticks[1].x);
+    s.push(`<circle cx="${xg}" cy="${Y(0)}" r="6" fill="var(--hole)" stroke="var(--surface)" stroke-width="2"/>`);
+    s.push(`<circle cx="${xc}" cy="${Y(cbm)}" r="6" fill="var(--elec)" stroke="var(--surface)" stroke-width="2"/>`);
+    const direct = Math.abs(PATH.pts[M.ic].x - PATH.ticks[1].x) < 1e-6 || Math.hypot(...M.k0) < 1e-6;
+    if (state.trans) {
+      s.push(`<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>`);
+      const EgG = B.E[PATH.pts.findIndex(p => Math.abs(p.x - PATH.ticks[1].x) < 1e-9)][4] - vbm;
+      if (direct) {
+        s.push(`<line x1="${xg}" x2="${xg}" y1="${Y(0) - 8}" y2="${Y(cbm) + 8}" stroke="var(--accent)" stroke-width="3" marker-end="url(#ar)"/>`);
+        s.push(`<text class="plabel" x="${xg + 10}" y="${(Y(0) + Y(cbm)) / 2}">fotón ${cbm.toFixed(2)} eV, Δk ≈ 0</text>`);
+      } else {
+        s.push(`<line x1="${xg}" x2="${xg}" y1="${Y(0) - 8}" y2="${Y(EgG) + 8}" stroke="var(--accent)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ar)"/>`);
+        s.push(`<text class="lvl" x="${xg + 8}" y="${Y(EgG) - 8}" fill="var(--accent)">directa en Γ: ${EgG.toFixed(2)} eV</text>`);
+        s.push(`<line x1="${xg + 4}" x2="${xc - 6}" y1="${Y(0) - 6}" y2="${Y(cbm) + 6}" stroke="var(--phonon)" stroke-width="3" marker-end="url(#ar)"/>`);
+        const kk = Math.hypot(...M.k0);
+        s.push(`<text class="plabel" x="${(xg + xc) / 2 + 6}" y="${(Y(0) + Y(cbm)) / 2 + 22}" fill="var(--phonon)">fotón ${cbm.toFixed(2)} eV + fonón con q = ${kk.toFixed(2)}·2π/a</text>`);
+      }
+    }
+    $('bandNote').textContent = `${MATS[state.mat].label} · ${MATS[state.mat].struct} · a = ${MATS[state.mat].a} Å · 89 ondas planas`;
+    const kph = cbm / HBC_EVNM, kzone = 2 * Math.PI / (MATS[state.mat].a / 10);
+    cap = direct
+      ? `El mínimo de conducción y el máximo de valencia están en Γ: la brecha es directa. Un fotón de ${cbm.toFixed(2)} eV lleva k = E/ħc = ${kph.toExponential(1)} nm⁻¹, ${(kzone / kph).toFixed(0)} veces menos que 2π/a: las transiciones ópticas son verticales.`
+      : `El máximo de valencia está en Γ pero el mínimo de conducción está en ${state.mat === 'Si' ? 'k ≈ ' + Math.hypot(...M.k0).toFixed(2) + '·2π/a hacia X' : 'L'}: la brecha es indirecta. El fotón casi no lleva momento (${kph.toExponential(1)} nm⁻¹ contra ${kzone.toFixed(1)} nm⁻¹ de la zona), así que la emisión necesita un fonón y es miles de veces más lenta.`;
+  } else {
+    $('bandNote').textContent = `calculando ${n}/${PATH.pts.length} puntos k…`;
+    cap = 'Diagonalizando el hamiltoniano de 89 ondas planas en cada punto k…';
+  }
+  s.push(`<rect x="${L}" y="${T}" width="${w}" height="${h}" fill="transparent"/>`);
+  $('band').innerHTML = s.join('');
+  $('bandCap').textContent = cap;
+  $('freeLeg').hidden = !state.free;
+  bandGeom = { X, L, w, vbm };
+}
+
+// ---------- Kronig–Penney ----------
+function kpF(E, V0, w, b) {
+  if (E <= 0) E = 1e-9;
+  const al = Math.sqrt(E / HB2NM);
+  if (V0 <= 1e-9) return Math.cos(al * (w + b));
+  if (Math.abs(E - V0) < 1e-9) E += 1e-7;
+  if (E < V0) { const be = Math.sqrt((V0 - E) / HB2NM); return Math.cos(al * w) * Math.cosh(be * b) + (be * be - al * al) / (2 * al * be) * Math.sin(al * w) * Math.sinh(be * b); }
+  const ga = Math.sqrt((E - V0) / HB2NM); return Math.cos(al * w) * Math.cos(ga * b) - (al * al + ga * ga) / (2 * al * ga) * Math.sin(al * w) * Math.sin(ga * b);
+}
+function kpModel() {
+  const { V0, w, b } = state, Lp = w + b, kz = Math.PI / Lp;
+  const Emax = Math.max(4.4 * HB2NM * kz * kz, V0 * 1.25);
+  const N = 2400, Es = [], fs = [];
+  for (let i = 0; i <= N; i++) { const E = Emax * i / N; Es.push(E); fs.push(kpF(E, V0, w, b)); }
+  const bands = []; let cur = null;
+  fs.forEach((f, i) => { const ok = Math.abs(f) <= 1; if (ok && !cur) cur = { lo: Es[i], i0: i }; if (!ok && cur) { cur.hi = Es[i - 1]; cur.i1 = i - 1; bands.push(cur); cur = null; } });
+  if (cur) { cur.hi = Es[N]; cur.i1 = N; cur.open = true; bands.push(cur); }
+  // bordes exactos por bisección y masa efectiva en el fondo y el techo de la banda 1
+  const solve = (lo, hi, target) => { let a = lo, c = hi; const fa = kpF(a, V0, w, b) - target; for (let it = 0; it < 80; it++) { const m = (a + c) / 2, fm = kpF(m, V0, w, b) - target; if ((fm > 0) === (fa > 0)) a = m; else c = m; } return (a + c) / 2; };
+  bands.forEach(bd => {
+    if (bd.i0 > 0) { const t = fs[bd.i0 - 1] > 0 ? 1 : -1; bd.lo = solve(Es[bd.i0 - 1], Es[bd.i0], t); bd.tlo = t; }
+    else bd.tlo = 1;
+    if (!bd.open && bd.i1 < N) { const t = fs[bd.i1 + 1] > 0 ? 1 : -1; bd.hi = solve(Es[bd.i1], Es[bd.i1 + 1], t); bd.thi = t; }
+  });
+  const out = { Lp, kz, Emax, Es, fs, bands };
+  if (bands.length) {
+    const b1 = bands[0], dk = 0.03 * kz;
+    const E0 = b1.lo, E1 = solve(b1.lo, b1.hi, b1.tlo * Math.cos(dk * Lp));
+    out.m1 = HB2NM * dk * dk / Math.max(E1 - E0, 1e-12);
+    if (!b1.open) { const Et = b1.hi, Et1 = solve(b1.lo, b1.hi, b1.thi * Math.cos(dk * Lp)); out.m1top = -HB2NM * dk * dk / Math.max(Et - Et1, 1e-12); }
+    out.W1 = b1.hi - b1.lo;
+    if (bands.length > 1) out.gap1 = bands[1].lo - b1.hi;
+  }
+  return out;
+}
+let kpGeom = null;
+function drawKP() {
+  const K = kpModel(), { V0 } = state;
+  const yhi = K.Emax, Y0 = 18, H = 440, B = 42, h = H - Y0 - B, Y = E => Y0 + (yhi - E) / yhi * h;
+  // f(E)
+  { const W = 400, L = 50, R = 14, w = W - L - R, s = [], X = f => L + (Math.max(-3.2, Math.min(3.2, f)) + 3.2) / 6.4 * w;
+    s.push(`<rect x="${X(-1)}" y="${Y0}" width="${X(1) - X(-1)}" height="${h}" fill="var(--accent-soft)"/>`);
+    K.bands.forEach(bd => s.push(`<rect x="${L}" y="${Y(bd.hi)}" width="${w}" height="${Y(bd.lo) - Y(bd.hi)}" fill="var(--accent)" opacity="0.10"/>`));
+    [-3, -2, -1, 0, 1, 2, 3].forEach(v => { s.push(`<line x1="${X(v)}" x2="${X(v)}" y1="${Y0}" y2="${Y0 + h}" stroke="var(--border)" ${Math.abs(v) === 1 ? '' : 'stroke-dasharray="2 4"'}/>`); s.push(`<text class="tick" x="${X(v)}" y="${Y0 + h + 15}" text-anchor="middle">${v}</text>`); });
+    const st = niceStep(yhi, 6); for (let E = 0; E <= yhi; E += st) s.push(`<text class="tick" x="${L - 6}" y="${Y(E) + 3}" text-anchor="end">${+E.toFixed(2)}</text>`);
+    s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 8}" text-anchor="middle">f(E) = cos(kL)</text>`);
+    s.push(`<text class="axis-label" transform="translate(12 ${Y0 + h / 2}) rotate(-90)" text-anchor="middle">energía (eV)</text>`);
+    s.push(`<clipPath id="kf"><rect x="${L}" y="${Y0}" width="${w}" height="${h}"/></clipPath>`);
+    s.push(`<polyline clip-path="url(#kf)" points="${K.Es.map((E, i) => X(K.fs[i]).toFixed(1) + ',' + Y(E).toFixed(1)).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2"/>`);
+    if (V0 > 0 && V0 < yhi) { s.push(`<line x1="${L}" x2="${L + w}" y1="${Y(V0)}" y2="${Y(V0)}" stroke="var(--copper)" stroke-dasharray="5 4"/>`); s.push(`<text class="lvl" x="${L + w - 4}" y="${Y(V0) - 5}" text-anchor="end" fill="var(--copper)">V₀</text>`); }
+    s.push(`<text class="lvl" x="${X(0)}" y="${Y0 + 14}" text-anchor="middle" fill="var(--accent)">|f| ≤ 1: permitido</text>`);
+    $('kpF').innerHTML = s.join('');
+  }
+  // E(k)
+  { const W = 560, L = 50, R = 16, w = W - L - R, s = [];
+    const ext = state.zone === 'ext', nz = ext ? Math.max(1, Math.min(4, K.bands.length)) : 1, kmax = nz * K.kz;
+    const X = k => L + (k + kmax) / (2 * kmax) * w;
+    for (let z = -nz; z <= nz; z++) { const x = X(z * K.kz); s.push(`<line x1="${x}" x2="${x}" y1="${Y0}" y2="${Y0 + h}" stroke="var(--border)" ${z === 0 ? '' : 'stroke-dasharray="3 3"'}/>`); s.push(`<text class="tick" x="${x}" y="${Y0 + h + 15}" text-anchor="middle">${z === 0 ? '0' : (z > 0 ? '' : '−') + (Math.abs(z) === 1 ? '' : Math.abs(z)) + 'π/L'}</text>`); }
+    K.bands.forEach(bd => s.push(`<rect x="${L}" y="${Y(bd.hi)}" width="${w}" height="${Y(bd.lo) - Y(bd.hi)}" fill="var(--accent)" opacity="0.06"/>`));
+    const st = niceStep(yhi, 6); for (let E = 0; E <= yhi; E += st) s.push(`<text class="tick" x="${L - 6}" y="${Y(E) + 3}" text-anchor="end">${+E.toFixed(2)}</text>`);
+    s.push(`<text class="axis-label" x="${L + w / 2}" y="${H - 8}" text-anchor="middle">vector de onda k ${ext ? '(zona extendida)' : '(primera zona de Brillouin)'}</text>`);
+    s.push(`<clipPath id="ke"><rect x="${L}" y="${Y0}" width="${w}" height="${h}"/></clipPath>`);
+    // libre
+    const free = []; for (let n = -6; n <= 6; n++) { const pts = []; for (let i = 0; i <= 120; i++) { const k = -kmax + 2 * kmax * i / 120; const kk = ext ? k : k + 2 * n * K.kz; if (!ext && false) continue; pts.push(X(k).toFixed(1) + ',' + Y(HB2NM * kk * kk).toFixed(1)); } free.push(pts); if (ext) break; }
+    free.forEach(p => s.push(`<polyline clip-path="url(#ke)" points="${p.join(' ')}" fill="none" stroke="var(--text-faint)" stroke-width="1.2" stroke-dasharray="4 3"/>`));
+    // bandas
+    K.bands.forEach((bd, bi) => {
+      const pts = [];
+      for (let i = bd.i0; i <= bd.i1; i++) { const f = Math.max(-1, Math.min(1, K.fs[i])); const k0 = Math.acos(f) / K.Lp; pts.push({ k: k0, E: K.Es[i] }); }
+      const segs = [];
+      if (!ext) { segs.push(pts.map(p => [p.k, p.E])); segs.push(pts.map(p => [-p.k, p.E])); }
+      else if (bi < nz) { const base = bi * K.kz; const kk = pts.map(p => [bi % 2 === 0 ? base + p.k : base + (K.kz - p.k), p.E]); segs.push(kk); segs.push(kk.map(q => [-q[0], q[1]])); }
+      segs.forEach(sg => s.push(`<polyline clip-path="url(#ke)" points="${sg.sort((a, c) => a[0] - c[0]).map(q => X(q[0]).toFixed(1) + ',' + Y(q[1]).toFixed(1)).join(' ')}" fill="none" stroke="var(--accent)" stroke-width="2.4"/>`));
+    });
+    // parábola de masa efectiva en el fondo de la banda 1
+    if (K.m1 && K.bands.length) { const E0 = K.bands[0].lo, pts = []; for (let i = 0; i <= 60; i++) { const k = -0.6 * K.kz + 1.2 * K.kz * i / 60; pts.push(X(k).toFixed(1) + ',' + Y(E0 + HB2NM * k * k / K.m1).toFixed(1)); } s.push(`<polyline clip-path="url(#ke)" points="${pts.join(' ')}" fill="none" stroke="var(--copper)" stroke-width="1.6"/>`); }
+    // brechas
+    K.bands.forEach((bd, i) => { if (i + 1 < K.bands.length) { const g = K.bands[i + 1].lo - bd.hi; if (g > 0.01 * yhi) { const x = L + w - 6; s.push(`<line x1="${x}" x2="${x}" y1="${Y(bd.hi)}" y2="${Y(K.bands[i + 1].lo)}" stroke="var(--copper)" stroke-width="1.6"/>`); s.push(`<text class="lvl" x="${x - 5}" y="${(Y(bd.hi) + Y(K.bands[i + 1].lo)) / 2 + 4}" text-anchor="end" fill="var(--copper)">E_g${i + 1} = ${g.toFixed(2)} eV</text>`); } } });
+    s.push(`<rect x="${L}" y="${Y0}" width="${w}" height="${h}" fill="transparent"/>`);
+    $('kpE').innerHTML = s.join('');
+    kpGeom = { K, X, L, w, kmax };
+  }
+  $('kpNote').textContent = `L = w + b = ${(K.Lp).toFixed(2)} nm · π/L = ${K.kz.toFixed(2)} nm⁻¹`;
+  const m1 = K.m1, top = K.m1top;
+  $('kpCap').textContent = K.bands.length
+    ? `Primera banda: ancho ${K.W1 != null ? K.W1.toFixed(2) : '—'} eV, masa efectiva en el fondo m* = ${m1 ? m1.toFixed(2) : '—'} m₀${top ? `, en el techo m* = ${top.toFixed(2)} m₀ (negativa: se comporta como hueco)` : ''}${K.gap1 != null ? `. Primera brecha ${K.gap1.toFixed(2)} eV en k = ±π/L` : ''}. Cuanto más alta o ancha la barrera, menos se traslapan los estados de pozos vecinos: la banda se angosta y m* crece.`
+    : 'Sin estados permitidos en este intervalo de energía.';
+  return K;
+}
+
+// ---------- tabla y ecuaciones ----------
+function drawTable() {
+  const rows = ['Si', 'Ge', 'GaAs'].map(m => {
+    const B = BANDS[m], M = B && B.done ? B.masses : null, e = MATS[m].exp;
+    const calc = M ? (M.cbm - M.vbm).toFixed(2) : '…';
+    const where = M ? (Math.hypot(...M.k0) < 1e-6 ? 'Γ' : (m === 'Si' ? `${Math.hypot(...M.k0).toFixed(2)}·X` : 'L')) : '…';
+    const me = M ? M.meText : '…';
+    return `<tr class="${m === state.mat ? 'active' : ''}"><td>${MATS[m].label}</td><td>${calc}<br><span class="ex">${e.Eg.toFixed(2)}</span></td><td>${where}<br><span class="ex">${e.where}</span></td><td>${me}<br><span class="ex">${e.me}</span></td><td>${M ? M.mlh100.toFixed(2) : '…'}<br><span class="ex">${e.mlh}</span></td><td>${e.so}</td></tr>`;
+  }).join('');
+  $('cmpTable').innerHTML = `<thead><tr><th>Material</th><th>E_g (eV)</th><th>Mínimo de conducción</th><th>m*_e (m₀)</th><th>m*_lh (m₀)</th><th>Δ_so (eV)</th></tr></thead><tbody>${rows}</tbody>`;
+}
+function drawEq(pl, dens, K) {
+  const m = MATS[state.mat], a = m.a, h = state.hkl, H2 = h[0] ** 2 + h[1] ** 2 + h[2] ** 2;
+  const L = [], Hh = t => L.push(`<p class="eq-h">${t}</p>`), Q = t => L.push(`<div class="eq-line">${t}</div>`);
+  Hh('Cristal');
+  Q(`${m.struct}: red fcc + base (0,0,0) y (¼,¼,¼)a, 8 átomos por celda → n = 8/a³ = 8/(${a} Å)³ = <span class="hi">${sci(8 / (a * 1e-8) ** 3)} cm⁻³</span>`);
+  Q(`vecino más cercano: d = √3·a/4 = ${(Math.sqrt(3) * a / 4).toFixed(3)} Å,   ángulo de enlace 109.47°`);
+  Q(`d_hkl = a/√(h² + k² + l²) = ${a}/√${H2} = <span class="hi">${(a / Math.sqrt(H2)).toFixed(3)} Å</span>   plano ${hklStr(h)}`);
+  Q(`densidad del plano ${hklStr(h)} (un solo plano atómico) = ${dens.toFixed(3)}/a² = ${sci(dens / (a * 1e-8) ** 2)} cm⁻²`);
+  Hh('Red recíproca');
+  Q(`bᵢ = 2π(aⱼ × aₖ)/[aᵢ·(aⱼ × aₖ)];  fcc → bcc con |X| = 2π/a = ${(2 * Math.PI / (a / 10)).toFixed(2)} nm⁻¹,  |L| = √3π/a = ${(Math.sqrt(3) * Math.PI / (a / 10)).toFixed(2)} nm⁻¹`);
+  const B = BANDS[state.mat];
+  if (B && B.done) {
+    const M = B.masses;
+    Hh('Bandas y masa efectiva');
+    Q(`H_GG′(k) = (ħ²/2m₀)|k + G|²δ_GG′ + V_S(|G − G′|)cos((G − G′)·τ) + iV_A sen((G − G′)·τ)`);
+    Q(`E_g = E_c,min − E_v,max = <span class="hi">${(M.cbm - M.vbm).toFixed(3)} eV</span>   (experimento ${m.exp.Eg} eV)`);
+    Q(`1/m* = (1/ħ²)·∂²E/∂k²  →  m*_e = ${M.meText} m₀;   huecos [100]: m_hh = ${M.mhh100.toFixed(2)}, m_lh = ${M.mlh100.toFixed(2)};  [111]: m_hh = ${M.mhh111.toFixed(2)}, m_lh = ${M.mlh111.toFixed(2)}`);
+    if (state.mat !== 'GaAs') Q(`masa de densidad de estados: m_dos = (M_c²·m_l·m_t²)^(1/3), M_c = ${state.mat === 'Si' ? 6 : 4} valles${state.mat === 'Ge' ? ' (8 medios valles en L)' : ''} → ${(((state.mat === 'Si' ? 36 : 16) * M.ml * M.mt * M.mt) ** (1 / 3)).toFixed(2)} m₀ (exp. ${state.mat === 'Si' ? '1.08' : '0.56'} m₀)`);
+    const Eg = M.cbm - M.vbm;
+    Q(`fotón: k = E/ħc = ${Eg.toFixed(2)}/197.3 eV·nm = ${(Eg / HBC_EVNM).toExponential(2)} nm⁻¹  ≪  2π/a = ${(2 * Math.PI / (a / 10)).toFixed(1)} nm⁻¹`);
+  }
+  Hh('Kronig–Penney');
+  Q(`cos(kL) = cos(αw)cosh(βb) + (β² − α²)/(2αβ)·sen(αw)senh(βb),  α = √(2m₀E)/ħ,  β = √(2m₀(V₀ − E))/ħ`);
+  if (K.bands.length) Q(`banda 1: [${K.bands[0].lo.toFixed(3)}, ${K.bands[0].open ? '…' : K.bands[0].hi.toFixed(3)}] eV,  m*(fondo) = ħ²k²/[2(E(k) − E₀)] = <span class="hi">${K.m1 ? K.m1.toFixed(3) : '—'} m₀</span>`);
+  $('eqList').innerHTML = L.join('');
+  $('eqNote').textContent = `${m.label} · ${hklStr(h)}`;
+}
+
+// ---------- lecturas ----------
+function drawReadouts(dens) {
+  const m = MATS[state.mat], a = m.a, h = state.hkl, B = BANDS[state.mat];
+  if (B && B.done) {
+    const M = B.masses, Eg = M.cbm - M.vbm, direct = Math.hypot(...M.k0) < 1e-6;
+    $('r1').textContent = Eg.toFixed(2) + ' eV'; $('r1s').textContent = `experimento ${m.exp.Eg} eV`;
+    $('r2').textContent = direct ? 'directa' : 'indirecta'; $('r2s').textContent = direct ? 'mínimo de conducción en Γ' : `mínimo en ${state.mat === 'Si' ? '0.85·X (Δ)' : 'L'}`;
+    $('r3').textContent = M.meShort; $('r3s').textContent = M.meSub;
+  } else { ['r1', 'r2', 'r3'].forEach(id => $(id).textContent = '…'); ['r1s', 'r2s', 'r3s'].forEach(id => $(id).textContent = 'calculando bandas'); }
+  $('r4').textContent = a.toFixed(2) + ' Å'; $('r4s').textContent = `${m.struct} · vecinos a ${(Math.sqrt(3) * a / 4).toFixed(2)} Å`;
+  $('r5').textContent = (a / Math.hypot(...h)).toFixed(3) + ' Å'; $('r5s').textContent = 'plano ' + hklStr(h);
+  $('r6').textContent = sci(8 / (a * 1e-8) ** 3) + ' cm⁻³';
+}
+
+// ---------- render ----------
+function syncControls() {
+  document.querySelectorAll('#matSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === state.mat)));
+  document.querySelectorAll('#zoneSeg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === state.zone)));
+  ['h', 'k', 'l'].forEach((id, i) => { $(id).value = state.hkl[i]; });
+  $('bondsChk').checked = state.bonds; $('planeChk').checked = state.plane; $('transChk').checked = state.trans; $('freeChk').checked = state.free;
+  [['V0', state.V0, v => v.toFixed(1) + ' eV'], ['w', state.w, v => v.toFixed(2) + ' nm'], ['b', state.b, v => v.toFixed(2) + ' nm']].forEach(([id, v, f]) => { if (+$(id).value !== v) $(id).value = v; $(id + 'Val').textContent = f(v); });
+}
+let densCache = {};
+function renderAll() {
+  syncControls();
+  const m = MATS[state.mat];
+  const pl = drawCell(); drawBZ();
+  const key = state.hkl.join(','); if (!(key in densCache)) densCache[key] = planarDensity(state.hkl);
+  const dens = densCache[key];
+  $('cellNote').textContent = `${m.struct} · plano ${hklStr(state.hkl)}`;
+  $('cellLegend').innerHTML = m.atoms[0] === m.atoms[1]
+    ? `<span><i class="dotk" style="background:var(--atomA)"></i>${m.atoms[0]} en la red fcc</span><span><i class="dotk" style="background:var(--atomB)"></i>${m.atoms[1]} desplazado (¼,¼,¼)a</span><span><i class="sw" style="border-color:var(--planeEdge)"></i>plano ${hklStr(state.hkl)} y átomos que contiene</span>`
+    : `<span><i class="dotk" style="background:var(--atomA)"></i>Ga</span><span><i class="dotk" style="background:var(--atomB)"></i>As</span><span><i class="sw" style="border-color:var(--planeEdge)"></i>plano ${hklStr(state.hkl)} y átomos que contiene</span>`;
+  const a = m.a, facts = [['a', a.toFixed(2) + ' Å'], ['d_hkl', (a / Math.hypot(...state.hkl)).toFixed(3) + ' Å'], ['átomos/celda', '8'], ['densidad del plano', sci(dens / (a * 1e-8) ** 2) + ' cm⁻²']];
+  $('cellFacts').innerHTML = facts.map(f => `<div>${f[0]}<b>${f[1]}</b></div>`).join('');
+  ensureBands(state.mat);
+  drawBands();
+  const K = drawKP();
+  drawTable(); drawEq(pl, dens, K); drawReadouts(dens);
+}
+let pend = false; const schedule = () => { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; renderAll(); }); };
+
+// ---------- eventos ----------
+['h', 'k', 'l'].forEach(id => { $(id).innerHTML = [-3, -2, -1, 0, 1, 2, 3].map(v => `<option value="${v}">${v}</option>`).join(''); });
+['h', 'k', 'l'].forEach((id, i) => $(id).addEventListener('change', e => { const v = +e.target.value; const nh = state.hkl.slice(); nh[i] = v; if (nh.every(x => x === 0)) { e.target.value = state.hkl[i]; return; } state.hkl = nh; renderAll(); }));
+$('hklChips').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.hkl = b.dataset.hkl.split(',').map(Number); renderAll(); });
+$('matSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.mat = b.dataset.v; renderAll(); });
+$('zoneSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.zone = b.dataset.v; renderAll(); });
+[['bondsChk', 'bonds'], ['planeChk', 'plane'], ['transChk', 'trans'], ['freeChk', 'free']].forEach(([id, k]) => $(id).addEventListener('change', e => { state[k] = e.target.checked; renderAll(); }));
+['V0', 'w', 'b'].forEach(id => $(id).addEventListener('input', e => { state[id] = +e.target.value; schedule(); }));
+$('resetBtn').addEventListener('click', () => { Object.assign(state, DEF()); renderAll(); });
+attachDrag($('cellStage')); attachDrag($('bzStage'));
+// tooltips
+function tip(svgId, wrapId, tipId, fn) { const svg = $(svgId), wrap = $(wrapId), t = $(tipId);
+  svg.addEventListener('pointermove', e => { const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal, sx = (e.clientX - r.left) * vb.width / r.width; const html = fn(sx); if (!html) { t.classList.remove('on'); return; } const wr = wrap.getBoundingClientRect(); t.innerHTML = html; t.style.left = (e.clientX - wr.left + wrap.scrollLeft) + 'px'; t.style.top = (e.clientY - wr.top) + 'px'; t.classList.add('on'); });
+  svg.addEventListener('pointerleave', () => t.classList.remove('on')); }
+tip('band', 'bandWrap', 'bandTip', sx => {
+  const B = BANDS[state.mat]; if (!bandGeom || !B || !B.E.length || sx < bandGeom.L || sx > bandGeom.L + bandGeom.w) return null;
+  const x = (sx - bandGeom.L) / bandGeom.w * PATH.xmax; let i = 0, bd = 1e9; PATH.pts.forEach((p, j) => { if (j < B.E.length && Math.abs(p.x - x) < bd) { bd = Math.abs(p.x - x); i = j; } });
+  const k = PATH.pts[i].k, e = B.E[i];
+  return `k = (${k.map(v => v.toFixed(2)).join(', ')})·2π/a<br>valencia: ${e.slice(0, 4).map(v => (v - bandGeom.vbm).toFixed(2)).join(' · ')} eV<br>conducción: ${e.slice(4, 8).map(v => (v - bandGeom.vbm).toFixed(2)).join(' · ')} eV`;
+});
+tip('kpE', 'kpWrap', 'kpTip', sx => { if (!kpGeom || sx < kpGeom.L || sx > kpGeom.L + kpGeom.w) return null; const k = -kpGeom.kmax + (sx - kpGeom.L) / kpGeom.w * 2 * kpGeom.kmax; return `k = ${k.toFixed(2)} nm⁻¹ = ${(k / kpGeom.K.kz).toFixed(2)}·π/L<br>λ = 2π/|k| = ${(2 * Math.PI / Math.abs(k)).toFixed(2)} nm`; });
+
+renderAll();
+// precalcula los otros materiales en segundo plano para la tabla
+function nextBg() { if (computeJob) return; const m = ['Si', 'Ge', 'GaAs'].find(x => !(BANDS[x] && BANDS[x].done)); if (m) ensureBands(m); }
+setTimeout(nextBg, 1200);
+})();
+
+</script>
+<script>
+(function () {
+  const tabs = Array.from(document.querySelectorAll('.tabs [role="tab"]'));
+  const panels = { lab: document.getElementById('panelLab'), theory: document.getElementById('panelTheory') };
+  function show(name, push) {
+    tabs.forEach(t => { const on = t.dataset.tab === name; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    Object.entries(panels).forEach(([k, p]) => { if (p) p.hidden = k !== name; });
+    if (push) { try { history.replaceState(null, '', name === 'theory' ? '#teoria' : location.pathname + location.search); } catch (e) { } }
+    if (name === 'lab') window.dispatchEvent(new Event('resize'));
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => { show(t.dataset.tab, true); window.scrollTo({ top: 0 }); });
+    t.addEventListener('keydown', e => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); show(n.dataset.tab, true);
+    });
+  });
+  document.querySelectorAll('.toc a[data-target]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault(); const el = document.getElementById(a.dataset.target); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  document.querySelectorAll('[data-goto-lab]').forEach(b => b.addEventListener('click', () => { show('lab', true); window.scrollTo({ top: 0 }); }));
+  document.querySelectorAll('[data-totop]').forEach(b => b.addEventListener('click', () => { const t = document.querySelector('.toc'); window.scrollTo({ top: 0, behavior: 'smooth' }); if (t) t.querySelector('a') && t.querySelector('a').focus({ preventScroll: true }); }));
+  let start = 'lab'; try { if (/^#teor/i.test(location.hash)) start = 'theory'; } catch (e) { }
+  show(start, false);
+})();
+
+</script>
+</body>
+</html>
